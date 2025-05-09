@@ -1,0 +1,38 @@
+[project]
+name = "slideman-v1"
+version = "1.0.0"
+description = "a pptx file manager with keywords handling of slides and slide elements"
+authors = [
+    {name = "Monirul Islam",email = "monirul.islam.de@gmail.com"}
+]
+license = {text = "not to be copied or reproduced without author's permission"}
+readme = "README.md"
+requires-python = ">=3.9,<3.14"
+dependencies = [
+    "pyside6 (>=6.6,<6.9)",
+    "pytest (>=7.0,<8.0)",
+    "pywin32 (>=305)",
+    "pillow (>=10.0)",
+    "rapidfuzz (>=3.0)",
+    "appdirs (>=1.4)",
+    "python-pptx (>=1.0.2,<2.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+pytest-qt = "^4.4.0"
+pyinstaller = "^6.13.0"
+
+[tool.pytest.ini_options]
+# Add the 'src' directory to the Python path when running tests
+pythonpath = [
+  "src"
+]
+# Optional: Define where pytest should look for tests
+testpaths = [
+    "tests",
+]

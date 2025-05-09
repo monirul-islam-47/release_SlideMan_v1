@@ -1,0 +1,509 @@
+<!DOCTYPE html><html><head>
+      <title>gemini_technical_build_plan</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:///c:\Users\Gluttony\.windsurf\extensions\shd101wyy.markdown-preview-enhanced-0.8.18-universal\crossnote\dependencies\katex\katex.min.css">
+      
+      
+      
+      
+      
+      <style>
+      code[class*=language-],pre[class*=language-]{color:#333;background:0 0;font-family:Consolas,"Liberation Mono",Menlo,Courier,monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.4;-moz-tab-size:8;-o-tab-size:8;tab-size:8;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:.8em;overflow:auto;border-radius:3px;background:#f5f5f5}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal;background:#f5f5f5}.token.blockquote,.token.comment{color:#969896}.token.cdata{color:#183691}.token.doctype,.token.macro.property,.token.punctuation,.token.variable{color:#333}.token.builtin,.token.important,.token.keyword,.token.operator,.token.rule{color:#a71d5d}.token.attr-value,.token.regex,.token.string,.token.url{color:#183691}.token.atrule,.token.boolean,.token.code,.token.command,.token.constant,.token.entity,.token.number,.token.property,.token.symbol{color:#0086b3}.token.prolog,.token.selector,.token.tag{color:#63a35c}.token.attr-name,.token.class,.token.class-name,.token.function,.token.id,.token.namespace,.token.pseudo-class,.token.pseudo-element,.token.url-reference .token.variable{color:#795da3}.token.entity{cursor:help}.token.title,.token.title .token.punctuation{font-weight:700;color:#1d3e81}.token.list{color:#ed6a43}.token.inserted{background-color:#eaffea;color:#55a532}.token.deleted{background-color:#ffecec;color:#bd2c00}.token.bold{font-weight:700}.token.italic{font-style:italic}.language-json .token.property{color:#183691}.language-markup .token.tag .token.punctuation{color:#333}.language-css .token.function,code.language-css{color:#0086b3}.language-yaml .token.atrule{color:#63a35c}code.language-yaml{color:#183691}.language-ruby .token.function{color:#333}.language-markdown .token.url{color:#795da3}.language-makefile .token.symbol{color:#795da3}.language-makefile .token.variable{color:#183691}.language-makefile .token.builtin{color:#0086b3}.language-bash .token.keyword{color:#0086b3}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:hsla(24,20%,50%,.08);background:linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:hsla(24,20%,50%,.4);color:#f4f1ef;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px #fff}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}html body{font-family:'Helvetica Neue',Helvetica,'Segoe UI',Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ol,html body>ul{margin-bottom:16px}html body ol,html body ul{padding-left:2em}html body ol.no-list,html body ul.no-list{padding:0;list-style-type:none}html body ol ol,html body ol ul,html body ul ol,html body ul ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:700;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::after,html body code::before{letter-spacing:-.2em;content:'\00a0'}html body pre>code{padding:0;margin:0;word-break:normal;white-space:pre;background:0 0;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:after,html body pre code:before,html body pre tt:after,html body pre tt:before{content:normal}html body blockquote,html body dl,html body ol,html body p,html body pre,html body ul{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body code,html body pre{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview ul{list-style:disc}.markdown-preview ul ul{list-style:circle}.markdown-preview ul ul ul{list-style:square}.markdown-preview ol{list-style:decimal}.markdown-preview ol ol,.markdown-preview ul ol{list-style-type:lower-roman}.markdown-preview ol ol ol,.markdown-preview ol ul ol,.markdown-preview ul ol ol,.markdown-preview ul ul ol{list-style-type:lower-alpha}.markdown-preview .newpage,.markdown-preview .pagebreak{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center!important}.markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .status{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0;min-height:100vh}@media screen and (min-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{font-size:14px!important;padding:1em}}@media print{html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% - 300px);padding:2em calc(50% - 457px - 300px / 2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+      <!-- The content below will be included at the end of the <head> element. --><script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    // your code here
+  });
+</script></head><body for="html-export">
+    
+    
+      <div class="crossnote markdown-preview  ">
+      
+<h1 id="project-power-presenter---detailed-technical-build-plan">Project Power Presenter - Detailed Technical Build Plan </h1>
+<p>This plan provides technical specifics for implementing the Power Presenter application, expanding on the previous plain-English version and referencing the defined architecture and layout.</p>
+<p><strong>Phase 1: Foundation &amp; Core Infrastructure (Est. Week 1-2)</strong></p>
+<ul>
+<li><strong>Goal:</strong> Establish the project skeleton, core Qt application, dependencies, resource handling, basic state management, logging, and settings.</li>
+<li><strong>Technical Steps:</strong>
+<ol>
+<li><strong>Project Setup:</strong>
+<ul>
+<li><code>git init</code> in <code>pptx_manager/</code>.</li>
+<li>Create directory structure: <code>src/pptx_manager/</code>, <code>resources/icons/</code>, <code>resources/qss/</code>, <code>tests/unit/</code>, <code>tests/gui/</code>.</li>
+<li><code>pyproject.toml</code>: Use Poetry (<code>poetry init</code>). Define <code>[tool.poetry.dependencies]</code> for Python <code>~3.9</code>, <code>PySide6 ~= 6.6</code>, <code>pywin32 &gt;= 305</code>, <code>Pillow &gt;= 10.0</code>, <code>rapidfuzz &gt;= 3.0</code>, <code>appdirs &gt;= 1.4</code>. Define <code>[tool.poetry.group.dev.dependencies]</code> for <code>pytest</code>, <code>pytest-qt</code>.</li>
+<li><code>.gitignore</code>: Add <code>__pycache__/</code>, <code>*.pyc</code>, <code>.venv/</code>, <code>build/</code>, <code>dist/</code>, <code>*.log</code>, <code>*.db</code>, <code>local_settings.ini</code>.</li>
+</ul>
+</li>
+<li><strong>Environment:</strong> <code>poetry install</code>.</li>
+<li><strong>Resource Compilation:</strong>
+<ul>
+<li><code>resources/resources.qrc</code>:<pre data-role="codeBlock" data-info="xml" class="language-xml xml"><code><span class="token doctype"><span class="token punctuation">&lt;!</span><span class="token doctype-tag">DOCTYPE</span> <span class="token name">RCC</span><span class="token punctuation">&gt;</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>RCC</span> <span class="token attr-name">version</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>1.0<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>qresource</span> <span class="token attr-name">prefix</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>/<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>file</span><span class="token punctuation">&gt;</span></span>qss/dark.qss<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>file</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>file</span><span class="token punctuation">&gt;</span></span>qss/light.qss<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>file</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>file</span><span class="token punctuation">&gt;</span></span>icons/app_icon.svg<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>file</span><span class="token punctuation">&gt;</span></span>
+    <span class="token comment">&lt;!-- Add other icons --&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>qresource</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>RCC</span><span class="token punctuation">&gt;</span></span>
+</code></pre></li>
+<li>Compile: <code>pyside6-rcc resources/resources.qrc -o src/pptx_manager/resources_rc.py</code>.</li>
+<li>Import: <code>from . import resources_rc</code> within <code>src/pptx_manager/ui/main_window.py</code> (or similar entry point) to register resources.</li>
+</ul>
+</li>
+<li><strong>Basic Main Window (<code>src/pptx_manager/ui/main_window.py</code>):</strong><pre data-role="codeBlock" data-info="python" class="language-python python"><code><span class="token keyword keyword-from">from</span> PySide6<span class="token punctuation">.</span>QtWidgets <span class="token keyword keyword-import">import</span> QApplication<span class="token punctuation">,</span> QMainWindow<span class="token punctuation">,</span> QStackedWidget<span class="token punctuation">,</span> QVBoxLayout<span class="token punctuation">,</span> QWidget
+<span class="token keyword keyword-from">from</span> PySide6<span class="token punctuation">.</span>QtCore <span class="token keyword keyword-import">import</span> Slot
+<span class="token keyword keyword-from">from</span> <span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token keyword keyword-import">import</span> theme <span class="token comment"># Assuming theme.py exists</span>
+
+<span class="token keyword keyword-class">class</span> <span class="token class-name">MainWindow</span><span class="token punctuation">(</span>QMainWindow<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword keyword-def">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token builtin">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>__init__<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>setWindowTitle<span class="token punctuation">(</span><span class="token string">"Power Presenter"</span><span class="token punctuation">)</span>
+        <span class="token comment"># self.setWindowIcon(QIcon(":/icons/app_icon.svg")) # Example</span>
+
+        self<span class="token punctuation">.</span>stacked_widget <span class="token operator">=</span> QStackedWidget<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token comment"># TODO: Add pages later</span>
+
+        main_widget <span class="token operator">=</span> QWidget<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment"># Placeholder for potential layout with nav rail</span>
+        layout <span class="token operator">=</span> QVBoxLayout<span class="token punctuation">(</span>main_widget<span class="token punctuation">)</span> <span class="token comment"># Example layout</span>
+        layout<span class="token punctuation">.</span>addWidget<span class="token punctuation">(</span>self<span class="token punctuation">.</span>stacked_widget<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>setCentralWidget<span class="token punctuation">(</span>main_widget<span class="token punctuation">)</span>
+
+        self<span class="token punctuation">.</span>_create_actions<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>_create_menus<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>_load_settings<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword keyword-def">def</span> <span class="token function">_create_actions</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token comment"># Example: self.theme_toggle_action = QAction("Toggle Theme", self)</span>
+        <span class="token comment"># self.theme_toggle_action.triggered.connect(self.toggle_theme)</span>
+        <span class="token keyword keyword-pass">pass</span> <span class="token comment"># Add actions later for File, Edit (Undo/Redo), View (Theme), Help</span>
+
+    <span class="token keyword keyword-def">def</span> <span class="token function">_create_menus</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+         <span class="token comment"># Example: view_menu = self.menuBar().addMenu("&amp;View")</span>
+         <span class="token comment"># view_menu.addAction(self.theme_toggle_action)</span>
+        <span class="token keyword keyword-pass">pass</span>
+
+    <span class="token decorator annotation punctuation">@Slot</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword keyword-def">def</span> <span class="token function">toggle_theme</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        current_theme <span class="token operator">=</span> theme<span class="token punctuation">.</span>get_current_theme<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        new_theme <span class="token operator">=</span> <span class="token string">"light"</span> <span class="token keyword keyword-if">if</span> current_theme <span class="token operator">==</span> <span class="token string">"dark"</span> <span class="token keyword keyword-else">else</span> <span class="token string">"dark"</span>
+        theme<span class="token punctuation">.</span>apply_theme<span class="token punctuation">(</span>QApplication<span class="token punctuation">.</span>instance<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> new_theme<span class="token punctuation">)</span>
+        <span class="token comment"># TODO: Save theme choice to QSettings</span>
+
+    <span class="token keyword keyword-def">def</span> <span class="token function">closeEvent</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> event<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>_save_settings<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        event<span class="token punctuation">.</span>accept<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword keyword-def">def</span> <span class="token function">_load_settings</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token comment"># settings = QSettings(...) # Load geometry, theme, MRU etc.</span>
+        <span class="token comment"># self.restoreGeometry(settings.value("mainWindowGeometry"))</span>
+        <span class="token keyword keyword-pass">pass</span>
+
+    <span class="token keyword keyword-def">def</span> <span class="token function">_save_settings</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token comment"># settings = QSettings(...) # Save geometry, theme, MRU etc.</span>
+        <span class="token comment"># settings.setValue("mainWindowGeometry", self.saveGeometry())</span>
+        <span class="token keyword keyword-pass">pass</span>
+
+<span class="token comment"># In src/pptx_manager/__main__.py</span>
+<span class="token keyword keyword-import">import</span> sys
+<span class="token keyword keyword-import">import</span> logging
+<span class="token keyword keyword-import">import</span> traceback
+<span class="token keyword keyword-from">from</span> PySide6<span class="token punctuation">.</span>QtWidgets <span class="token keyword keyword-import">import</span> QApplication<span class="token punctuation">,</span> QMessageBox
+<span class="token keyword keyword-from">from</span> PySide6<span class="token punctuation">.</span>QtCore <span class="token keyword keyword-import">import</span> QSettings<span class="token punctuation">,</span> QCoreApplication
+<span class="token keyword keyword-from">from</span> <span class="token punctuation">.</span>ui<span class="token punctuation">.</span>main_window <span class="token keyword keyword-import">import</span> MainWindow
+<span class="token keyword keyword-from">from</span> <span class="token punctuation">.</span> <span class="token keyword keyword-import">import</span> theme<span class="token punctuation">,</span> app_state <span class="token comment"># Assuming these exist</span>
+<span class="token comment"># from .config import APP_NAME, ORG_NAME # Define these constants</span>
+
+<span class="token keyword keyword-def">def</span> <span class="token function">setup_logging</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># ... (Logging setup using appdirs, RotatingFileHandler as per idea.md)</span>
+    <span class="token keyword keyword-pass">pass</span>
+
+<span class="token keyword keyword-def">def</span> <span class="token function">global_exception_hook</span><span class="token punctuation">(</span>exc_type<span class="token punctuation">,</span> exc_value<span class="token punctuation">,</span> exc_tb<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># ... (Logging critical error + QMessageBox.critical as per idea.md)</span>
+    sys<span class="token punctuation">.</span>exit<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+
+<span class="token keyword keyword-def">def</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># QCoreApplication.setOrganizationName(ORG_NAME)</span>
+    <span class="token comment"># QCoreApplication.setApplicationName(APP_NAME)</span>
+    QApplication<span class="token punctuation">.</span>setAttribute<span class="token punctuation">(</span>Qt<span class="token punctuation">.</span>AA_EnableHighDpiScaling<span class="token punctuation">)</span> <span class="token comment"># For HiDPI</span>
+    QApplication<span class="token punctuation">.</span>setAttribute<span class="token punctuation">(</span>Qt<span class="token punctuation">.</span>AA_UseHighDpiPixmaps<span class="token punctuation">)</span>
+
+    app <span class="token operator">=</span> QApplication<span class="token punctuation">(</span>sys<span class="token punctuation">.</span>argv<span class="token punctuation">)</span>
+    setup_logging<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    sys<span class="token punctuation">.</span>excepthook <span class="token operator">=</span> global_exception_hook
+
+    <span class="token comment"># Apply initial theme</span>
+    settings <span class="token operator">=</span> QSettings<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment"># ORG_NAME, APP_NAME will be used</span>
+    initial_theme <span class="token operator">=</span> settings<span class="token punctuation">.</span>value<span class="token punctuation">(</span><span class="token string">"theme"</span><span class="token punctuation">,</span> <span class="token string">"dark"</span><span class="token punctuation">)</span>
+    theme<span class="token punctuation">.</span>apply_theme<span class="token punctuation">(</span>app<span class="token punctuation">,</span> initial_theme<span class="token punctuation">)</span>
+
+    <span class="token comment"># Initialize singletons</span>
+    _app_state <span class="token operator">=</span> app_state<span class="token punctuation">.</span>AppState<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment"># Instantiate singleton</span>
+    <span class="token comment"># _event_bus = event_bus.EventBus() # Instantiate singleton</span>
+
+    main_win <span class="token operator">=</span> MainWindow<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    main_win<span class="token punctuation">.</span>show<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    sys<span class="token punctuation">.</span>exit<span class="token punctuation">(</span>app<span class="token punctuation">.</span><span class="token keyword keyword-exec">exec</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token keyword keyword-if">if</span> __name__ <span class="token operator">==</span> <span class="token string">"__main__"</span><span class="token punctuation">:</span>
+    main<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre></li>
+<li><strong>Theme Loading (<code>src/pptx_manager/theme.py</code>):</strong><pre data-role="codeBlock" data-info="python" class="language-python python"><code><span class="token keyword keyword-from">from</span> PySide6<span class="token punctuation">.</span>QtCore <span class="token keyword keyword-import">import</span> QFile<span class="token punctuation">,</span> QTextStream<span class="token punctuation">,</span> QIODevice
+<span class="token keyword keyword-from">from</span> PySide6<span class="token punctuation">.</span>QtWidgets <span class="token keyword keyword-import">import</span> QApplication
+
+_current_theme <span class="token operator">=</span> <span class="token string">"dark"</span> <span class="token comment"># Default</span>
+
+<span class="token keyword keyword-def">def</span> <span class="token function">load_stylesheet</span><span class="token punctuation">(</span>theme_name<span class="token punctuation">:</span> <span class="token builtin">str</span><span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">&gt;</span> <span class="token builtin">str</span><span class="token punctuation">:</span>
+    qss_path <span class="token operator">=</span> <span class="token string-interpolation"><span class="token string">f":/qss/</span><span class="token interpolation"><span class="token punctuation">{</span>theme_name<span class="token punctuation">}</span></span><span class="token string">.qss"</span></span>
+    <span class="token builtin">file</span> <span class="token operator">=</span> QFile<span class="token punctuation">(</span>qss_path<span class="token punctuation">)</span>
+    <span class="token keyword keyword-if">if</span> <span class="token builtin">file</span><span class="token punctuation">.</span><span class="token builtin">open</span><span class="token punctuation">(</span>QIODevice<span class="token punctuation">.</span>ReadOnly <span class="token operator">|</span> QIODevice<span class="token punctuation">.</span>Text<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        stream <span class="token operator">=</span> QTextStream<span class="token punctuation">(</span><span class="token builtin">file</span><span class="token punctuation">)</span>
+        stylesheet <span class="token operator">=</span> stream<span class="token punctuation">.</span>readAll<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token builtin">file</span><span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword keyword-return">return</span> stylesheet
+    <span class="token keyword keyword-return">return</span> <span class="token string">""</span>
+
+<span class="token keyword keyword-def">def</span> <span class="token function">apply_theme</span><span class="token punctuation">(</span>app<span class="token punctuation">:</span> QApplication<span class="token punctuation">,</span> theme_name<span class="token punctuation">:</span> <span class="token builtin">str</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword keyword-global">global</span> _current_theme
+    stylesheet <span class="token operator">=</span> load_stylesheet<span class="token punctuation">(</span>theme_name<span class="token punctuation">)</span>
+    <span class="token keyword keyword-if">if</span> stylesheet<span class="token punctuation">:</span>
+        app<span class="token punctuation">.</span>setStyleSheet<span class="token punctuation">(</span>stylesheet<span class="token punctuation">)</span>
+        _current_theme <span class="token operator">=</span> theme_name
+
+<span class="token keyword keyword-def">def</span> <span class="token function">get_current_theme</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">&gt;</span> <span class="token builtin">str</span><span class="token punctuation">:</span>
+    <span class="token keyword keyword-return">return</span> _current_theme
+</code></pre></li>
+<li><strong>Logging &amp; Crash Handling:</strong> Implement as shown in <code>idea.md</code> within <code>__main__.py</code>.</li>
+<li><strong>Core State Management (<code>src/pptx_manager/app_state.py</code>, <code>event_bus.py</code>):</strong>
+<ul>
+<li><code>AppState(QObject)</code>: Implement singleton pattern. Include <code>self.undo_stack = QUndoStack(self)</code>. Add signals like <code>projectLoaded = QtCore.Signal(str)</code>. Store <code>current_project: Optional[Project] = None</code>.</li>
+<li><code>EventBus(QObject)</code>: Implement singleton. Define signals like <code>conversionProgress = QtCore.Signal(int, int, int) # file_id, current, total</code>.</li>
+</ul>
+</li>
+<li><strong>Persistent Settings:</strong> Use <code>QSettings("YourCompany", "PPTXManager")</code> in <code>MainWindow</code>'s <code>_load_settings</code>, <code>_save_settings</code>, and <code>closeEvent</code>. Save/restore <code>self.saveGeometry()</code>/<code>restoreGeometry()</code>, theme choice, and potentially <code>AppState.undo_stack.index()</code> (though restoring undo history itself is complex).</li>
+</ol>
+</li>
+</ul>
+<p><strong>Phase 2: Data Modeling &amp; Persistence (Est. Week 2-3)</strong></p>
+<ul>
+<li><strong>Goal:</strong> Implement data classes and SQLite service layer.</li>
+<li><strong>Technical Steps:</strong>
+<ol>
+<li><strong>Data Models (<code>src/pptx_manager/models/</code>):</strong> Use <code>@dataclass</code> for <code>Project</code>, <code>File</code>, <code>Slide</code>, <code>Keyword</code>, <code>Element</code>. Example:<pre data-role="codeBlock" data-info="python" class="language-python python"><code><span class="token keyword keyword-from">from</span> dataclasses <span class="token keyword keyword-import">import</span> dataclass<span class="token punctuation">,</span> field
+
+<span class="token decorator annotation punctuation">@dataclass</span>
+<span class="token keyword keyword-class">class</span> <span class="token class-name">Element</span><span class="token punctuation">:</span>
+    <span class="token builtin">id</span><span class="token punctuation">:</span> <span class="token builtin">int</span>
+    slide_id<span class="token punctuation">:</span> <span class="token builtin">int</span>
+    element_type<span class="token punctuation">:</span> <span class="token builtin">str</span> <span class="token comment"># e.g., 'shape', 'picture', 'chart'</span>
+    bbox_x<span class="token punctuation">:</span> <span class="token builtin">float</span> <span class="token comment"># EMU</span>
+    bbox_y<span class="token punctuation">:</span> <span class="token builtin">float</span> <span class="token comment"># EMU</span>
+    bbox_w<span class="token punctuation">:</span> <span class="token builtin">float</span> <span class="token comment"># EMU</span>
+    bbox_h<span class="token punctuation">:</span> <span class="token builtin">float</span> <span class="token comment"># EMU</span>
+    <span class="token comment"># Potentially shape_id_str: str # From pptx shape.shape_id if needed</span>
+</code></pre></li>
+<li><strong>Database Service (<code>src/pptx_manager/services/database.py</code>):</strong><pre data-role="codeBlock" data-info="python" class="language-python python"><code><span class="token keyword keyword-import">import</span> sqlite3
+<span class="token keyword keyword-from">from</span> pathlib <span class="token keyword keyword-import">import</span> Path
+<span class="token comment"># from ..models import Project, ... # Import your dataclasses</span>
+
+DB_SCHEMA_VERSION <span class="token operator">=</span> <span class="token number">1</span>
+
+<span class="token keyword keyword-class">class</span> <span class="token class-name">Database</span><span class="token punctuation">:</span>
+    <span class="token keyword keyword-def">def</span> <span class="token function">__init__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> db_path<span class="token punctuation">:</span> Path<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>db_path <span class="token operator">=</span> db_path
+        self<span class="token punctuation">.</span>_conn <span class="token operator">=</span> <span class="token boolean">None</span>
+
+    <span class="token keyword keyword-def">def</span> <span class="token function">connect</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>_conn <span class="token operator">=</span> sqlite3<span class="token punctuation">.</span>connect<span class="token punctuation">(</span>self<span class="token punctuation">.</span>db_path<span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>_conn<span class="token punctuation">.</span>row_factory <span class="token operator">=</span> sqlite3<span class="token punctuation">.</span>Row <span class="token comment"># Access columns by name</span>
+        self<span class="token punctuation">.</span>_conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">"PRAGMA foreign_keys = ON;"</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>_initialize_schema<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword keyword-def">def</span> <span class="token function">close</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword keyword-if">if</span> self<span class="token punctuation">.</span>_conn<span class="token punctuation">:</span>
+            self<span class="token punctuation">.</span>_conn<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+            self<span class="token punctuation">.</span>_conn <span class="token operator">=</span> <span class="token boolean">None</span>
+
+    <span class="token keyword keyword-def">def</span> <span class="token function">_initialize_schema</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        current_version <span class="token operator">=</span> self<span class="token punctuation">.</span>_conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">"PRAGMA user_version;"</span><span class="token punctuation">)</span><span class="token punctuation">.</span>fetchone<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+        <span class="token keyword keyword-if">if</span> current_version <span class="token operator">&lt;</span> DB_SCHEMA_VERSION<span class="token punctuation">:</span>
+            <span class="token keyword keyword-if">if</span> current_version <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">:</span> <span class="token comment"># Initial creation</span>
+                self<span class="token punctuation">.</span>_create_tables<span class="token punctuation">(</span><span class="token punctuation">)</span>
+                self<span class="token punctuation">.</span>_conn<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"PRAGMA user_version = </span><span class="token interpolation"><span class="token punctuation">{</span>DB_SCHEMA_VERSION<span class="token punctuation">}</span></span><span class="token string">;"</span></span><span class="token punctuation">)</span>
+            <span class="token comment"># else: Add migration logic here for future versions</span>
+            self<span class="token punctuation">.</span>_conn<span class="token punctuation">.</span>commit<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword keyword-def">def</span> <span class="token function">_create_tables</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        cursor <span class="token operator">=</span> self<span class="token punctuation">.</span>_conn<span class="token punctuation">.</span>cursor<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token comment"># --- Execute CREATE TABLE statements exactly as in idea.md ---</span>
+        <span class="token comment"># Example:</span>
+        cursor<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token triple-quoted-string string">"""
+            CREATE TABLE projects (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                folder_path TEXT NOT NULL UNIQUE,
+                created_at TEXT DEFAULT (datetime('now'))
+                -- Add updated_at trigger if needed (more complex in sqlite)
+            );"""</span><span class="token punctuation">)</span>
+        <span class="token comment"># ... Create files, slides, elements, keywords, slide_keywords, element_keywords ...</span>
+        <span class="token comment"># Add necessary INDEXes:</span>
+        cursor<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">"CREATE INDEX idx_slides_file_id ON slides(file_id);"</span><span class="token punctuation">)</span>
+        cursor<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">"CREATE INDEX idx_elements_slide_id ON elements(slide_id);"</span><span class="token punctuation">)</span>
+        cursor<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">"CREATE INDEX idx_slide_keywords_keyword_id ON slide_keywords(keyword_id);"</span><span class="token punctuation">)</span>
+        cursor<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">"CREATE INDEX idx_element_keywords_keyword_id ON element_keywords(keyword_id);"</span><span class="token punctuation">)</span>
+        <span class="token comment"># Add FTS5 table later when search is implemented</span>
+
+    <span class="token comment"># --- CRUD Methods ---</span>
+    <span class="token keyword keyword-def">def</span> <span class="token function">add_project</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> name<span class="token punctuation">:</span> <span class="token builtin">str</span><span class="token punctuation">,</span> folder_path<span class="token punctuation">:</span> <span class="token builtin">str</span><span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">&gt;</span> <span class="token builtin">int</span><span class="token punctuation">:</span>
+        cursor <span class="token operator">=</span> self<span class="token punctuation">.</span>_conn<span class="token punctuation">.</span>cursor<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        cursor<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">"INSERT INTO projects (name, folder_path) VALUES (?, ?)"</span><span class="token punctuation">,</span> <span class="token punctuation">(</span>name<span class="token punctuation">,</span> folder_path<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        self<span class="token punctuation">.</span>_conn<span class="token punctuation">.</span>commit<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword keyword-return">return</span> cursor<span class="token punctuation">.</span>lastrowid
+
+    <span class="token keyword keyword-def">def</span> <span class="token function">get_all_projects</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">&gt;</span> <span class="token builtin">list</span><span class="token punctuation">[</span>Project<span class="token punctuation">]</span><span class="token punctuation">:</span>
+        cursor <span class="token operator">=</span> self<span class="token punctuation">.</span>_conn<span class="token punctuation">.</span>cursor<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        cursor<span class="token punctuation">.</span>execute<span class="token punctuation">(</span><span class="token string">"SELECT id, name, folder_path, created_at FROM projects ORDER BY name COLLATE NOCASE;"</span><span class="token punctuation">)</span>
+        <span class="token comment"># return [Project(**row) for row in cursor.fetchall()] # Requires mapping Row to dataclass</span>
+        <span class="token keyword keyword-return">return</span> <span class="token punctuation">[</span>Project<span class="token punctuation">(</span><span class="token builtin">id</span><span class="token operator">=</span>row<span class="token punctuation">[</span><span class="token string">'id'</span><span class="token punctuation">]</span><span class="token punctuation">,</span> name<span class="token operator">=</span>row<span class="token punctuation">[</span><span class="token string">'name'</span><span class="token punctuation">]</span><span class="token punctuation">,</span> folder_path<span class="token operator">=</span>row<span class="token punctuation">[</span><span class="token string">'folder_path'</span><span class="token punctuation">]</span><span class="token punctuation">,</span> created_at<span class="token operator">=</span>row<span class="token punctuation">[</span><span class="token string">'created_at'</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token keyword keyword-for">for</span> row <span class="token keyword keyword-in">in</span> cursor<span class="token punctuation">.</span>fetchall<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+
+    <span class="token comment"># ... Implement other CRUD for projects, files, etc. ...</span>
+
+    <span class="token keyword keyword-def">def</span> <span class="token function">__enter__</span><span class="token punctuation">(</span>self<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword keyword-return">return</span> self
+
+    <span class="token keyword keyword-def">def</span> <span class="token function">__exit__</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> exc_type<span class="token punctuation">,</span> exc_val<span class="token punctuation">,</span> exc_tb<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        self<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment"># Usage:</span>
+<span class="token comment"># db_service = Database(Path("./my_project.db"))</span>
+<span class="token comment"># with db_service as db:</span>
+<span class="token comment">#    projects = db.get_all_projects()</span>
+</code></pre></li>
+<li><strong>Unit Tests (<code>tests/services/test_database.py</code>):</strong><pre data-role="codeBlock" data-info="python" class="language-python python"><code><span class="token keyword keyword-import">import</span> pytest
+<span class="token keyword keyword-import">import</span> sqlite3
+<span class="token keyword keyword-from">from</span> pathlib <span class="token keyword keyword-import">import</span> Path
+<span class="token keyword keyword-from">from</span> pptx_manager<span class="token punctuation">.</span>services<span class="token punctuation">.</span>database <span class="token keyword keyword-import">import</span> Database
+<span class="token keyword keyword-from">from</span> pptx_manager<span class="token punctuation">.</span>models <span class="token keyword keyword-import">import</span> Project
+
+<span class="token decorator annotation punctuation">@pytest<span class="token punctuation">.</span>fixture</span>
+<span class="token keyword keyword-def">def</span> <span class="token function">temp_db</span><span class="token punctuation">(</span>tmp_path<span class="token punctuation">:</span> Path<span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">&gt;</span> Database<span class="token punctuation">:</span>
+    db_path <span class="token operator">=</span> tmp_path <span class="token operator">/</span> <span class="token string">"test.db"</span>
+    db <span class="token operator">=</span> Database<span class="token punctuation">(</span>db_path<span class="token punctuation">)</span>
+    db<span class="token punctuation">.</span>connect<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment"># Creates schema</span>
+    <span class="token keyword keyword-yield">yield</span> db
+    db<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token keyword keyword-def">def</span> <span class="token function">test_add_and_get_project</span><span class="token punctuation">(</span>temp_db<span class="token punctuation">:</span> Database<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    project_id <span class="token operator">=</span> temp_db<span class="token punctuation">.</span>add_project<span class="token punctuation">(</span><span class="token string">"Test Proj"</span><span class="token punctuation">,</span> <span class="token string">"/fake/path"</span><span class="token punctuation">)</span>
+    <span class="token keyword keyword-assert">assert</span> project_id <span class="token operator">&gt;</span> <span class="token number">0</span>
+    projects <span class="token operator">=</span> temp_db<span class="token punctuation">.</span>get_all_projects<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword keyword-assert">assert</span> <span class="token builtin">len</span><span class="token punctuation">(</span>projects<span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">1</span>
+    <span class="token keyword keyword-assert">assert</span> projects<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>name <span class="token operator">==</span> <span class="token string">"Test Proj"</span>
+    <span class="token keyword keyword-assert">assert</span> projects<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">.</span>folder_path <span class="token operator">==</span> <span class="token string">"/fake/path"</span>
+</code></pre></li>
+</ol>
+</li>
+</ul>
+<p><strong>Phase 3: Projects Page &amp; File Handling (Est. Week 3-4)</strong></p>
+<ul>
+<li><strong>Goal:</strong> Implement project creation, listing, basic file copying.</li>
+<li><strong>Technical Steps:</strong>
+<ol>
+<li><strong>Projects Page UI (<code>src/pptx_manager/ui/pages/projects_page.py</code>):</strong>
+<ul>
+<li><code>ProjectsPage(QWidget)</code> layout with <code>QToolBar</code>, <code>QListView</code>, <code>QStackedWidget</code>.</li>
+<li><code>ProjectListModel(QAbstractListModel)</code>:
+<ul>
+<li><code>_projects: list[Project] = []</code></li>
+<li><code>load_data(db: Database)</code>: Fetches from DB, calls <code>beginResetModel</code>/<code>endResetModel</code>.</li>
+<li><code>rowCount()</code>: Returns <code>len(self._projects)</code>.</li>
+<li><code>data(index, role)</code>: Returns <code>proj.name</code> for <code>Qt.DisplayRole</code>, potentially counts for other roles later.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>File I/O Service (<code>src/pptx_manager/services/file_io.py</code>):</strong>
+<ul>
+<li>Use <code>shutil.copy2</code> for copying. Use <code>shutil.disk_usage</code>. Check <code>os.path.exists</code>.</li>
+<li>Add <code>calculate_checksum(file_path: str) -&gt; str</code> using <code>hashlib.sha256</code>.</li>
+</ul>
+</li>
+<li><strong>Connect "New Project" Workflow:</strong>
+<ul>
+<li>Slot connected to "New" action:
+<ul>
+<li><code>QFileDialog.getOpenFileNames(self, "Select PPTX Files", "", "PowerPoint Files (*.pptx)")</code>.</li>
+<li><code>QInputDialog.getText(self, "New Project", "Project Name:")</code>.</li>
+<li>Determine project folder path (e.g., base dir + sanitized name).</li>
+<li><strong>Synchronous First:</strong> Call <code>file_io.copy_files_to_project</code>.</li>
+<li>Use <code>Database</code> instance: <code>db.add_project</code>, loop copied files -&gt; <code>db.add_file</code> (add <code>files</code> table: <code>id</code>, <code>project_id</code>, <code>filename</code>, <code>rel_path</code>, <code>checksum</code>, <code>slide_count INT NULL</code>). Calculate checksums here.</li>
+<li>Refresh list model: <code>project_list_model.load_data(db)</code>.</li>
+<li><code>event_bus.projectCreated.emit(project_folder_path)</code>.</li>
+<li>Update <code>QSettings</code> MRU list.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>List Existing Projects:</strong> Call <code>project_list_model.load_data(db)</code> when page becomes visible or app starts.</li>
+<li><strong>Project Actions &amp; Undo:</strong>
+<ul>
+<li>Implement <code>commands/create_project.py</code>, <code>rename_project.py</code>, <code>delete_project.py</code>.</li>
+<li><code>CreateProjectCmd(QUndoCommand)</code>: <code>redo()</code> calls <code>db.add_project</code>, <code>file_io.copy...</code>; <code>undo()</code> calls <code>db.delete_project</code>, <code>shutil.rmtree</code>.</li>
+<li>Push commands: <code>app_state.undo_stack.push(CreateProjectCmd(...))</code>.</li>
+<li>Connect <code>QMainWindow</code> Undo/Redo actions to <code>app_state.undo_stack.undo()</code> / <code>redo()</code>.</li>
+</ul>
+</li>
+<li><strong>Background File Copy:</strong>
+<ul>
+<li>Define <code>FileCopyWorker(QRunnable)</code> + <code>WorkerSignals(QObject)</code> with <code>progress = Signal(int)</code>, <code>finished = Signal(list)</code>, <code>error = Signal(str)</code>.</li>
+<li>In <code>run()</code>: loop files, <code>shutil.copy2</code>, calculate progress, <code>self.signals.progress.emit(percent)</code>. Emit <code>finished</code> with results or <code>error</code>.</li>
+<li>In "New Project" slot: <code>worker = FileCopyWorker(...)</code>, connect signals, <code>QThreadPool.globalInstance().start(worker)</code>. Show progress bar. Handle <code>finished</code>/<code>error</code> signals to proceed with DB operations.</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<p><strong>Phase 4: Core PowerPoint Integration - Slide Conversion (Est. Week 5-6)</strong></p>
+<ul>
+<li><strong>Goal:</strong> Implement reliable COM-based slide-to-PNG conversion and basic shape extraction.</li>
+<li><strong>Technical Steps:</strong>
+<ol>
+<li><strong>PowerPoint Check:</strong> Implement <code>check_powerpoint_available()</code> using <code>win32com.client.Dispatch</code> in a <code>try...except</code>. Call early.</li>
+<li><strong>Slide Converter Service (<code>services/slide_converter.py</code>):</strong>
+<ul>
+<li><code>SlideConverter(QRunnable)</code> + <code>WorkerSignals</code> (progress, finished, error). Takes <code>file_id</code>, <code>file_path</code>.</li>
+<li><code>run()</code>:<pre data-role="codeBlock" data-info="python" class="language-python python"><code><span class="token keyword keyword-import">import</span> pythoncom
+<span class="token keyword keyword-import">import</span> win32com<span class="token punctuation">.</span>client
+<span class="token keyword keyword-import">import</span> pywintypes
+<span class="token keyword keyword-from">from</span> pptx <span class="token keyword keyword-import">import</span> Presentation <span class="token comment"># python-pptx</span>
+
+pythoncom<span class="token punctuation">.</span>CoInitialize<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment"># STA essential? Or MTA? Test carefully.</span>
+ppt <span class="token operator">=</span> <span class="token boolean">None</span>
+pres <span class="token operator">=</span> <span class="token boolean">None</span>
+<span class="token keyword keyword-try">try</span><span class="token punctuation">:</span>
+    ppt <span class="token operator">=</span> win32com<span class="token punctuation">.</span>client<span class="token punctuation">.</span>Dispatch<span class="token punctuation">(</span><span class="token string">"PowerPoint.Application"</span><span class="token punctuation">)</span>
+    <span class="token comment"># Consider ppt.Visible = False and ppt.DisplayAlerts = 0</span>
+    pres <span class="token operator">=</span> ppt<span class="token punctuation">.</span>Presentations<span class="token punctuation">.</span>Open<span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">(</span>file_path<span class="token punctuation">)</span><span class="token punctuation">,</span> ReadOnly<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">,</span> WithWindow<span class="token operator">=</span><span class="token boolean">False</span><span class="token punctuation">)</span>
+    
+    <span class="token comment"># Use python-pptx to get shape info efficiently? Or COM object model?</span>
+    pptx_pres <span class="token operator">=</span> Presentation<span class="token punctuation">(</span>file_path<span class="token punctuation">)</span> <span class="token comment"># Open again with python-pptx</span>
+
+    total_slides <span class="token operator">=</span> <span class="token builtin">len</span><span class="token punctuation">(</span>pres<span class="token punctuation">.</span>Slides<span class="token punctuation">)</span>
+    <span class="token keyword keyword-for">for</span> i<span class="token punctuation">,</span> slide_com <span class="token keyword keyword-in">in</span> <span class="token builtin">enumerate</span><span class="token punctuation">(</span>pres<span class="token punctuation">.</span>Slides<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        slide_index <span class="token operator">=</span> i <span class="token operator">+</span> <span class="token number">1</span> <span class="token comment"># 1-based index for COM</span>
+        slide_pptx <span class="token operator">=</span> pptx_pres<span class="token punctuation">.</span>slides<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token comment"># 0-based for python-pptx</span>
+
+        <span class="token comment"># Export Image using COM</span>
+        png_filename <span class="token operator">=</span> <span class="token string-interpolation"><span class="token string">f"slide_</span><span class="token interpolation"><span class="token punctuation">{</span>slide_index<span class="token punctuation">}</span></span><span class="token string">.png"</span></span>
+        png_path <span class="token operator">=</span> Path<span class="token punctuation">(</span>cache_dir<span class="token punctuation">)</span> <span class="token operator">/</span> png_filename <span class="token comment"># Define cache_dir</span>
+        slide_com<span class="token punctuation">.</span>Export<span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">(</span>png_path<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"PNG"</span><span class="token punctuation">)</span> <span class="token comment"># Add error handling</span>
+
+        <span class="token comment"># Add slide to DB (get slide_id)</span>
+        slide_id <span class="token operator">=</span> db<span class="token punctuation">.</span>add_slide<span class="token punctuation">(</span>self<span class="token punctuation">.</span>file_id<span class="token punctuation">,</span> slide_index<span class="token punctuation">,</span> <span class="token builtin">str</span><span class="token punctuation">(</span>png_path<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+        <span class="token comment"># Extract Shapes using python-pptx</span>
+        <span class="token keyword keyword-for">for</span> shape <span class="token keyword keyword-in">in</span> slide_pptx<span class="token punctuation">.</span>shapes<span class="token punctuation">:</span>
+            <span class="token keyword keyword-try">try</span><span class="token punctuation">:</span>
+                bbox <span class="token operator">=</span> <span class="token punctuation">(</span>shape<span class="token punctuation">.</span>left<span class="token punctuation">.</span>emu<span class="token punctuation">,</span> shape<span class="token punctuation">.</span>top<span class="token punctuation">.</span>emu<span class="token punctuation">,</span> shape<span class="token punctuation">.</span>width<span class="token punctuation">.</span>emu<span class="token punctuation">,</span> shape<span class="token punctuation">.</span>height<span class="token punctuation">.</span>emu<span class="token punctuation">)</span>
+                shape_type <span class="token operator">=</span> shape<span class="token punctuation">.</span>shape_type<span class="token punctuation">.</span>name <span class="token comment"># Get general type</span>
+                db<span class="token punctuation">.</span>add_element<span class="token punctuation">(</span>slide_id<span class="token punctuation">,</span> shape_type<span class="token punctuation">,</span> <span class="token operator">*</span>bbox<span class="token punctuation">)</span>
+            <span class="token keyword keyword-except">except</span> AttributeError<span class="token punctuation">:</span>
+                 <span class="token comment"># Some shapes might lack geometry (e.g., placeholders) - log/skip</span>
+                 logging<span class="token punctuation">.</span>warning<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"Shape lacks geometry: </span><span class="token interpolation"><span class="token punctuation">{</span><span class="token builtin">getattr</span><span class="token punctuation">(</span>shape<span class="token punctuation">,</span> <span class="token string">'name'</span><span class="token punctuation">,</span> <span class="token string">'Unnamed'</span><span class="token punctuation">)</span><span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">)</span>
+
+        self<span class="token punctuation">.</span>signals<span class="token punctuation">.</span>progress<span class="token punctuation">.</span>emit<span class="token punctuation">(</span>self<span class="token punctuation">.</span>file_id<span class="token punctuation">,</span> slide_index<span class="token punctuation">,</span> total_slides<span class="token punctuation">)</span>
+
+    <span class="token comment"># Update file's slide count in DB</span>
+    db<span class="token punctuation">.</span>update_file_slide_count<span class="token punctuation">(</span>self<span class="token punctuation">.</span>file_id<span class="token punctuation">,</span> total_slides<span class="token punctuation">)</span>
+    self<span class="token punctuation">.</span>signals<span class="token punctuation">.</span>finished<span class="token punctuation">.</span>emit<span class="token punctuation">(</span>self<span class="token punctuation">.</span>file_id<span class="token punctuation">)</span>
+
+<span class="token keyword keyword-except">except</span> <span class="token punctuation">(</span>pywintypes<span class="token punctuation">.</span>com_error<span class="token punctuation">,</span> Exception<span class="token punctuation">)</span> <span class="token keyword keyword-as">as</span> e<span class="token punctuation">:</span>
+    logging<span class="token punctuation">.</span>error<span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f"COM Error converting </span><span class="token interpolation"><span class="token punctuation">{</span>self<span class="token punctuation">.</span>file_path<span class="token punctuation">}</span></span><span class="token string">: </span><span class="token interpolation"><span class="token punctuation">{</span>e<span class="token punctuation">}</span></span><span class="token string">"</span></span><span class="token punctuation">,</span> exc_info<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+    self<span class="token punctuation">.</span>signals<span class="token punctuation">.</span>error<span class="token punctuation">.</span>emit<span class="token punctuation">(</span>self<span class="token punctuation">.</span>file_id<span class="token punctuation">,</span> <span class="token builtin">str</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token keyword keyword-finally">finally</span><span class="token punctuation">:</span>
+    <span class="token keyword keyword-if">if</span> pres<span class="token punctuation">:</span> pres<span class="token punctuation">.</span>Close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword keyword-if">if</span> ppt<span class="token punctuation">:</span> ppt<span class="token punctuation">.</span>Quit<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment"># Ensure PowerPoint closes</span>
+    pythoncom<span class="token punctuation">.</span>CoUninitialize<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre></li>
+</ul>
+</li>
+<li><strong>Thumbnail Cache (<code>services/thumbnail_cache.py</code>):</strong> Implement dictionary cache + disk saving/loading (e.g., <code>png_path</code> from DB). <code>get_thumbnail(slide_id)</code> checks memory, then disk (<code>QPixmap(path)</code>), returns <code>QPixmap</code> or placeholder.</li>
+<li><strong>Integrate Conversion:</strong> Trigger <code>SlideConverter</code> tasks after <code>FileCopyWorker</code> finishes successfully. Connect <code>EventBus</code> or worker signals to UI (status bar, enable next steps). Update <code>slides.thumb_path</code> in DB upon successful export.</li>
+</ol>
+</li>
+</ul>
+<p><strong>Phase 5: SlideView Page &amp; Tagging (Est. Week 7-9)</strong></p>
+<ul>
+<li><strong>Goal:</strong> View slides, highlight shapes, implement tagging UI and logic.</li>
+<li><strong>Technical Steps:</strong>
+<ol>
+<li><strong>SlideView Page UI:</strong> <code>SlideViewPage(QWidget)</code> with <code>QSplitter</code>. Left: <code>SlideCanvas(QGraphicsView)</code>, <code>ThumbnailListView(QListView)</code>. Right: <code>QWidget</code> with <code>QFormLayout</code> for <code>TagEdit</code> widgets.</li>
+<li><strong>Thumbnail Bar:</strong> <code>ThumbnailListModel</code> loads <code>slides</code> for <code>current_project_id</code>. Delegate displays <code>QPixmap</code> from <code>ThumbnailCache</code>. Connect <code>view.clicked</code>.</li>
+<li><strong>Slide Canvas:</strong> <code>SlideCanvas(QGraphicsView)</code>. Slot <code>load_slide(slide_id)</code>:
+<ul>
+<li><code>self.scene().clear()</code>.</li>
+<li>Load main pixmap from cache/disk path in <code>slides</code> table. <code>self.scene().addPixmap(...)</code>.</li>
+<li><code>elements = db.get_elements_for_slide(slide_id)</code>.</li>
+<li>Loop <code>elements</code>: <code>rect = QGraphicsRectItem(element.bbox_x, element.bbox_y, element.bbox_w, element.bbox_h)</code>. <strong>Need EMU-to-Scene coordinate conversion based on Pixmap size and view transform.</strong> Store <code>rect.setData(ELEMENT_ID_ROLE, element.id)</code>. Set <code>rect.setFlag(QGraphicsItem.ItemIsSelectable)</code>. <code>self.scene().addItem(rect)</code>.</li>
+<li><code>self.fitInView(self.scene().sceneRect(), Qt.KeepAspectRatio)</code>.</li>
+</ul>
+</li>
+<li><strong>Shape Click Detection:</strong> Connect <code>self.scene().selectionChanged</code> signal. Get selected <code>QGraphicsRectItem</code>s. Extract <code>element_id = item.data(ELEMENT_ID_ROLE)</code>. Style selected item (e.g., <code>rect.setPen(...)</code>). Emit <code>elementClicked = QtCore.Signal(int)</code>. Handle multiple selections if needed.</li>
+<li><strong><code>TagEdit</code> Widget (<code>ui/components/tag_edit.py</code>):</strong> Custom widget using layout, <code>QLineEdit</code>, displaying tags (e.g., <code>QPushButton</code>s with 'x'). Use <code>QCompleter</code> with <code>QStringListModel</code>. Emit <code>tagAdded</code>, <code>tagRemoved</code>.</li>
+<li><strong>Keyword Panel UI:</strong> Instantiate <code>TagEdit</code>s.</li>
+<li><strong>Tagging Logic:</strong> Connect <code>SlideCanvas.elementClicked</code> to slot updating element tag section. Connect <code>TagEdit.tagAdded</code> -&gt; slot -&gt; <code>kw_id = db.add_keyword_if_not_exists(text, kind)</code> -&gt; <code>db.link_slide_keyword(slide_id, kw_id)</code> or <code>db.link_element_keyword(element_id, kw_id)</code> -&gt; Push <code>AddKeywordCmd(slide_id/element_id, kw_id, kind)</code> -&gt; <code>event_bus.keywordsChanged.emit(...)</code>. Implement corresponding <code>Remove...Cmd</code>.</li>
+<li><strong>Keyword Loading:</strong> On slide/element selection, call <code>db.get_keywords_for_slide/element</code> and <code>tag_edit.set_tags(list_of_keywords)</code>. Update completer model: <code>completer_model.setStringList(db.get_all_keyword_strings(kind))</code>.</li>
+<li><strong>External Modification:</strong> Implement checksum check (<code>files.checksum</code>) on project load or before slide conversion. Show <code>QMessageBox.warning</code> if mismatch. Offer rescan option (complex: re-run conversion, try to match old elements/tags).</li>
+</ol>
+</li>
+</ul>
+<p><strong>Phase 6: Supporting Pages &amp; Features (Est. Week 10-12)</strong></p>
+<ul>
+<li><strong>Goal:</strong> Implement Keyword Manager, Assembly, Delivery pages.</li>
+<li><strong>Technical Steps:</strong>
+<ol>
+<li><strong>Keyword Manager Page:</strong> <code>KeywordManagerPage(QWidget)</code>. Use <code>QTableView</code> + <code>KeywordTableModel</code>. Model performs SQL JOIN between <code>slides</code> and <code>slide_keywords</code>/<code>element_keywords</code> (using <code>GROUP_CONCAT</code> for tags). Fuzzy Merge: Use <code>rapidfuzz.process.extract</code> in background thread. Merge action calls <code>db.merge_keywords</code> (updates <code>keywords</code> table, reassigns foreign keys in link tables within a transaction). Push <code>MergeKeywordsCmd</code>.</li>
+<li><strong>Assembly Manager Page:</strong> <code>AssemblyManagerPage(QWidget)</code>. Implement 3 panels. Search <code>QLineEdit.textChanged</code> (debounce!) -&gt; <code>db.search_keywords_fts(query_text)</code> (Requires <code>CREATE VIRTUAL TABLE keywords_fts USING fts5(keyword, kind, content=keywords, content_rowid=id);</code> and triggers to keep it updated). Basket = <code>list[int]</code>. Final Set <code>QListView</code> (icon mode, drag-drop model <code>flags</code>/<code>supportedDropActions</code>/<code>mimeData</code>/<code>dropMimeData</code>). Query slides: <code>SELECT s.* FROM slides s JOIN slide_keywords sk ON s.id = sk.slide_id WHERE sk.keyword_id IN (?, ?, ...)</code> UNION with element keywords.</li>
+<li><strong>Delivery Page:</strong> <code>DeliveryPage(QWidget)</code>. <code>QListView</code> shows final set from Assembly. "Save As PPTX": <code>ExportWorker(QRunnable)</code> takes <code>ordered_slide_ids: list[int]</code>. Uses COM: <code>ppt.Presentations.Add()</code>, loop slide IDs, get source path/index from DB, <code>newPres.Slides.InsertFromFile(source_path, source_index, newPres.Slides.Count + 1)</code>. Call <code>newPres.SaveAs(output_path)</code>. Handle errors. "Open in PP": same but don't save.</li>
+<li><strong>Reusable <code>SlideThumbnailWidget</code>:</strong> Refactor thumbnail display logic into a custom <code>QWidget</code> or <code>QStyledItemDelegate</code> if complexity warrants it.</li>
+</ol>
+</li>
+</ul>
+<p><strong>Phase 7: Polishing, Testing &amp; Packaging (Est. Week 13-14)</strong></p>
+<ul>
+<li><strong>Goal:</strong> Refine UX, test thoroughly, package.</li>
+<li><strong>Technical Steps:</strong>
+<ol>
+<li><strong>UI/UX Polish:</strong> Add tooltips (<code>widget.setToolTip(...)</code>), check layouts at different window sizes. Ensure consistent styling.</li>
+<li><strong>Accessibility:</strong> Use <code>QWidget.setTabOrder</code>, <code>QShortcut(QKeySequence.StandardKey.XXX)</code>, <code>widget.setAccessibleName()</code>. Test with Narrator.</li>
+<li><strong>Error Handling:</strong> Wrap service calls in <code>try...except</code> blocks in UI slots/commands. Log exceptions. Show user-friendly error messages (<code>QMessageBox</code>).</li>
+<li><strong>Testing:</strong> Use <code>qtbot</code> for UI tests. Mock services (<code>@patch('pptx_manager.ui.pages.projects_page.Database')</code>). Mock <code>win32com.client.Dispatch</code>. Test signal emissions (<code>qtbot.waitSignal</code>). Test undo/redo sequences. Aim for code coverage.</li>
+<li><strong>Documentation:</strong> Update <code>README.md</code>. Add module/class/method docstrings.</li>
+<li><strong>Packaging:</strong> Create <code>pptx_manager.spec</code>. Use <code>Analysis(...)</code>, <code>PyInstaller.utils.hooks.collect_data_files</code>, <code>collect_submodules</code>. Explicitly list <code>hiddenimports=['win32com.client', 'pywintypes', 'rapidfuzz._fuzz', ...]</code>. Add Qt platform/style plugins via <code>binaries</code> or <code>datas</code>. Use <code>upx=True</code> if desired. <code>console=False</code>. Test installer on clean VM.</li>
+<li><strong>Update Check:</strong> Fetch version from URL using <code>urllib.request</code>. Compare versions. Show dialog with <code>QDesktopServices.openUrl</code>.</li>
+</ol>
+</li>
+</ul>
+<p><strong>Phase 8: Release &amp; Iteration (Ongoing)</strong></p>
+<ul>
+<li><strong>Goal:</strong> Release, gather feedback, plan next cycle.</li>
+<li><strong>Technical Steps:</strong> Tag release in Git. Create GitHub Release with packaged EXE/installer. Monitor logs/feedback. Prioritize backlog for v1.x.</li>
+</ul>
+<p>This technical plan provides specific implementation guidance. Remember to commit frequently, write tests alongside features, and adapt based on encountered issues, especially around COM stability and performance tuning.</p>
+
+      </div>
+      
+      
+    
+    
+    
+    
+    
+    
+  
+    </body></html>

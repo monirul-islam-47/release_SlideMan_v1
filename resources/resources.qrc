@@ -1,0 +1,35 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+    <!-- Stylesheets -->
+    <file alias="qss/dark.qss">qss/dark.qss</file>
+    <file alias="qss/light.qss">qss/light.qss</file>
+
+    <!-- Icons -->
+    <file alias="icons/cil-mood-good.png">icons/cil-mood-good.png</file>
+    <file alias="icons/cil-x.png">icons/cil-x.png</file>
+    <file alias="icons/cil-reload.png">icons/cil-reload.png</file>
+    <file alias="icons/cil-file.png">icons/cil-file.png</file>
+    <file alias="icons/cil-remove.png">icons/cil-remove.png</file>
+    <file alias="icons/cil-pencil.png">icons/cil-pencil.png</file>
+    <file alias="icons/cil-coffee.png">icons/cil-coffee.png</file>
+    <file alias="icons/icon_close.png">icons/icon_close.png</file>
+    <file alias="icons/icon_maximize.png">icons/icon_maximize.png</file>
+    <file alias="icons/icon_minimize.png">icons/icon_minimize.png</file>
+    <file alias="icons/icon_menu.png">icons/icon_menu.png</file>
+    <file alias="icons/icon_settings.png">icons/icon_settings.png</file>
+    <file alias="icons/icon_restore.png">icons/icon_restore.png</file>
+    <!-- Navigation icons -->
+    <file alias="icons/cil-folder.png">icons/cil-folder.png</file>
+    <file alias="icons/cil-image1.png">icons/cil-image1.png</file>
+    <file alias="icons/cil-tags.png">icons/cil-tags.png</file>
+    <file alias="icons/cil-layers.png">icons/cil-layers.png</file>
+    <file alias="icons/cil-paper-plane.png">icons/cil-paper-plane.png</file>
+    <file alias="icons/cil-arrow-bottom.png">icons/cil-arrow-bottom.png</file>
+    <file alias="icons/cil-arrow-bottom-2.png">icons/cil-arrow-bottom-2.png</file>
+    <!-- Add other icons here as you create them -->
+    <!-- Example: <file alias="icons/new_project.svg">icons/new_project.svg</file> -->
+    <!-- Example: <file alias="icons/exit.svg">icons/exit.svg</file> -->
+
+</qresource>
+</RCC>
+
