@@ -29,18 +29,34 @@ APP_NAME = "Slideman"
 class MainWindow(QMainWindow):
     def __init__(self, db_service: Database):
         super().__init__()
-        self.setWindowTitle("Slideman") # Updated App Name
-        self.setWindowIcon(QIcon(":/icons/cil-mood-good.png")) # Assumes icon exists in resources
-
-        # --- Initialize Database Service ---
+        # Set up logging
+        self.logger = logging.getLogger(__name__)
+        self.logger.info("Initializing MainWindow")
         
-        self.db_service = db_service # Use the provided service instance
-        if not self.db_service.connect():
-            # Critical error if DB can't connect on startup
-            QMessageBox.critical(self, "Database Error",
-                                 f"Could not connect to the database at:\n{db_path}\n"
-                                 f"Please check permissions and disk space.\nApplication will exit.")
-            sys.exit(1) # Exit if DB connection fails
+        try:
+            self.setWindowTitle("Slideman") # Updated App Name
+            # Comment out icon - resource file is missing
+            # self.setWindowIcon(QIcon(":/icons/cil-mood-good.png")) # Assumes icon exists in resources
+            self.logger.debug("Window title set")
+
+            # --- Initialize Database Service ---
+            self.logger.info("Setting up database connection")
+            self.db_service = db_service # Use the provided service instance
+            if not self.db_service.connect():
+                # Critical error if DB can't connect on startup
+                error_msg = f"Could not connect to the database at: {self.db_service.db_path}"
+                self.logger.critical(error_msg)
+                QMessageBox.critical(self, "Database Error",
+                                     f"{error_msg}\n"
+                                     f"Please check permissions and disk space.\nApplication will exit.")
+                sys.exit(1) # Exit if DB connection fails
+            self.logger.info("Database connection successful")
+        except Exception as e:
+            self.logger.critical(f"Error during MainWindow initialization (basic setup): {e}", exc_info=True)
+            QMessageBox.critical(self, "Initialization Error",
+                               f"Error initializing application (basic setup): {e}\n"
+                               f"Application will exit.")
+            sys.exit(1)
         # --------------------------------
 
         # Core layout elements (Part of Presentation Layer)
@@ -48,115 +64,238 @@ class MainWindow(QMainWindow):
         # self.stacked_widget.addWidget(self.projects_page)
 
         # --- UI Structure ---
-        # This layout will eventually include the left navigation buttons/list
-        # interacting with self.stacked_widget
-        main_widget = QWidget()
-        main_layout = QHBoxLayout(main_widget)
-        main_layout.setContentsMargins(0, 0, 0, 0)
-        main_layout.setSpacing(0)
+        try:
+            self.logger.info("Creating UI structure")
+            # This layout will eventually include the left navigation buttons/list
+            # interacting with self.stacked_widget
+            main_widget = QWidget()
+            self.logger.debug("Created main widget")
+            
+            main_layout = QHBoxLayout(main_widget)
+            main_layout.setContentsMargins(0, 0, 0, 0)
+            main_layout.setSpacing(0)
+            self.logger.debug("Set up main layout")
 
-        # --- Left Navigation Panel ---
-        self.nav_frame = QFrame()
-        self.nav_frame.setFixedWidth(150) # Example fixed width
-        self.nav_frame.setStyleSheet("background-color: #44475a;") # Example color (adjust theme)
-        nav_layout = QVBoxLayout(self.nav_frame)
-        nav_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        nav_layout.setContentsMargins(5, 10, 5, 10)
-        nav_layout.setSpacing(10)
+            # --- Left Navigation Panel ---
+            self.logger.debug("Creating navigation panel")
+            self.nav_frame = QFrame()
+            self.nav_frame.setFixedWidth(150) # Example fixed width
+            self.nav_frame.setStyleSheet("background-color: #44475a;") # Example color (adjust theme)
+            nav_layout = QVBoxLayout(self.nav_frame)
+            nav_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+            nav_layout.setContentsMargins(5, 10, 5, 10)
+            nav_layout.setSpacing(10)
+            self.logger.debug("Navigation panel created successfully")
+        except Exception as e:
+            self.logger.critical(f"Error creating UI structure: {e}", exc_info=True)
+            QMessageBox.critical(self, "UI Initialization Error",
+                               f"Error initializing UI structure: {e}\n"
+                               f"Application will exit.")
+            sys.exit(1)
 
         # Enhanced Navigation Buttons with icons
-        self.btn_projects = QPushButton(" Projects")
-        self.btn_projects.setObjectName("navButton")
-        self.btn_projects.setIcon(QIcon(":/icons/cil-folder.png"))
-        self.btn_projects.setIconSize(QSize(18, 18))
+        try:
+            self.logger.info("Creating navigation buttons")
+            
+            self.btn_projects = QPushButton(" Projects")
+            self.btn_projects.setObjectName("navButton")
+            # Comment out icon - resource file is missing
+            # self.btn_projects.setIcon(QIcon(":/icons/cil-folder.png"))
+            # self.btn_projects.setIconSize(QSize(18, 18))
+            self.logger.debug("Created Projects button")
+            
+            self.btn_slideview = QPushButton(" SlideView")
+            self.btn_slideview.setObjectName("navButton")
+            # Comment out icon - resource file is missing
+            # self.btn_slideview.setIcon(QIcon(":/icons/cil-image1.png"))
+            # self.btn_slideview.setIconSize(QSize(18, 18))
+            self.logger.debug("Created SlideView button")
+            
+            self.btn_keywords = QPushButton(" Keywords")
+            self.btn_keywords.setObjectName("navButton")
+            # Comment out icon - resource file is missing
+            # self.btn_keywords.setIcon(QIcon(":/icons/cil-tags.png"))
+            self.logger.debug("Created Keywords button")
+        except Exception as e:
+            self.logger.critical(f"Error creating navigation buttons: {e}", exc_info=True)
+            QMessageBox.critical(self, "UI Initialization Error",
+                               f"Error creating navigation buttons: {e}\n"
+                               f"Application will exit.")
+            sys.exit(1)
+        # self.btn_keywords.setIconSize(QSize(18, 18))
         
-        self.btn_slideview = QPushButton(" SlideView")
-        self.btn_slideview.setObjectName("navButton")
-        self.btn_slideview.setIcon(QIcon(":/icons/cil-image1.png"))
-        self.btn_slideview.setIconSize(QSize(18, 18))
-        
-        self.btn_keywords = QPushButton(" Keywords")
-        self.btn_keywords.setObjectName("navButton")
-        self.btn_keywords.setIcon(QIcon(":/icons/cil-tags.png"))
-        self.btn_keywords.setIconSize(QSize(18, 18))
-        
-        self.btn_assembly = QPushButton(" Assembly")
-        self.btn_assembly.setObjectName("navButton")
-        self.btn_assembly.setIcon(QIcon(":/icons/cil-layers.png"))
-        self.btn_assembly.setIconSize(QSize(18, 18))
-        
-        self.btn_delivery = QPushButton(" Delivery")
-        self.btn_delivery.setObjectName("navButton")
-        self.btn_delivery.setIcon(QIcon(":/icons/cil-paper-plane.png"))
-        self.btn_delivery.setIconSize(QSize(18, 18))
+        try:
+            self.logger.info("Creating additional navigation buttons")
+            
+            self.btn_assembly = QPushButton(" Assembly")
+            self.btn_assembly.setObjectName("navButton")
+            # Comment out icon - resource file is missing
+            # self.btn_assembly.setIcon(QIcon(":/icons/cil-layers.png"))
+            # self.btn_assembly.setIconSize(QSize(18, 18))
+            self.logger.debug("Created Assembly button")
+            
+            self.btn_delivery = QPushButton(" Delivery")
+            self.btn_delivery.setObjectName("navButton")
+            # Comment out icon - resource file is missing
+            # self.btn_delivery.setIcon(QIcon(":/icons/cil-truck.png"))
+            # self.btn_delivery.setIconSize(QSize(18, 18))
+            self.logger.debug("Created Delivery button")
 
-        nav_layout.addWidget(self.btn_projects)
-        nav_layout.addWidget(self.btn_slideview)
-        nav_layout.addWidget(self.btn_keywords)
-        nav_layout.addWidget(self.btn_assembly)
-        nav_layout.addWidget(self.btn_delivery)
-        # Add spacer to push buttons up
-        nav_layout.addStretch(1)
+            # Add navigation buttons to layout
+            self.logger.info("Adding buttons to navigation layout")
+            nav_layout.addWidget(self.btn_projects)
+            nav_layout.addWidget(self.btn_slideview)
+            nav_layout.addWidget(self.btn_keywords)
+            nav_layout.addWidget(self.btn_assembly)
+            nav_layout.addWidget(self.btn_delivery)
+            nav_layout.addStretch(1)  # Push buttons to top
+            self.logger.debug("Added all buttons to navigation layout")
+        except Exception as e:
+            self.logger.critical(f"Error setting up navigation layout: {e}", exc_info=True)
+            QMessageBox.critical(self, "UI Initialization Error",
+                               f"Error setting up navigation layout: {e}\n"
+                               f"Application will exit.")
+            sys.exit(1)
 
         # --- Content Area (Stacked Widget) ---
-        self.stacked_widget = QStackedWidget()
+        try:
+            self.logger.info("Setting up content area with stacked widget")
+            self.stacked_widget = QStackedWidget()
+            self.stacked_widget.setStyleSheet("background-color: #282a36;")
+            self.logger.debug("Created stacked widget")
 
-        # Instantiate and add pages
-        self.projects_page = ProjectsPage(db_service=self.db_service, parent=self) # Pass db_service
-        # TODO: Instantiate other pages later
-        self.stacked_widget.addWidget(self.projects_page)
-        # Add placeholder pages for now to test navigation
-        self.slideview_page = SlideViewPage(parent=self)
-        self.stacked_widget.addWidget(self.slideview_page)
-        self.keyword_manager_page = KeywordManagerPage(parent=self)  # Create the KeywordManagerPage instance
-        self.stacked_widget.addWidget(self.keyword_manager_page)  # Add it to the stacked widget
-        self.assembly_manager_page = AssemblyManagerPage(parent=self)  # Create the AssemblyManagerPage instance
-        self.stacked_widget.addWidget(self.assembly_manager_page)  # Add it to the stacked widget
-        self.delivery_page = DeliveryPage(parent=self)  # Create the Delivery page instance
-        self.stacked_widget.addWidget(self.delivery_page)  # Add it to the stacked widget
+            # Create the individual pages and add them to the stacked widget
+            self.logger.info("Creating content pages")
+            # Each one will need references to db_service, app_state, etc.
+            # IMPORTANT: Use the same INDEX ORDER as navigation buttons!
+            try:
+                self.logger.debug("Creating ProjectsPage")
+                self.projects_page = ProjectsPage(self.db_service) # Index 0
+                self.logger.debug("Created ProjectsPage successfully")
+            except Exception as e:
+                self.logger.critical(f"Failed to create ProjectsPage: {e}", exc_info=True)
+                raise Exception(f"Failed to create ProjectsPage: {e}")
+                
+            try:
+                self.logger.debug("Creating SlideViewPage")
+                self.slideview_page = SlideViewPage(self.db_service) # Index 1 - now expects db_service
+                self.logger.debug("Created SlideViewPage successfully")
+            except Exception as e:
+                self.logger.critical(f"Failed to create SlideViewPage: {e}", exc_info=True)
+                raise Exception(f"Failed to create SlideViewPage: {e}")
+                
+            try:
+                self.logger.debug("Creating KeywordManagerPage")
+                self.keyword_manager_page = KeywordManagerPage() # Index 2 - no db_service
+                self.logger.debug("Created KeywordManagerPage successfully")
+            except Exception as e:
+                self.logger.critical(f"Failed to create KeywordManagerPage: {e}", exc_info=True)
+                raise Exception(f"Failed to create KeywordManagerPage: {e}")
+                
+            try:
+                self.logger.debug("Creating AssemblyManagerPage")
+                self.assembly_manager_page = AssemblyManagerPage() # Index 3 - no db_service
+                self.logger.debug("Created AssemblyManagerPage successfully")
+            except Exception as e:
+                self.logger.critical(f"Failed to create AssemblyManagerPage: {e}", exc_info=True)
+                raise Exception(f"Failed to create AssemblyManagerPage: {e}")
+                
+            try:
+                self.logger.debug("Creating DeliveryPage")
+                self.delivery_page = DeliveryPage() # Index 4 - no db_service
+                self.logger.debug("Created DeliveryPage successfully")
+            except Exception as e:
+                self.logger.critical(f"Failed to create DeliveryPage: {e}", exc_info=True)
+                raise Exception(f"Failed to create DeliveryPage: {e}")
 
-        # --- Assemble Main Layout ---
-        main_layout.addWidget(self.nav_frame)
-        main_layout.addWidget(self.stacked_widget)
+            # Add pages to stacked widget
+            self.logger.info("Adding pages to stacked widget")
+            self.stacked_widget.addWidget(self.projects_page)
+            self.stacked_widget.addWidget(self.slideview_page)
+            self.stacked_widget.addWidget(self.keyword_manager_page)
+            self.stacked_widget.addWidget(self.assembly_manager_page)
+            self.stacked_widget.addWidget(self.delivery_page)
+            self.logger.debug("Added all pages to stacked widget")
 
-        self.setCentralWidget(main_widget)
+            # Add both panels to the main layout
+            self.logger.info("Finalizing main layout")
+            main_layout.addWidget(self.nav_frame)
+            main_layout.addWidget(self.stacked_widget, 1) # Content area should expand
 
-        # ... (StatusBar, Actions, Menus, Settings) ...
+            self.setCentralWidget(main_widget)
+            self.logger.debug("Set central widget successfully")
+        except Exception as e:
+            self.logger.critical(f"Error setting up content area: {e}", exc_info=True)
+            QMessageBox.critical(self, "UI Initialization Error",
+                               f"Error setting up content area: {e}\n"
+                               f"Application will exit.")
+            sys.exit(1)
 
-        # Set buttons to checkable and create a button group for exclusive selection
-        self.nav_buttons = [self.btn_projects, self.btn_slideview, self.btn_keywords, 
-                           self.btn_assembly, self.btn_delivery]
-        
-        for btn in self.nav_buttons:
-            btn.setCheckable(True)
+        try:
+            self.logger.info("Setting up navigation button properties")
+            # Set buttons to checkable and create a button group for exclusive selection
+            self.nav_buttons = [self.btn_projects, self.btn_slideview, self.btn_keywords, self.btn_assembly, self.btn_delivery]
+            for btn in self.nav_buttons:
+                btn.setCheckable(True)
+                btn.setAutoExclusive(True)
+            self.logger.debug("Navigation buttons configured successfully")
             
-        # Connect navigation buttons and implement active state tracking
-        self.btn_projects.clicked.connect(lambda: self._handle_nav_button_click(0))
-        self.btn_slideview.clicked.connect(lambda: self._handle_nav_button_click(1))
-        self.btn_keywords.clicked.connect(lambda: self._handle_nav_button_click(2))
-        self.btn_assembly.clicked.connect(lambda: self._handle_nav_button_click(3))
-        self.btn_delivery.clicked.connect(lambda: self._handle_nav_button_click(4))
+            # Set up status bar
+            self.logger.info("Setting up status bar")
+            self.status_bar = QStatusBar()
+            self.setStatusBar(self.status_bar)
+            self.logger.debug("Status bar created")
+            
+            # Create UI actions, menus, and connect signals
+            try:
+                self.logger.info("Creating actions")
+                self._create_actions()
+                self.logger.debug("Actions created successfully")
+            except Exception as e:
+                self.logger.critical(f"Failed to create actions: {e}", exc_info=True)
+                raise Exception(f"Failed to create actions: {e}")
+                
+            try:
+                self.logger.info("Creating menus")
+                self._create_menus()
+                self.logger.debug("Menus created successfully")
+            except Exception as e:
+                self.logger.critical(f"Failed to create menus: {e}", exc_info=True)
+                raise Exception(f"Failed to create menus: {e}")
+                
+            try:
+                self.logger.info("Connecting signals")
+                self._connect_signals()
+                self.logger.debug("Signals connected successfully")
+            except Exception as e:
+                self.logger.critical(f"Failed to connect signals: {e}", exc_info=True)
+                raise Exception(f"Failed to connect signals: {e}")
+            
+            # Apply settings
+            try:
+                self.logger.info("Loading settings")
+                self._load_settings()
+                self.logger.debug("Settings loaded successfully")
+            except Exception as e:
+                self.logger.warning(f"Failed to load settings: {e}", exc_info=True)
+                # Don't raise exception for settings - app can function without them
+            
+            # Set the initial active tab (first button)
+            self.logger.info("Setting initial active tab")
+            self.btn_projects.setChecked(True)
+            self.stacked_widget.setCurrentIndex(0)
+            self.logger.debug("Initial tab set successfully")
+            self.logger.info("MainWindow initialization completed successfully")
+        except Exception as e:
+            self.logger.critical(f"Error during final MainWindow initialization: {e}", exc_info=True)
+            QMessageBox.critical(self, "UI Initialization Error",
+                               f"Error during final UI initialization: {e}\n"
+                               f"Application will exit.")
+            sys.exit(1)
 
-        # Set initial page and active button
-        self.stacked_widget.setCurrentIndex(0)
-        self.btn_projects.setChecked(True)
-
-        self.status_bar = QStatusBar()
-        self.setStatusBar(self.status_bar)
+        # The initial page and button state are already set above at lines 285-286
         self.status_bar.showMessage("Ready", 3000) # Initial status message
-
-        self._connect_signals() # Ensure this is called
-
-        # Setup Actions, Menus (UI concern)
-        self._create_actions()
-        self._create_menus()
         # self._create_toolbar() # Optional
-
-        # Connect signals
-        self._connect_signals()
-
-        # Connects to Persistence Layer (via QSettings)
-        self._load_settings()
 
     def _create_actions(self):
         # File Menu Actions
@@ -197,6 +336,13 @@ class MainWindow(QMainWindow):
         event_bus.statusMessageUpdate.connect(self.update_status_bar)
         # Connect other EventBus signals here later
         # ------------------------------
+        
+        # --- Connect navigation button signals ---
+        self.btn_projects.clicked.connect(lambda: self._handle_nav_button_click(0))
+        self.btn_slideview.clicked.connect(lambda: self._handle_nav_button_click(1))
+        self.btn_keywords.clicked.connect(lambda: self._handle_nav_button_click(2))
+        self.btn_assembly.clicked.connect(lambda: self._handle_nav_button_click(3))
+        self.btn_delivery.clicked.connect(lambda: self._handle_nav_button_click(4))
 
         
     # --- closeEvent needs db_service reference ---

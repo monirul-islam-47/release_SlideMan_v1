@@ -45,8 +45,8 @@ class Element(BaseModel):
         if not isinstance(v, (int, float)):
             raise TypeError(f"{info.field_name} must be a number, got {type(v).__name__}")
         
-        # For width and height, validate they are positive
-        if info.field_name in ['bbox_w', 'bbox_h'] and v <= 0:
-            raise ValueError(f"{info.field_name} must be positive, got {v}")
+        # For width and height, validate they are non-negative (allow 0 for existing data)
+        if info.field_name in ['bbox_w', 'bbox_h'] and v < 0:
+            raise ValueError(f"{info.field_name} must be non-negative, got {v}")
             
         return float(v)  # Convert to float if it's an int

@@ -19,6 +19,10 @@ from ...models.slide import Slide # Need Slide model for type hints
 from ...models.file import File # Need File model for type hints
 from ...models.element import Element # Need Element model for element overlays
 from ...services.thumbnail_cache import thumbnail_cache # Import singleton cache instance
+from ...services.exceptions import (
+    DatabaseError, ResourceNotFoundError, ValidationError,
+    FileNotFoundError as SlidemanFileNotFoundError
+)
 from ...app_state import app_state # Need access to AppState
 from ...commands.manage_slide_keyword import LinkSlideKeywordCmd, UnlinkSlideKeywordCmd
 from ...commands.manage_element_keyword import LinkElementKeywordCmd, UnlinkElementKeywordCmd
@@ -105,15 +109,15 @@ class SlideViewPage(QWidget):
     """
     Page for viewing individual slides, thumbnails, and managing keywords.
     """
-    def __init__(self, parent=None): # Add dependencies (db_service) later if needed directly by this page
+    def __init__(self, db_service, parent=None):
         super().__init__(parent)
         self.logger = logging.getLogger(__name__)
         self.logger.info("Initializing SlideView Page")
         
-        # Get database service from AppState
-        self.db = app_state.db_service
+        # Use the provided database service
+        self.db = db_service
         if not self.db:
-            self.logger.error("Database service not available in AppState!")
+            self.logger.error("Database service not provided!")
 
         # Initialize instance variables
         self._current_project_id = None
@@ -318,20 +322,30 @@ class SlideViewPage(QWidget):
             QMessageBox.critical(self, "Error", "Database service is not available")
             return
             
-        # 1. Get project from DB
-        project = self.db.get_project_by_path(project_folder_path)
-        if not project:
-            self.logger.error(f"Project not found in database: {project_folder_path}")
+        try:
+            # 1. Get project from DB
+            project = self.db.get_project_by_path(project_folder_path)
+            if not project:
+                raise ResourceNotFoundError("Project", project_folder_path)
+                
+            self._current_project_id = project.id
+            self.logger.debug(f"Found project ID: {project.id}, name: {project.name}")
+            
+            # 2. Get files for this project
+            files = self.db.get_files_for_project(project.id)
+            if not files:
+                self.logger.warning(f"No files found for project ID: {project.id}")
+                self.thumbnail_model.load_slides([])
+                return
+                
+        except ResourceNotFoundError as e:
+            self.logger.error(f"Project not found: {e}", exc_info=True)
+            QMessageBox.warning(self, "Project Not Found", f"The project at '{project_folder_path}' was not found in the database.")
             self.thumbnail_model.load_slides([])
             return
-            
-        self._current_project_id = project.id
-        self.logger.debug(f"Found project ID: {project.id}, name: {project.name}")
-        
-        # 2. Get files for this project
-        files = self.db.get_files_for_project(project.id)
-        if not files:
-            self.logger.warning(f"No files found for project ID: {project.id}")
+        except DatabaseError as e:
+            self.logger.error(f"Database error loading project data: {e}", exc_info=True)
+            QMessageBox.critical(self, "Database Error", f"Failed to load project data:\n{e}")
             self.thumbnail_model.load_slides([])
             return
             
@@ -350,19 +364,24 @@ class SlideViewPage(QWidget):
             # Get slides for each file
             file_id = file_obj.id
             self.logger.debug(f"Getting slides for file ID: {file_id}")
-            slides_for_file = self.db.get_slides_for_file(file_id)
-            
-            if slides_for_file:
-                self.logger.debug(f"Found {len(slides_for_file)} slides for file {file_id}")
-                # For debugging, show first slide's path
-                if slides_for_file:
-                    first_slide = slides_for_file[0]
-                    self.logger.debug(f"Slide {first_slide.id}: thumb_path={first_slide.thumb_rel_path}")
+            try:
+                slides_for_file = self.db.get_slides_for_file(file_id)
                 
-                # Add these slides to the combined list
-                all_slides.extend(slides_for_file)
-            else:
-                self.logger.warning(f"No slides found for file ID: {file_id}")
+                if slides_for_file:
+                    self.logger.debug(f"Found {len(slides_for_file)} slides for file {file_id}")
+                    # For debugging, show first slide's path
+                    if slides_for_file:
+                        first_slide = slides_for_file[0]
+                        self.logger.debug(f"Slide {first_slide.id}: thumb_path={first_slide.thumb_rel_path}")
+                    
+                    # Add these slides to the combined list
+                    all_slides.extend(slides_for_file)
+                else:
+                    self.logger.warning(f"No slides found for file ID: {file_id}")
+            except DatabaseError as e:
+                self.logger.error(f"Database error loading slides for file ID {file_id}: {e}", exc_info=True)
+                # Continue loading other files
+                continue
         
         # Store all slides for later filtering
         self._all_slides = all_slides
@@ -474,22 +493,32 @@ class SlideViewPage(QWidget):
         self.name_tag_edit.clear()
         app_state.current_element_id = None
         
-        # Get the image path using the database service
-        image_rel_path = self.db.get_slide_image_path(slide.id)
-        if not image_rel_path:
-            self.logger.warning(f"No image path found for slide ID {slide.id}")
-            return
+        try:
+            # Get the image path using the database service
+            image_rel_path = self.db.get_slide_image_path(slide.id)
+            if not image_rel_path:
+                self.logger.warning(f"No image path found for slide ID {slide.id}")
+                return
+                
+            # Construct full path from project path and relative path
+            project_path = Path(app_state.current_project_path) if app_state.current_project_path else None
+            if not project_path:
+                self.logger.error("No project path available in AppState")
+                return
+                
+            # Fetch elements for this slide
+            elements = self.db.get_elements_for_slide(slide.id)
+            self.logger.debug(f"Fetched {len(elements)} elements for slide {slide.id}")
+            self._current_slide_elements = elements  # Store elements for later reference
             
-        # Construct full path from project path and relative path
-        project_path = Path(app_state.current_project_path) if app_state.current_project_path else None
-        if not project_path:
-            self.logger.error("No project path available in AppState")
+        except ResourceNotFoundError as e:
+            self.logger.error(f"Slide not found: {e}", exc_info=True)
+            QMessageBox.warning(self, "Slide Not Found", f"The selected slide (ID: {slide.id}) was not found in the database.")
             return
-            
-        # Fetch elements for this slide
-        elements = self.db.get_elements_for_slide(slide.id)
-        self.logger.debug(f"Fetched {len(elements)} elements for slide {slide.id}")
-        self._current_slide_elements = elements  # Store elements for later reference
+        except DatabaseError as e:
+            self.logger.error(f"Database error loading slide data: {e}", exc_info=True)
+            QMessageBox.critical(self, "Database Error", f"Failed to load slide data:\n{e}")
+            return
         
         # Load keywords for this slide
         self._load_keywords_for_slide(slide.id)
@@ -550,14 +579,22 @@ class SlideViewPage(QWidget):
             self.logger.error("Cannot update keyword suggestions: Database service not available")
             return
             
-        # Get all existing keywords
-        all_keywords = self.db.get_all_keyword_strings()
-        self.logger.debug(f"Loaded {len(all_keywords)} keywords for suggestions")
-        
-        # Get topic and title keywords specifically
-        topic_keywords = self.db.get_all_keyword_strings(kind='topic')
-        title_keywords = self.db.get_all_keyword_strings(kind='title')
-        name_keywords = self.db.get_all_keyword_strings(kind='name')
+        try:
+            # Get all existing keywords
+            all_keywords = self.db.get_all_keyword_strings()
+            self.logger.debug(f"Loaded {len(all_keywords)} keywords for suggestions")
+            
+            # Get topic and title keywords specifically
+            topic_keywords = self.db.get_all_keyword_strings(kind='topic')
+            title_keywords = self.db.get_all_keyword_strings(kind='title')
+            name_keywords = self.db.get_all_keyword_strings(kind='name')
+        except DatabaseError as e:
+            self.logger.error(f"Database error loading keyword suggestions: {e}", exc_info=True)
+            # Continue with empty suggestions rather than crashing
+            all_keywords = []
+            topic_keywords = []
+            title_keywords = []
+            name_keywords = []
         
         # Update suggestions for each TagEdit
         self.topic_tag_edit.update_suggestions(topic_keywords)
@@ -570,19 +607,24 @@ class SlideViewPage(QWidget):
             self.logger.error("Cannot load keywords: Database service not available")
             return
             
-        # Get topic keywords
-        topic_keywords = self.db.get_keywords_for_slide(slide_id, kind='topic')
-        topic_texts = [kw.keyword for kw in topic_keywords]  
-        self.logger.debug(f"Loaded {len(topic_texts)} topic keywords for slide ID {slide_id}")
-        
-        # Get title keywords
-        title_keywords = self.db.get_keywords_for_slide(slide_id, kind='title')
-        title_texts = [kw.keyword for kw in title_keywords]  
-        self.logger.debug(f"Loaded {len(title_texts)} title keywords for slide ID {slide_id}")
-        
-        # Set the keywords in the TagEdit widgets
-        self.topic_tag_edit.set_tags(topic_texts)
-        self.title_tag_edit.set_tags(title_texts)
+        try:
+            # Get topic keywords
+            topic_keywords = self.db.get_keywords_for_slide(slide_id, kind='topic')
+            topic_texts = [kw.keyword for kw in topic_keywords]  
+            self.logger.debug(f"Loaded {len(topic_texts)} topic keywords for slide ID {slide_id}")
+            
+            # Get title keywords
+            title_keywords = self.db.get_keywords_for_slide(slide_id, kind='title')
+            title_texts = [kw.keyword for kw in title_keywords]  
+            self.logger.debug(f"Loaded {len(title_texts)} title keywords for slide ID {slide_id}")
+            
+            # Set the keywords in the TagEdit widgets
+            self.topic_tag_edit.set_tags(topic_texts)
+            self.title_tag_edit.set_tags(title_texts)
+            
+        except DatabaseError as e:
+            self.logger.error(f"Database error loading keywords for slide {slide_id}: {e}", exc_info=True)
+            QMessageBox.warning(self, "Database Error", f"Failed to load keywords for the slide.")
     
     def _load_keywords_for_element(self, element_id: int):
         """Load keywords for an element and update the TagEdit widget."""
@@ -590,9 +632,13 @@ class SlideViewPage(QWidget):
             self.logger.error("Cannot load keywords: Database service not available")
             return
             
-        # Get name keywords
-        element_keywords = self.db.get_keywords_for_element(element_id)
-        name_texts = [kw.keyword for kw in element_keywords]  
+        try:
+            # Get name keywords
+            element_keywords = self.db.get_keywords_for_element(element_id)
+            name_texts = [kw.keyword for kw in element_keywords]
+        except DatabaseError as e:
+            self.logger.error(f"Database error loading keywords for element {element_id}: {e}", exc_info=True)
+            name_texts = []  
         self.logger.debug(f"Loaded {len(name_texts)} name keywords for element ID {element_id}")
         
         # Set the keywords in the TagEdit widget
@@ -609,19 +655,26 @@ class SlideViewPage(QWidget):
             
         slide_id = app_state.current_slide_id
         
-        # Add the keyword to the database if it doesn't exist
-        keyword_id = self.db.add_keyword_if_not_exists(tag_text, 'topic')
-        if keyword_id is None:
-            self.logger.error(f"Failed to add topic keyword '{tag_text}'")
-            return
+        try:
+            # Add the keyword to the database if it doesn't exist
+            keyword_id = self.db.add_keyword_if_not_exists(tag_text, 'topic')
+            if keyword_id is None:
+                self.logger.error(f"Failed to add topic keyword '{tag_text}'")
+                return
+                
+            # Create and execute command
+            cmd = LinkSlideKeywordCmd(slide_id, keyword_id, f"Add topic '{tag_text}'")
+            app_state.undo_stack.push(cmd)
+            self.logger.debug(f"Added topic '{tag_text}' to slide ID {slide_id}")
             
-        # Create and execute command
-        cmd = LinkSlideKeywordCmd(slide_id, keyword_id, f"Add topic '{tag_text}'")
-        app_state.undo_stack.push(cmd)
-        self.logger.debug(f"Added topic '{tag_text}' to slide ID {slide_id}")
-        
-        # Update suggestions
-        self._update_keyword_suggestions()
+            # Update suggestions
+            self._update_keyword_suggestions()
+            
+        except DatabaseError as e:
+            self.logger.error(f"Database error adding topic tag '{tag_text}': {e}", exc_info=True)
+            QMessageBox.critical(self, "Database Error", f"Failed to add topic tag:\n{e}")
+            # Reload tags to reflect actual state
+            self._load_keywords_for_slide(slide_id)
     
     @Slot(str)
     def _handle_topic_tag_removed(self, tag_text: str):
@@ -632,16 +685,23 @@ class SlideViewPage(QWidget):
             
         slide_id = app_state.current_slide_id
         
-        # Get the keyword ID
-        keyword_id = self.db.get_keyword_id(tag_text, 'topic')
-        if keyword_id is None:
-            self.logger.error(f"Cannot find topic keyword '{tag_text}'")
-            return
+        try:
+            # Get the keyword ID
+            keyword_id = self.db.get_keyword_id(tag_text, 'topic')
+            if keyword_id is None:
+                self.logger.error(f"Cannot find topic keyword '{tag_text}'")
+                return
+                
+            # Create and execute command
+            cmd = UnlinkSlideKeywordCmd(slide_id, keyword_id, f"Remove topic '{tag_text}'")
+            app_state.undo_stack.push(cmd)
+            self.logger.debug(f"Removed topic '{tag_text}' from slide ID {slide_id}")
             
-        # Create and execute command
-        cmd = UnlinkSlideKeywordCmd(slide_id, keyword_id, f"Remove topic '{tag_text}'")
-        app_state.undo_stack.push(cmd)
-        self.logger.debug(f"Removed topic '{tag_text}' from slide ID {slide_id}")
+        except DatabaseError as e:
+            self.logger.error(f"Database error removing topic tag '{tag_text}': {e}", exc_info=True)
+            QMessageBox.critical(self, "Database Error", f"Failed to remove topic tag:\n{e}")
+            # Reload tags to reflect actual state
+            self._load_keywords_for_slide(slide_id)
     
     @Slot(str)
     def _handle_title_tag_added(self, tag_text: str):
@@ -756,18 +816,23 @@ class SlideViewPage(QWidget):
         
         # For each element in the current slide, check if it has tags
         for element in self._current_slide_elements:
-            keywords = self.db.get_keywords_for_element(element.id)
-            if keywords:
-                # Format element type and first few keywords
-                element_type = element.element_type
-                keyword_preview = ", ".join([kw.keyword for kw in keywords[:3]])
-                if len(keywords) > 3:
-                    keyword_preview += "..."
-                    
-                # Create list item with element ID as data
-                item = QStandardItem(f"{element_type}: {keyword_preview}")
-                item.setData(element.id, Qt.ItemDataRole.UserRole)
-                self.tagged_elements_model.appendRow(item)
+            try:
+                keywords = self.db.get_keywords_for_element(element.id)
+                if keywords:
+                    # Format element type and first few keywords
+                    element_type = element.element_type
+                    keyword_preview = ", ".join([kw.keyword for kw in keywords[:3]])
+                    if len(keywords) > 3:
+                        keyword_preview += "..."
+                        
+                    # Create list item with element ID as data
+                    item = QStandardItem(f"{element_type}: {keyword_preview}")
+                    item.setData(element.id, Qt.ItemDataRole.UserRole)
+                    self.tagged_elements_model.appendRow(item)
+            except DatabaseError as e:
+                self.logger.error(f"Database error getting keywords for element {element.id}: {e}", exc_info=True)
+                # Skip this element and continue with others
+                continue
         
         self.logger.debug(f"Updated tagged elements list with {self.tagged_elements_model.rowCount()} items")
         

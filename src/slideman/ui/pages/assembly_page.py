@@ -14,6 +14,9 @@ from PySide6.QtGui import QPixmap, QStandardItemModel, QStandardItem, QColor, QB
 from pathlib import Path
 from ...app_state import app_state  # Need access to AppState
 from ...services.database import Database  # For type hints
+from ...services.exceptions import (
+    DatabaseError, ResourceNotFoundError, ValidationError
+)
 from ...services.thumbnail_cache import thumbnail_cache
 from ...models.keyword import Keyword, KeywordKind
 from ...models.slide import Slide
@@ -204,11 +207,15 @@ class AssemblyManagerPage(QWidget):
         self.current_project_id = None
         # The current project might be stored in the database
         if app_state.current_project_path and self.db:
-            # Retrieve the project ID from the database using the path
-            project_id = self.db.get_project_id_by_path(app_state.current_project_path)
-            if project_id is not None:
-                self.current_project_id = project_id
-                self.logger.debug(f"Current project ID: {self.current_project_id}")
+            try:
+                # Retrieve the project ID from the database using the path
+                project_id = self.db.get_project_id_by_path(app_state.current_project_path)
+                if project_id is not None:
+                    self.current_project_id = project_id
+                    self.logger.debug(f"Current project ID: {self.current_project_id}")
+            except DatabaseError as e:
+                self.logger.error(f"Database error getting project ID: {e}", exc_info=True)
+                # Continue without project filtering
             
         # Create a timer for debouncing search input
         self.search_timer = QTimer(self)
@@ -462,8 +469,11 @@ class AssemblyManagerPage(QWidget):
             self.keyword_results_model.setKeywords(keywords)
             
             self.logger.debug(f"Found {len(keywords)} keywords matching '{query_term}'")
+        except DatabaseError as e:
+            self.logger.error(f"Database error searching keywords: {e}", exc_info=True)
+            self.keyword_results_model.setKeywords([])
         except Exception as e:
-            self.logger.error(f"Error searching keywords: {e}", exc_info=True)
+            self.logger.error(f"Unexpected error searching keywords: {e}", exc_info=True)
             self.keyword_results_model.setKeywords([])
             
     @Slot()
@@ -565,24 +575,35 @@ class AssemblyManagerPage(QWidget):
         keyword_id = idx.data(KeywordListModel.KeywordIdRole)
         keyword_text = idx.data(KeywordListModel.KeywordTextRole)
         self.preview_label.setText(f"Preview for Keyword: {keyword_text}")
-        # Fetch slides
-        if self.current_project_id:
-            slides = self.db.get_slides_for_keyword(keyword_id, project_id=self.current_project_id)
-        else:
-            slides = self.db.get_slides_for_keyword(keyword_id)
-        self.preview_model.setSlides(slides)
+        
+        try:
+            # Fetch slides
+            if self.current_project_id:
+                slides = self.db.get_slides_for_keyword(keyword_id, project_id=self.current_project_id)
+            else:
+                slides = self.db.get_slides_for_keyword(keyword_id)
+            self.preview_model.setSlides(slides)
+        except DatabaseError as e:
+            self.logger.error(f"Database error loading slides for keyword: {e}", exc_info=True)
+            self.preview_model.setSlides([])
+            self.preview_label.setText(f"Preview for Keyword: {keyword_text} [Error loading slides]")
         
     @Slot(QModelIndex)
     def _show_enlarged_slide(self, index: QModelIndex):
         """Show a dialog with an enlarged slide image."""
         slide_id = index.data(self.preview_model.SlideIdRole)
-        # Attempt full-res image, fall back to thumbnail if missing
-        using_full = True
-        image_rel = self.db.get_slide_image_path(slide_id)
-        if not image_rel:
-            self.logger.warning(f"No full-res image for SlideID {slide_id}, falling back to thumbnail.")
-            image_rel = self.db.get_slide_thumbnail_path(slide_id)
-            using_full = False
+        
+        try:
+            # Attempt full-res image, fall back to thumbnail if missing
+            using_full = True
+            image_rel = self.db.get_slide_image_path(slide_id)
+            if not image_rel:
+                self.logger.warning(f"No full-res image for SlideID {slide_id}, falling back to thumbnail.")
+                image_rel = self.db.get_slide_thumbnail_path(slide_id)
+        except DatabaseError as e:
+            self.logger.error(f"Database error getting slide image path: {e}", exc_info=True)
+            return
+            
         if not image_rel:
             self.logger.error(f"No image or thumbnail path for SlideID {slide_id}. Cannot enlarge.")
             return
@@ -675,47 +696,60 @@ class AssemblyManagerPage(QWidget):
         
     @Slot(list)
     def _update_final_set(self, keyword_ids: list):
-        """Populate final set based on current basket keywords."""
+        """Update final set based on current basket keywords, preserving existing order where possible."""
         self.logger.debug(f"Updating final set with keyword IDs: {keyword_ids}")
         try:
-            # Clear and rebuild full set
-            self.final_set_view.clear()
+            # Get current slide order before update
+            current_order = self.final_set_view.get_ordered_slide_indices()
+            current_set = set(current_order)
             
             if not keyword_ids:
-                # No keywords: persist empty order
+                # No keywords: clear assembly
+                self.final_set_view.clear()
                 app_state.set_assembly_order([])
                 self.logger.debug("No keywords, cleared assembly")
                 return
                 
-            # Aggregate unique slides
-            slides_map: Dict[int, Slide] = {}
+            # Aggregate unique slides for new keywords
+            new_slides_map: Dict[int, Slide] = {}
             for kid in keyword_ids:
                 try:
                     slides = (self.db.get_slides_for_keyword(kid, project_id=self.current_project_id)
                             if self.current_project_id else self.db.get_slides_for_keyword(kid))
                     for s in slides:
-                        slides_map[s.id] = s
+                        new_slides_map[s.id] = s
+                except DatabaseError as e:
+                    self.logger.error(f"Database error getting slides for keyword ID {kid}: {e}", exc_info=True)
                 except Exception as e:
-                    self.logger.warning(f"Error getting slides for keyword ID {kid}: {e}")
+                    self.logger.warning(f"Unexpected error getting slides for keyword ID {kid}: {e}")
             
-            self.logger.debug(f"Found {len(slides_map)} unique slides for {len(keyword_ids)} keywords")
+            new_slide_ids = set(new_slides_map.keys())
+            self.logger.debug(f"Found {len(new_slide_ids)} unique slides for {len(keyword_ids)} keywords")
             
-            # Add each slide to assembly view
+            # Determine what to add and remove
+            to_remove = current_set - new_slide_ids
+            to_add = new_slide_ids - current_set
+            
+            # Remove slides that are no longer in any keyword
+            for slide_id in to_remove:
+                self.final_set_view.remove_slide(slide_id)
+            
+            # Add new slides
             added_count = 0
-            for slide in slides_map.values():
+            for slide_id in to_add:
                 try:
+                    slide = new_slides_map[slide_id]
                     pix = thumbnail_cache.get_thumbnail(slide.id)
-                    # Use an empty dictionary - let the widget handle defaults
                     result = self.final_set_view.add_slide(slide.id, pix, {})
                     if result:
                         added_count += 1
                 except Exception as e:
-                    self.logger.warning(f"Error adding slide ID {slide.id} to assembly: {e}")
+                    self.logger.warning(f"Error adding slide ID {slide_id} to assembly: {e}")
             
-            # Persist new order of IDs
+            # Persist new order
             ids = self.final_set_view.get_ordered_slide_indices()
             app_state.set_assembly_order(ids)
-            self.logger.debug(f"Added {added_count} slides to assembly. Final order: {ids}")
+            self.logger.debug(f"Updated assembly: removed {len(to_remove)}, added {added_count} slides. Final count: {len(ids)}")
             
         except Exception as e:
             self.logger.error(f"Error updating final set: {e}", exc_info=True)

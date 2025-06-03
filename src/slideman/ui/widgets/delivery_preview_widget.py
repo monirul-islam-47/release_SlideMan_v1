@@ -1,41 +1,32 @@
 import logging
-from typing import Optional, Dict, List, Union
-from PySide6.QtWidgets import QWidget, QListWidget, QListWidgetItem, QAbstractItemView
-from PySide6.QtCore import Qt, QSize, QPoint, QRect, Signal
-from PySide6.QtGui import QIcon, QPixmap, QPainter, QPen
+from typing import Optional
+from PySide6.QtWidgets import QWidget
+from PySide6.QtGui import QPixmap
 from ...app_state import app_state
-from ...services.thumbnail_cache import thumbnail_cache
-from .assembly_preview_widget import AssemblyPreviewWidget
+from .base_preview_widget import BasePreviewWidget
 
 logger = logging.getLogger(__name__)
 
-class DeliveryPreviewWidget(AssemblyPreviewWidget):
-    """ListWidget-based delivery preview with the same drag-drop behavior as AssemblyPreview."""
-    orderChanged = Signal(list)
+
+class DeliveryPreviewWidget(BasePreviewWidget):
+    """Delivery-specific preview widget with larger thumbnail size."""
     
     def __init__(self, parent: Optional[QWidget] = None):
-        super().__init__(parent)
-        # Initialize KeywordId with None to satisfy the validation check
+        # Initialize with larger delivery thumbnail size
+        super().__init__(
+            parent=parent,
+            icon_size=(180, 135),
+            grid_padding=(20, 40),
+            spacing=10
+        )
         self.KeywordId = None
-        # Set larger thumbnail size for delivery view
-        self.setIconSize(QSize(180, 135))
-        icon_width = self.iconSize().width()
-        icon_height = self.iconSize().height()
-        self.setGridSize(QSize(icon_width + 20, icon_height + 40))
         
-    def add_slide(self, slide_id, thumbnail, keywords):
-        # Ensure KeywordId is in the keywords dict
+    def add_slide(self, slide_id: int, thumbnail: QPixmap, keywords: dict):
+        """Add slide ensuring KeywordId is present."""
         if 'KeywordId' not in keywords:
             keywords['KeywordId'] = None
         return super().add_slide(slide_id, thumbnail, keywords)
-        
-    def dropEvent(self, event):
-        logger.debug("DeliveryPreviewWidget: dropEvent")
-        super().dropEvent(event)
-        ids = self.get_ordered_slide_indices()
-        app_state.set_assembly_order(ids)
-        self.orderChanged.emit(ids)
-        
-    def get_ordered_slides(self):
-        """Return current slides in order."""
-        return [self.item(i) for i in range(self.count())]
+    
+    def _on_order_changed(self, order: list[int]):
+        """Handle order changes by updating app state."""
+        app_state.set_assembly_order(order)

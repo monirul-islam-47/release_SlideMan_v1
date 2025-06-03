@@ -15,6 +15,7 @@ class File(BaseModel):
         slide_count: Optional[int] - Number of slides in the file, if known
         checksum: Optional[str] - Hash of the file contents for change detection
         conversion_status: FileStatus - Current processing status of the file
+        created_at: Optional[str] - Timestamp when the file was added to the database
     """
     id: Optional[int] = None
     project_id: int
@@ -23,6 +24,7 @@ class File(BaseModel):
     slide_count: Optional[int] = None
     checksum: Optional[str] = None
     conversion_status: FileStatus = 'Pending'
+    created_at: Optional[str] = None
     
     model_config = {
         "arbitrary_types_allowed": False,

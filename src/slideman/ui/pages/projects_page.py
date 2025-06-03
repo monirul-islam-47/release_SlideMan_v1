@@ -15,6 +15,10 @@ from typing import List, Any, Optional, Dict, Union # Added Union
 from ...services.background_tasks import FileCopyWorker, WorkerSignals# Import the worker
 from ...services.database import Database # Import Database type hint
 from ...services import file_io # Import our file_io service module
+from ...services.exceptions import (
+    DatabaseError, ResourceNotFoundError, DuplicateResourceError,
+    ValidationError, FileOperationError
+)
 from ...models.project import Project
 from ...models.file import File # Import File model for type hints
 from ...event_bus import event_bus
@@ -340,11 +344,25 @@ class ProjectsPage(QWidget):
             self.logger.info(f"Successfully added project '{project_name}' (ID: {project_id}) with {files_added_to_db} file records.")
             db_success = True # Mark success
 
-        except Exception as e:
-            self.logger.error(f"Error adding project/files to database after copy for project '{project_name}': {e}", exc_info=True)
+        except DuplicateResourceError as e:
+            self.logger.error(f"Project '{project_name}' already exists in database: {e}", exc_info=True)
+            QMessageBox.warning(self,
+                                "Project Already Exists",
+                                f"A project named '{project_name}' already exists in the database.")
+            event_bus.statusMessageUpdate.emit("Project already exists.", 5000)
+            # db_success remains False
+        except DatabaseError as e:
+            self.logger.error(f"Database error while adding project '{project_name}': {e}", exc_info=True)
             QMessageBox.critical(self,
                                  "Database Error",
                                  f"Files copied successfully for '{project_name}', but failed to add project details to the database.\n\nError: {e}")
+            event_bus.statusMessageUpdate.emit("Database error occurred.", 5000)
+            # db_success remains False
+        except Exception as e:
+            self.logger.error(f"Unexpected error adding project/files to database for project '{project_name}': {e}", exc_info=True)
+            QMessageBox.critical(self,
+                                 "Unexpected Error",
+                                 f"An unexpected error occurred while adding project '{project_name}' to the database.\n\nError: {e}")
             event_bus.statusMessageUpdate.emit("Error adding project to database.", 5000)
             # db_success remains False
 
@@ -423,9 +441,17 @@ class ProjectsPage(QWidget):
                 QMessageBox.information(self, "Conversion Not Needed", f"No files require conversion in project '{project_name}'.")
                 return # Important to return if nothing to do
 
-        except Exception as e:
-            self.logger.error(f"Error fetching files for conversion (Project ID {project_id}): {e}", exc_info=True)
+        except ResourceNotFoundError as e:
+            self.logger.error(f"Project not found (ID {project_id}): {e}", exc_info=True)
+            QMessageBox.warning(self, "Project Not Found", f"The project '{project_name}' was not found in the database.")
+            return
+        except DatabaseError as e:
+            self.logger.error(f"Database error fetching files for conversion (Project ID {project_id}): {e}", exc_info=True)
             QMessageBox.critical(self, "Database Error", f"Could not retrieve file list for conversion:\n{e}")
+            return
+        except Exception as e:
+            self.logger.error(f"Unexpected error fetching files for conversion (Project ID {project_id}): {e}", exc_info=True)
+            QMessageBox.critical(self, "Unexpected Error", f"An unexpected error occurred:\n{e}")
             return
 
         # --- Set UI to Conversion Busy State ---
@@ -451,12 +477,21 @@ class ProjectsPage(QWidget):
                     self.logger.warning(f"Skipping file with no ID: {file_obj.filename}")
                     self._conversion_workers_active -= 1; continue
 
-                self.db.update_file_conversion_status(file_obj.id, 'In Progress')
+                try:
+                    self.db.update_file_conversion_status(file_obj.id, 'In Progress')
+                except DatabaseError as e:
+                    self.logger.error(f"Failed to update file status to 'In Progress' for FileID {file_obj.id}: {e}", exc_info=True)
+                    self._conversion_workers_active -= 1
+                    continue
+                    
                 full_file_path = project_folder_path / file_obj.rel_path
 
                 if not full_file_path.exists():
                     self.logger.error(f"File path does not exist: {full_file_path}. Marking as failed.")
-                    self.db.update_file_conversion_status(file_obj.id, 'Failed')
+                    try:
+                        self.db.update_file_conversion_status(file_obj.id, 'Failed')
+                    except DatabaseError as e:
+                        self.logger.error(f"Failed to update file status to 'Failed' for FileID {file_obj.id}: {e}", exc_info=True)
                     self._conversion_workers_active -= 1; continue
 
                 self.trigger_slide_conversion(file_obj.id, full_file_path)
@@ -464,7 +499,11 @@ class ProjectsPage(QWidget):
 
             except Exception as trigger_e:
                  self.logger.error(f"Error preparing conversion trigger for FileID {file_obj.id}: {trigger_e}", exc_info=True)
-                 if file_obj.id: self.db.update_file_conversion_status(file_obj.id, 'Failed')
+                 if file_obj.id:
+                     try:
+                         self.db.update_file_conversion_status(file_obj.id, 'Failed')
+                     except DatabaseError as e:
+                         self.logger.error(f"Failed to update file status to 'Failed' for FileID {file_obj.id}: {e}", exc_info=True)
                  self._conversion_workers_active -= 1
 
         if self._conversion_workers_active <= 0: # Check if counter dropped to zero during setup
@@ -715,7 +754,11 @@ class ProjectsPage(QWidget):
              self.logger.info(f"Fetched {len(projects)} projects from database.")
              self.project_model.load_projects(projects)
              event_bus.statusMessageUpdate.emit(f"Loaded {len(projects)} projects.", 3000)
+         except DatabaseError as e:
+             self.logger.error(f"Database error loading projects: {e}", exc_info=True)
+             QMessageBox.critical(self, "Database Error", f"Could not load projects from the database:\n{e}")
+             event_bus.statusMessageUpdate.emit("Database error loading projects.", 5000)
          except Exception as e:
-             self.logger.error(f"Error loading projects from database: {e}", exc_info=True)
-             QMessageBox.critical(self, "Error", f"Could not load projects:\n{e}")
+             self.logger.error(f"Unexpected error loading projects: {e}", exc_info=True)
+             QMessageBox.critical(self, "Unexpected Error", f"An unexpected error occurred while loading projects:\n{e}")
              event_bus.statusMessageUpdate.emit("Error loading projects.", 5000)

@@ -1,9 +1,10 @@
 # src/slideman/app_state.py
 
-from PySide6.QtCore import QObject, Signal, QSettings, Slot
+from PySide6.QtCore import QObject, Signal, QSettings, Slot, QMutex, QMutexLocker
 from PySide6.QtGui import QUndoStack
 from typing import Optional, List # For type hinting
 import logging
+import threading
 
 from .services.database import Database # Import Database type hint
 
@@ -12,10 +13,11 @@ from .services.database import Database # Import Database type hint
 
 class AppState(QObject):
     """
-    Singleton class holding the application's shared state.
+    Thread-safe singleton class holding the application's shared state.
     Includes the central undo stack.
     """
     _instance = None
+    _lock = threading.Lock()  # Thread lock for singleton creation
 
     # --- Define Signals ---
     # Signals related to state changes often originate here or are proxied
@@ -33,10 +35,15 @@ class AppState(QObject):
     assemblyOrderChanged = Signal(list)   # Emits ordered list of slide IDs
 
     def __new__(cls):
+        # Double-checked locking pattern for thread safety
         if cls._instance is None:
-            logging.debug("Creating AppState instance")
-            cls._instance = super().__new__(cls)
-            cls._instance._initialized = False # Initialize flag before __init__ call
+            with cls._lock:
+                # Check again inside the lock
+                if cls._instance is None:
+                    logging.debug("Creating AppState instance")
+                    cls._instance = super().__new__(cls)
+                    cls._instance._initialized = False # Initialize flag before __init__ call
+                    cls._instance._state_mutex = QMutex()  # Mutex for state modifications
         return cls._instance
 
     def __init__(self):
@@ -69,7 +76,6 @@ class AppState(QObject):
         self.undo_stack.canUndoChanged.connect(self._emit_undo_stack_changed)
         self.undo_stack.canRedoChanged.connect(self._emit_undo_stack_changed)
 
-        self.current_project_path: Optional[str] = None
         # --- Add DB Service Reference ---
         # This will be set from outside after initialization
         self.db_service: Optional[Database] = None
@@ -94,64 +100,104 @@ class AppState(QObject):
     def load_initial_state(self):
         """Loads persistent state like recent projects."""
         self.logger.debug("Loading initial state")
-        # self.recent_projects = self.settings.value("recentProjects", [], type=list)
-        # Load persisted assembly state
-        self.assembly_keyword_basket = self.settings.value("assemblyKeywordBasket", [], type=list)
-        self.assembly_final_slide_ids = self.settings.value("assemblyFinalSlideIds", [], type=list)
-        # Load last project? Optional.
+        try:
+            # self.recent_projects = self.settings.value("recentProjects", [], type=list)
+            # Load persisted assembly state
+            basket = self.settings.value("assemblyKeywordBasket", [], type=list)
+            slide_ids = self.settings.value("assemblyFinalSlideIds", [], type=list)
+            
+            # Handle None values
+            if basket is None:
+                basket = []
+            if slide_ids is None:
+                slide_ids = []
+            
+            # Ensure all IDs are integers
+            self.assembly_keyword_basket = [int(kid) if isinstance(kid, str) else kid for kid in basket if kid is not None]
+            self.assembly_final_slide_ids = [int(sid) if isinstance(sid, str) else sid for sid in slide_ids if sid is not None]
+            self.logger.debug(f"Loaded assembly basket: {self.assembly_keyword_basket}")
+            self.logger.debug(f"Loaded assembly slide IDs: {self.assembly_final_slide_ids}")
+            # Load last project? Optional.
+        except Exception as e:
+            self.logger.error(f"Error loading initial state: {e}", exc_info=True)
+            # Reset to defaults on error
+            self.assembly_keyword_basket = []
+            self.assembly_final_slide_ids = []
 
     def set_current_project(self, project_path: str): #, project_model: Project):
-         """Sets the currently active project."""
-         self.logger.info(f"Setting current project: {project_path}")
-         
-         # Only emit changed signal if actually changing projects
-         if self.current_project_path != project_path:
-             old_path = self.current_project_path
-             self.current_project_path = project_path
-             # Emit the currentProjectChanged signal
-             self.currentProjectChanged.emit(project_path)
-             self.logger.debug(f"Project changed from {old_path} to {project_path}")
-         else:
-             self.current_project_path = project_path
-             
-         # self.current_project_model = project_model
-         self.undo_stack.clear() # Clear undo stack for new project context
-         self.undo_stack.setClean()
-         # Add to recent projects (implement MRU logic)
-         # self._add_to_recent_projects(project_path)
-         self.projectLoaded.emit(project_path) # Emit signal
+        """Sets the currently active project (thread-safe)."""
+        project_changed = False
+        with QMutexLocker(self._state_mutex):
+            self.logger.info(f"Setting current project: {project_path}")
+            
+            # Only emit changed signal if actually changing projects
+            if self.current_project_path != project_path:
+                old_path = self.current_project_path
+                self.current_project_path = project_path
+                project_changed = True
+                self.logger.debug(f"Project changed from {old_path} to {project_path}")
+            else:
+                self.current_project_path = project_path
+                
+            # self.current_project_model = project_model
+            self.undo_stack.clear() # Clear undo stack for new project context
+            self.undo_stack.setClean()
+            # Add to recent projects (implement MRU logic)
+            # self._add_to_recent_projects(project_path)
+        
+        # Emit signals outside the mutex lock
+        if project_changed:
+            self.currentProjectChanged.emit(project_path)
+        self.projectLoaded.emit(project_path)
 
     def close_project(self):
-        """Closes the current project, resetting relevant state."""
-        self.logger.info("Closing current project")
-        self.current_project_path = None
-        # self.current_project_model = None
-        self.current_slide_id = None
-        self.current_element_id = None
-        self.undo_stack.clear()
-        self.undo_stack.setClean()
-        # Clear caches related to the project?
-        self.clear_assembly()
-        self.projectClosed.emit() # Emit signal
+        """Closes the current project, resetting relevant state (thread-safe)."""
+        with QMutexLocker(self._state_mutex):
+            self.logger.info("Closing current project")
+            self.current_project_path = None
+            # self.current_project_model = None
+            self.current_slide_id = None
+            self.current_element_id = None
+            self.undo_stack.clear()
+            self.undo_stack.setClean()
+            # Store basket state to clear after mutex release
+            self.assembly_keyword_basket = []
+            self.assembly_final_slide_ids = []
+        
+        # Emit signals outside the mutex lock
+        self.assemblyBasketChanged.emit([])
+        self.assemblyOrderChanged.emit([])
+        self.projectClosed.emit()
 
     def clear_assembly(self):
         """Clears the assembly state."""
-        self.assembly_keyword_basket = []
-        self.assembly_final_slide_ids = []
-        self.assemblyBasketChanged.emit(self.assembly_keyword_basket)
-        self.assemblyOrderChanged.emit(self.assembly_final_slide_ids)
+        with QMutexLocker(self._state_mutex):
+            self.assembly_keyword_basket = []
+            self.assembly_final_slide_ids = []
+        
+        # Emit signals outside the mutex lock
+        self.assemblyBasketChanged.emit([])
+        self.assemblyOrderChanged.emit([])
 
     def set_assembly_basket(self, ids: List[int]):
-        """Set and persist the keyword basket in AppState."""
-        self.assembly_keyword_basket = ids
-        self.settings.setValue("assemblyKeywordBasket", ids)
-        self.assemblyBasketChanged.emit(ids)
+        """Set and persist the keyword basket in AppState (thread-safe)."""
+        # Ensure all IDs are integers
+        ids_int = [int(kid) if isinstance(kid, str) else kid for kid in ids]
+        
+        with QMutexLocker(self._state_mutex):
+            self.assembly_keyword_basket = ids_int
+            self.settings.setValue("assemblyKeywordBasket", ids_int)
+        self.assemblyBasketChanged.emit(ids_int)
 
     def set_assembly_order(self, ids: List[int]):
-        """Set and persist the final slide order in AppState."""
-        self.assembly_final_slide_ids = ids
-        self.settings.setValue("assemblyFinalSlideIds", ids)
-        self.assemblyOrderChanged.emit(ids)
+        """Set and persist the final slide order in AppState (thread-safe)."""
+        # Ensure all IDs are integers
+        ids_int = [int(sid) if isinstance(sid, str) else sid for sid in ids]
+        
+        with QMutexLocker(self._state_mutex):
+            self.assembly_final_slide_ids = ids_int
+            self.settings.setValue("assemblyFinalSlideIds", ids_int)
+        self.assemblyOrderChanged.emit(ids_int)
 
     # --- Add methods to manage recent projects, caches etc. as needed ---
 

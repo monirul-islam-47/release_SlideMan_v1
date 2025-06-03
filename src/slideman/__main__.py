@@ -124,18 +124,40 @@ def main():
     # _app_state.load_initial_state() # Load MRU etc.
 
     # --- Initialize Database Service ---
+    logging.info("Initializing database service...")
     db_dir = Path(appdirs.user_data_dir(APP_NAME, ORG_NAME))
     db_path = db_dir / "slideman_library.db"
-    db_service = Database(db_path) # Create instance
+    logging.info(f"Database path: {db_path}")
+    
+    try:
+        db_service = Database(db_path) # Create instance
+        logging.info("Database instance created")
+    except Exception as e:
+        logging.critical(f"Failed to create Database instance: {e}", exc_info=True)
+        sys.exit(1)
+        
     if not db_service.connect():
+        logging.critical("Failed to connect to database")
         # ... (Handle critical DB connection error) ...
         sys.exit(1)
+    
+    logging.info("Database connected successfully")
     # --- Set DB service in AppState ---
-    app_state.set_db_service(db_service)
+    try:
+        app_state.set_db_service(db_service)
+        logging.info("Database service set in AppState successfully")
+    except Exception as e:
+        logging.critical(f"Failed to set database service in AppState: {e}", exc_info=True)
+        sys.exit(1)
     # ----------------------------------
 
     # --- Load initial state AFTER DB is set ---
-    app_state.load_initial_state()
+    try:
+        app_state.load_initial_state()
+        logging.info("Initial state loaded successfully")
+    except Exception as e:
+        logging.critical(f"Failed to load initial state: {e}", exc_info=True)
+        sys.exit(1)
     # -----------------------------------------
 
     # Always apply dark theme regardless of settings
@@ -148,9 +170,21 @@ def main():
     # --- Architecture: Instantiate and Show Presentation Layer ---
     logging.info("Creating MainWindow...")
     # Pass db_service instance created above
-    main_win = MainWindow(db_service=db_service)
-    main_win.show()
-    logging.info("Application started successfully.")
+    try:
+        main_win = MainWindow(db_service=db_service)
+        logging.info("MainWindow created successfully, now showing...")
+        main_win.show()
+        logging.info("Application started successfully.")
+    except Exception as e:
+        logging.critical(f"Failed to create or show MainWindow: {e}", exc_info=True)
+        # Show error message to user
+        error_dialog = QMessageBox()
+        error_dialog.setIcon(QMessageBox.Critical)
+        error_dialog.setWindowTitle("Application Error")
+        error_dialog.setText(f"Failed to initialize application: {e}")
+        error_dialog.setDetailedText(traceback.format_exc())
+        error_dialog.exec()
+        sys.exit(1)
 
     result = app.exec()
 

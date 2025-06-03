@@ -1,6 +1,7 @@
 # src/slideman/services/thumbnail_cache.py
 
 import logging
+from collections import OrderedDict
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -23,17 +24,23 @@ class ThumbnailCache(QObject):
     """
     Manages an in-memory cache for slide thumbnail QPixmap objects.
     Loads from disk if not found in cache.
+    Implements LRU (Least Recently Used) eviction policy with a maximum cache size.
     Designed as a singleton accessed via global instance 'thumbnail_cache'.
     """
     _instance = None
     _placeholder_thumbnail = None  # Lazy-loaded placeholder
+    
+    # Cache configuration
+    MAX_CACHE_SIZE = 500  # Maximum number of thumbnails to keep in memory
+    CACHE_LOW_WATER_MARK = 400  # When evicting, reduce to this size
 
     def __new__(cls):
         if cls._instance is None:
             logger.debug("Creating ThumbnailCache instance")
             cls._instance = super().__new__(cls)
-            # Initialize cache ONLY once
-            cls._instance._memory_cache: Dict[int, QPixmap] = {} # slide_id -> QPixmap
+            # Initialize cache ONLY once - using OrderedDict for LRU
+            cls._instance._memory_cache: OrderedDict[int, QPixmap] = OrderedDict()  # slide_id -> QPixmap
+            cls._instance._cache_size_bytes = 0  # Track approximate memory usage
             cls._instance._initialized = False
         return cls._instance
 
@@ -61,11 +68,35 @@ class ThumbnailCache(QObject):
                 ThumbnailCache._placeholder_thumbnail = QPixmap()
         return ThumbnailCache._placeholder_thumbnail
 
+    def _evict_lru_items(self):
+        """Evict least recently used items when cache is too large."""
+        if len(self._memory_cache) <= self.MAX_CACHE_SIZE:
+            return
+        
+        logger.info(f"Cache size ({len(self._memory_cache)}) exceeds limit ({self.MAX_CACHE_SIZE}). Evicting LRU items.")
+        
+        # Remove items until we reach the low water mark
+        while len(self._memory_cache) > self.CACHE_LOW_WATER_MARK:
+            # OrderedDict.popitem(last=False) removes the oldest item (FIFO/LRU)
+            evicted_id, evicted_pixmap = self._memory_cache.popitem(last=False)
+            self._cache_size_bytes -= self._estimate_pixmap_size(evicted_pixmap)
+            logger.debug(f"Evicted thumbnail for SlideID {evicted_id}")
+        
+        logger.info(f"Cache size reduced to {len(self._memory_cache)} items")
+    
+    def _estimate_pixmap_size(self, pixmap: QPixmap) -> int:
+        """Estimate memory usage of a QPixmap in bytes."""
+        if pixmap.isNull():
+            return 0
+        # Approximate: width * height * 4 bytes (RGBA)
+        return pixmap.width() * pixmap.height() * 4
+    
     def get_thumbnail(self, slide_id: int) -> Optional[QPixmap]:
         """
         Retrieves a thumbnail QPixmap for a given slide ID.
         Checks memory cache first, then attempts to load from disk path
         retrieved via the database service accessed through AppState.
+        Implements LRU by moving accessed items to the end.
 
         Args:
             slide_id: The database ID of the slide.
@@ -75,6 +106,8 @@ class ThumbnailCache(QObject):
         """
         # 1. Check memory cache
         if slide_id in self._memory_cache:
+            # Move to end to mark as recently used (LRU behavior)
+            self._memory_cache.move_to_end(slide_id)
             # logger.debug(f"Thumbnail cache HIT for SlideID: {slide_id}")
             return self._memory_cache[slide_id]
 
@@ -92,7 +125,13 @@ class ThumbnailCache(QObject):
         # Derive project path if not set in AppState
         if not current_project_path_str:
             try:
-                cur = db_service._conn.cursor()
+                # Use the database service's method to get connection properly
+                conn = db_service._get_connection() if hasattr(db_service, '_get_connection') else db_service._conn
+                if not conn:
+                    logger.warning(f"No database connection available for SlideID {slide_id}, using placeholder thumbnail.")
+                    return self._get_placeholder()
+                    
+                cur = conn.cursor()
                 cur.execute(
                     "SELECT p.folder_path FROM projects p "
                     "JOIN files f ON f.project_id = p.id "
@@ -139,7 +178,10 @@ class ThumbnailCache(QObject):
             logger.info(f"Found thumbnail at shared location: {shared_path}")
             pixmap = QPixmap(str(shared_path))
             if not pixmap.isNull():
+                # Check if we need to evict before adding
+                self._evict_lru_items()
                 self._memory_cache[slide_id] = pixmap
+                self._cache_size_bytes += self._estimate_pixmap_size(pixmap)
                 return pixmap
         
         # Fall back to standard location
@@ -147,7 +189,10 @@ class ThumbnailCache(QObject):
             logger.info(f"Found thumbnail at standard location: {standard_path}")
             pixmap = QPixmap(str(standard_path))
             if not pixmap.isNull():
+                # Check if we need to evict before adding
+                self._evict_lru_items()
                 self._memory_cache[slide_id] = pixmap
+                self._cache_size_bytes += self._estimate_pixmap_size(pixmap)
                 return pixmap
                 
         # If we reach here, we couldn't find the thumbnail anywhere
@@ -157,12 +202,26 @@ class ThumbnailCache(QObject):
     @Slot() # Slot to connect to AppState.projectClosed signal
     def clear_cache(self):
         """Clears the in-memory thumbnail cache."""
-        logger.info(f"Clearing thumbnail memory cache ({len(self._memory_cache)} items). Project closed.")
+        logger.info(f"Clearing thumbnail memory cache ({len(self._memory_cache)} items, ~{self._cache_size_bytes / 1024 / 1024:.1f} MB). Project closed.")
         self._memory_cache.clear()
+        self._cache_size_bytes = 0
 
     def get_cache_size(self) -> int:
-         """Returns the number of items currently in the memory cache."""
-         return len(self._memory_cache)
+        """Returns the number of items currently in the memory cache."""
+        return len(self._memory_cache)
+    
+    def get_cache_memory_usage(self) -> int:
+        """Returns the approximate memory usage of the cache in bytes."""
+        return self._cache_size_bytes
+    
+    def get_cache_stats(self) -> Dict[str, int]:
+        """Returns cache statistics."""
+        return {
+            "items": len(self._memory_cache),
+            "memory_bytes": self._cache_size_bytes,
+            "memory_mb": self._cache_size_bytes / 1024 / 1024,
+            "max_items": self.MAX_CACHE_SIZE
+        }
 
 
 # --- Global Singleton Instance ---

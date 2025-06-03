@@ -15,6 +15,10 @@ from PySide6.QtGui import QPixmap, QStandardItemModel, QStandardItem
 
 from ...app_state import app_state
 from ...services.thumbnail_cache import ThumbnailCache
+from ...services.exceptions import (
+    DatabaseError, ResourceNotFoundError, ValidationError,
+    FileOperationError
+)
 from ...services.keyword_tasks import FindSimilarKeywordsWorker
 from ..components.tag_edit import TagEdit
 from ..custom_widgets.tag_badge_item_delegate import TagBadgeItemDelegate
@@ -133,44 +137,53 @@ class KeywordTableModel(QAbstractTableModel):
             # Process slides
             data = []
             for slide in slides:
-                # Get keywords for each slide
-                topic_keywords = []
-                title_keywords = []
-                
-                keywords = self.db.get_keywords_for_slide(slide['id'])
-                
-                for kw in keywords:
-                    if kw.kind == 'topic':
-                        topic_keywords.append(kw)
-                    elif kw.kind == 'title':
-                        title_keywords.append(kw)
-                
-                # Count elements with tags and collect sample tag names
-                elements = self.db.get_elements_for_slide(slide['id'])
-                element_tag_count = 0
-                element_tag_names = []
-                for element in elements:
-                    element_keywords = self.db.get_keywords_for_element(element.id)
-                    # Filter for name keywords
-                    name_keywords = [kw for kw in element_keywords if kw.kind == 'name']
-                    if name_keywords:
-                        element_tag_count += 1
-                        for kw in name_keywords:
-                            if kw.keyword not in element_tag_names:
-                                element_tag_names.append(kw.keyword)
-                
-                # Build the data row
-                slide_data = {
-                    'slide_id': slide['id'],
-                    'slide_identifier': f"{slide['file_name']} - Slide {slide['slide_index']}",
-                    'thumbnail_path': slide['thumbnail_path'],
-                    'topic_tags': topic_keywords,
-                    'title_tags': title_keywords,
-                    'element_tag_count': element_tag_count,
-                    'element_tag_names': element_tag_names
-                }
-                
-                data.append(slide_data)
+                try:
+                    # Get keywords for each slide
+                    topic_keywords = []
+                    title_keywords = []
+                    
+                    keywords = self.db.get_keywords_for_slide(slide['id'])
+                    
+                    for kw in keywords:
+                        if kw.kind == 'topic':
+                            topic_keywords.append(kw)
+                        elif kw.kind == 'title':
+                            title_keywords.append(kw)
+                    
+                    # Count elements with tags and collect sample tag names
+                    elements = self.db.get_elements_for_slide(slide['id'])
+                    element_tag_count = 0
+                    element_tag_names = []
+                    for element in elements:
+                        try:
+                            element_keywords = self.db.get_keywords_for_element(element.id)
+                            # Filter for name keywords
+                            name_keywords = [kw for kw in element_keywords if kw.kind == 'name']
+                            if name_keywords:
+                                element_tag_count += 1
+                                for kw in name_keywords:
+                                    if kw.keyword not in element_tag_names:
+                                        element_tag_names.append(kw.keyword)
+                        except DatabaseError as e:
+                            self.logger.warning(f"Error getting keywords for element {element.id}: {e}")
+                            continue
+                    
+                    # Build the data row
+                    slide_data = {
+                        'slide_id': slide['id'],
+                        'slide_identifier': f"{slide['file_name']} - Slide {slide['slide_index']}",
+                        'thumbnail_path': slide['thumbnail_path'],
+                        'topic_tags': topic_keywords,
+                        'title_tags': title_keywords,
+                        'element_tag_count': element_tag_count,
+                        'element_tag_names': element_tag_names
+                    }
+                    
+                    data.append(slide_data)
+                    
+                except DatabaseError as e:
+                    self.logger.error(f"Database error processing slide {slide.get('id', 'unknown')}: {e}")
+                    continue
             
             # Store the loaded data
             self._full_data = data
@@ -184,8 +197,14 @@ class KeywordTableModel(QAbstractTableModel):
             
             self.logger.debug(f"Loaded {len(data)} slides with keywords")
             
+        except DatabaseError as e:
+            self.logger.error(f"Database error loading slide data: {e}", exc_info=True)
+            self._full_data = []
+            self._data = []
+            self.beginResetModel()
+            self.endResetModel()
         except Exception as e:
-            self.logger.error(f"Error loading slide data: {str(e)}", exc_info=True)
+            self.logger.error(f"Unexpected error loading slide data: {e}", exc_info=True)
             self._full_data = []
             self._data = []
             self.beginResetModel()
@@ -1116,17 +1135,26 @@ class KeywordManagerPage(QWidget):
             
         self.logger.info(f"Loading keyword data for project at {app_state.current_project_path}")
         
-        # Get project ID from path
-        project_id = self.db.get_project_id_by_path(app_state.current_project_path)
-        if not project_id:
-            self.logger.error(f"No project found with path {app_state.current_project_path}")
-            return
+        try:
+            # Get project ID from path
+            project_id = self.db.get_project_id_by_path(app_state.current_project_path)
+            if not project_id:
+                self.logger.error(f"No project found with path {app_state.current_project_path}")
+                return
+                
+            # Load data into model
+            self.keyword_model.load_data(project_id)
             
-        # Load data into model
-        self.keyword_model.load_data(project_id)
-        
-        # Update tag status information
-        self._update_tag_statistics(project_id)
+            # Update tag status information
+            self._update_tag_statistics(project_id)
+            
+        except ResourceNotFoundError:
+            self.logger.error(f"Project not found at path {app_state.current_project_path}")
+            QMessageBox.warning(self, "Project Not Found", 
+                                f"The project at '{app_state.current_project_path}' was not found in the database.")
+        except DatabaseError as e:
+            self.logger.error(f"Database error loading project data: {e}", exc_info=True)
+            QMessageBox.critical(self, "Database Error", f"Failed to load project data:\n{e}")
 
     def _update_tag_statistics(self, project_id):
         """Update the status bar with tag statistics for the current project"""
@@ -1224,18 +1252,20 @@ class KeywordManagerPage(QWidget):
         for index in indexes:
             row = index.row()
             
-            # Get from and to keyword IDs
+            # Get from and to keyword IDs and texts
             from_id = self.suggestion_model.item(row, 0).data(self.FROM_KEYWORD_ID_ROLE)
             to_id = self.suggestion_model.item(row, 1).data(self.TO_KEYWORD_ID_ROLE)
             kind = self.suggestion_model.item(row, 0).data(self.KEYWORD_KIND_ROLE)
+            from_text = self.suggestion_model.item(row, 0).text()
+            to_text = self.suggestion_model.item(row, 1).text()
             
             # Skip if we already have this pair
             pair = (from_id, to_id)
             if pair in merge_pairs:
                 continue
                 
-            # Create merge command
-            cmd = MergeKeywordsCmd(from_id, to_id, kind, f"Merge {kind} keywords")
+            # Create merge command with all required parameters
+            cmd = MergeKeywordsCmd(from_id, to_id, from_text, to_text, kind)
             merge_cmds.append(cmd)
             merge_pairs.append(pair)
             
@@ -1342,17 +1372,17 @@ class KeywordManagerPage(QWidget):
             self.logger.warning("Cannot export: No database or project")
             return
             
-        # Get project ID
-        project_id = self.db.get_project_id_by_path(app_state.current_project_path)
-        if not project_id:
-            self.logger.error("Cannot export: Project not found")
-            return
-            
-        # Get export file path
-        project_dir = Path(app_state.current_project_path).parent
-        export_path = project_dir / "keyword_export.csv"
-        
         try:
+            # Get project ID
+            project_id = self.db.get_project_id_by_path(app_state.current_project_path)
+            if not project_id:
+                self.logger.error("Cannot export: Project not found")
+                return
+                
+            # Get export file path
+            project_dir = Path(app_state.current_project_path).parent
+            export_path = project_dir / "keyword_export.csv"
+            
             # Get all keywords for this project
             topics = self.db.get_all_keywords_by_kind(project_id, 'topic')
             titles = self.db.get_all_keywords_by_kind(project_id, 'title')
@@ -1384,6 +1414,12 @@ class KeywordManagerPage(QWidget):
                 f"Exported {len(topics) + len(titles) + len(names)} keywords to:\n{export_path}"
             )
             
+        except DatabaseError as e:
+            self.logger.error(f"Database error exporting keywords: {e}", exc_info=True)
+            QMessageBox.critical(self, "Database Error", f"Failed to retrieve keywords from database:\n{e}")
+        except FileOperationError as e:
+            self.logger.error(f"File error exporting keywords: {e}", exc_info=True)
+            QMessageBox.critical(self, "File Error", f"Failed to write export file:\n{e}")
         except Exception as e:
-            self.logger.error(f"Error exporting keywords: {str(e)}")
-            QMessageBox.warning(self, "Export Error", f"Failed to export keywords: {str(e)}")
+            self.logger.error(f"Unexpected error exporting keywords: {e}", exc_info=True)
+            QMessageBox.critical(self, "Export Error", f"Failed to export keywords:\n{e}")

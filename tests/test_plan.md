@@ -107,6 +107,8 @@ This document outlines a comprehensive testing strategy for the SLIDEMAN slide m
   - Verify exported files are valid
   - Create in `tests/services/test_export_service.py`
 
+----- START FROM HERE ------------------------------------------------------
+
 #### 8. File I/O Service Tests
 - **Status**: Not implemented
 - **What to Test**:

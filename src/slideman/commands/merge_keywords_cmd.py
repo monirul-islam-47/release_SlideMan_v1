@@ -45,7 +45,11 @@ class MergeKeywordsCmd(QUndoCommand):
         if self.db:
             try:
                 # Get slide links
-                cursor = self.db._conn.cursor()
+                conn = self.db._get_connection()
+                if not conn:
+                    logger.error("Failed to get database connection")
+                    return
+                cursor = conn.cursor()
                 cursor.execute(
                     "SELECT slide_id FROM slide_keywords WHERE keyword_id = ?",
                     (from_keyword_id,)
@@ -85,14 +89,20 @@ class MergeKeywordsCmd(QUndoCommand):
             self.logger.error("Database service not available")
             return
         
+        # Get connection
+        conn = self.db._get_connection()
+        if not conn:
+            self.logger.error("Failed to get database connection")
+            return
+            
         try:
             # Use mutex for thread safety during write operations
             with self.db._write_mutex:
                 # Start a transaction
-                self.db._conn.execute("BEGIN TRANSACTION")
+                conn.execute("BEGIN TRANSACTION")
                 
                 # Re-create the original keyword
-                cursor = self.db._conn.cursor()
+                cursor = conn.cursor()
                 cursor.execute(
                     "INSERT INTO keywords (id, keyword, kind) VALUES (?, ?, ?)",
                     (self.from_keyword_id, self.from_keyword_text, self.kind)
@@ -113,10 +123,10 @@ class MergeKeywordsCmd(QUndoCommand):
                     )
                 
                 # Commit the transaction
-                self.db._conn.execute("COMMIT")
+                conn.execute("COMMIT")
                 self.logger.debug(f"Undid merge: Restored keyword '{self.from_keyword_text}' with {len(self.slide_links)} slide links and {len(self.element_links)} element links")
                 
         except Exception as e:
             # Rollback on error
-            self.db._conn.execute("ROLLBACK")
+            conn.execute("ROLLBACK")
             self.logger.error(f"Error undoing keyword merge: {str(e)}")

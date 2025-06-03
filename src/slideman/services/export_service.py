@@ -15,39 +15,41 @@ try:
 except ImportError:
     HAS_COM = False
 
-from .database import Database
+from .database_worker import DatabaseWorker
+from .exceptions import (
+    DatabaseError, PowerPointError, COMInitializationError,
+    PresentationAccessError, SlideExportError, ResourceNotFoundError
+)
 
 logger = logging.getLogger(__name__)
+
 
 class ExportWorkerSignals(QObject):
     """
     Defines signals available from the export worker thread.
-    Supported signals are:
-    exportProgress: Emits current slide and total slides (int, int)
-    exportFinished: Emits output path or success message (str)
-    exportError: Emits error message (str)
     """
     exportProgress = Signal(int, int)  # current, total
     exportFinished = Signal(str)       # output path or success message
     exportError = Signal(str)          # error message
 
+
 class ExportWorker(QRunnable):
     """
-    Worker thread for exporting PowerPoint presentations.
-    Inherits from QRunnable to run on a thread from QThreadPool.
-
+    Thread-safe worker for exporting PowerPoint presentations.
+    
     Args:
-        ordered_slide_ids: List of slide IDs in the order they should appear in the presentation
+        ordered_slide_ids: List of slide IDs in the order they should appear
         output_mode: Either 'open' (leave open in PowerPoint) or 'save' (save to file)
         output_path: Path to save the presentation (required if output_mode is 'save')
-        db_service: Database service instance
+        db_path: Path to database for worker connection
     """
+    
     def __init__(
             self, 
             ordered_slide_ids: List[int], 
             output_mode: Literal['open', 'save'], 
             output_path: Optional[Path], 
-            db_service: Database
+            db_path: Path
         ):
         super().__init__()
         
@@ -58,7 +60,7 @@ class ExportWorker(QRunnable):
         self.ordered_slide_ids = ordered_slide_ids
         self.output_mode = output_mode
         self.output_path = output_path
-        self.db_service = db_service
+        self.db_path = db_path
         self.signals = ExportWorkerSignals()
         
         # Validation
@@ -76,167 +78,284 @@ class ExportWorker(QRunnable):
         worker_id_str = f"ExportWorker ({len(self.ordered_slide_ids)} slides)"
         logger.info(f"[{worker_id_str}] Starting export in mode: {self.output_mode}")
         
-        # Initialize COM for this thread
-        try:
-            pythoncom.CoInitialize()
-        except Exception as e:
-            error_message = f"Failed to initialize COM: {e}"
-            logger.error(f"[{worker_id_str}] {error_message}", exc_info=True)
-            self.signals.exportError.emit(error_message)
-            return
-        
+        # Initialize thread-local resources
+        db_worker = None
+        com_initialized = False
         ppt_app = None
         new_pres = None
-        overall_success = True
+        
+        try:
+            # Initialize COM for this thread
+            try:
+                pythoncom.CoInitialize()
+                com_initialized = True
+                logger.debug(f"[{worker_id_str}] COM initialized")
+            except Exception as e:
+                raise COMInitializationError(f"Failed to initialize COM: {e}") from e
+            
+            # Create database worker
+            db_worker = DatabaseWorker(self.db_path)
+            
+            # Process the presentation
+            self._process_export(db_worker, worker_id_str)
+            
+        except COMInitializationError as e:
+            logger.error(f"[{worker_id_str}] COM initialization failed: {e}")
+            self.signals.exportError.emit(str(e))
+            
+        except PowerPointError as e:
+            logger.error(f"[{worker_id_str}] PowerPoint error: {e}")
+            self.signals.exportError.emit(str(e))
+            
+        except Exception as e:
+            logger.error(f"[{worker_id_str}] Unexpected error: {e}", exc_info=True)
+            self.signals.exportError.emit(f"Export failed: {str(e)}")
+            
+        finally:
+            # Cleanup resources
+            self._cleanup(db_worker, new_pres, ppt_app, com_initialized)
+            
+        logger.info(f"[{worker_id_str}] Export worker finished")
+    
+    def _process_export(self, db_worker: DatabaseWorker, worker_id_str: str):
+        """
+        Process the export operation.
+        
+        Args:
+            db_worker: Database worker instance.
+            worker_id_str: Worker identification string for logging.
+            
+        Raises:
+            PowerPointError: If export fails.
+        """
+        ppt_app = None
+        new_pres = None
         error_details = []
+        slides_with_errors = []
         
         try:
             # Create PowerPoint Application instance
-            ppt_app = win32com.client.Dispatch("PowerPoint.Application")
-            
-            if self.output_mode == 'open':
-                ppt_app.Visible = True  # Show PowerPoint only when explicitly opening
-            # Removed explicit hide for save mode; default COM instance remains hidden
+            try:
+                ppt_app = win32com.client.Dispatch("PowerPoint.Application")
+                if self.output_mode == 'open':
+                    ppt_app.Visible = True
+            except com_error as e:
+                raise PowerPointError("Failed to create PowerPoint application") from e
             
             # Create a new presentation
-            new_pres = ppt_app.Presentations.Add()
-            logger.info(f"[{worker_id_str}] Created new PowerPoint presentation")
+            try:
+                new_pres = ppt_app.Presentations.Add()
+                logger.info(f"[{worker_id_str}] Created new PowerPoint presentation")
+            except com_error as e:
+                raise PowerPointError("Failed to create new presentation") from e
             
             total_slides = len(self.ordered_slide_ids)
             slides_processed = 0
             
             # Process each slide
-            for slide_id in self.ordered_slide_ids:
+            for idx, slide_id in enumerate(self.ordered_slide_ids):
                 if self.is_cancelled:
                     logger.info(f"[{worker_id_str}] Export cancelled")
-                    overall_success = False
-                    break
+                    raise PowerPointError("Export cancelled by user")
                 
                 try:
-                    # Get source file path and slide index from the database
-                    slide_origin = self.db_service.get_slide_origin(slide_id)
+                    self._process_single_slide(
+                        db_worker, ppt_app, new_pres, slide_id, worker_id_str
+                    )
+                    slides_processed += 1
                     
-                    if not slide_origin:
-                        error_msg = f"Could not find origin information for slide ID: {slide_id}"
-                        logger.error(f"[{worker_id_str}] {error_msg}")
-                        error_details.append(error_msg)
-                        overall_success = False
-                        continue
-                    
-                    source_file_path, slide_index = slide_origin
-                    
-                    # Ensure the source file exists
-                    if not os.path.exists(source_file_path):
-                        error_msg = f"Source file does not exist: {source_file_path} for slide ID: {slide_id}"
-                        logger.error(f"[{worker_id_str}] {error_msg}")
-                        error_details.append(error_msg)
-                        overall_success = False
-                        continue
-                    
-                    # Insert the slide from the source file
-                    logger.debug(f"[{worker_id_str}] Inserting slide {slide_id} from {source_file_path} index {slide_index}")
-                    
-                    # Open the source presentation to get the slide
-                    try:
-                        source_pres = ppt_app.Presentations.Open(source_file_path, ReadOnly=True, WithWindow=False)
-                        if slide_index > source_pres.Slides.Count:
-                            logger.warning(f"[{worker_id_str}] Slide index {slide_index} exceeds slide count {source_pres.Slides.Count} in {source_file_path}")
-                            error_msg = f"Slide index {slide_index} not found in {os.path.basename(source_file_path)}"
-                            error_details.append(error_msg)
-                            source_pres.Close()
-                            continue
-                            
-                        # Copy the slide to the new presentation
-                        source_pres.Slides(slide_index).Copy()
-                        new_pres.Slides.Paste()
-                        source_pres.Close()
-                    except com_error as ce:
-                        logger.error(f"[{worker_id_str}] COM error opening source presentation {source_file_path}: {ce}")
-                        error_msg = f"Failed to access source presentation: {os.path.basename(source_file_path)}"
-                        error_details.append(error_msg)
-                        overall_success = False
-                        continue
-                    
-                except com_error as ce:
-                    error_msg = f"COM error processing slide ID {slide_id}: {ce}"
-                    logger.error(f"[{worker_id_str}] {error_msg}", exc_info=True)
-                    error_details.append(error_msg)
-                    overall_success = False
-                    # Continue with other slides
-                
                 except Exception as e:
-                    error_msg = f"Error processing slide ID {slide_id}: {e}"
-                    logger.error(f"[{worker_id_str}] {error_msg}", exc_info=True)
+                    error_msg = f"Slide {idx + 1} (ID: {slide_id}): {str(e)}"
                     error_details.append(error_msg)
-                    overall_success = False
-                    # Continue with other slides
+                    slides_with_errors.append(slide_id)
+                    logger.error(f"[{worker_id_str}] {error_msg}")
+                    # Continue processing other slides
                 
                 # Update progress
-                slides_processed += 1
                 self.signals.exportProgress.emit(slides_processed, total_slides)
             
-            # Handle the presentation based on the output mode
-            if self.output_mode == 'save' and self.output_path:
-                try:
-                    # Save the presentation
-                    save_path = str(self.output_path)
-                    logger.info(f"[{worker_id_str}] Saving presentation to: {save_path}")
-                    new_pres.SaveAs(save_path)
-                    new_pres.Close()
-                    ppt_app.Visible = True
-                    ppt_app.Presentations.Open(save_path, ReadOnly=False, WithWindow=True)
-                    success_message = f"Presentation saved to: {save_path}"
-                except Exception as e:
-                    error_msg = f"Failed to save presentation: {e}"
-                    logger.error(f"[{worker_id_str}] {error_msg}", exc_info=True)
-                    error_details.append(error_msg)
-                    overall_success = False
-                    success_message = "Failed to save presentation"
+            # Check if we have any successful slides
+            if slides_processed == 0:
+                raise SlideExportError("Failed to export any slides")
+            
+            # Handle the presentation based on output mode
+            if self.output_mode == 'save':
+                self._save_presentation(new_pres, ppt_app, worker_id_str)
             else:
                 # Leave presentation open
-                success_message = "Presentation opened in PowerPoint"
                 logger.info(f"[{worker_id_str}] Presentation left open in PowerPoint")
-                # Don't close new_pres here
+                self.signals.exportFinished.emit("Presentation opened in PowerPoint")
             
-            # Emit final signal based on success
-            if overall_success:
-                logger.info(f"[{worker_id_str}] Export completed successfully: {success_message}")
-                self.signals.exportFinished.emit(success_message)
-            else:
-                combined_errors = "; ".join(error_details)
-                error_message = f"Export completed with errors: {combined_errors}"
-                logger.warning(f"[{worker_id_str}] {error_message}")
-                self.signals.exportError.emit(error_message)
+            # Report partial success if there were errors
+            if error_details:
+                warning_msg = (
+                    f"Export completed with {len(error_details)} errors. "
+                    f"Successfully exported {slides_processed}/{total_slides} slides."
+                )
+                logger.warning(f"[{worker_id_str}] {warning_msg}")
+                if self.output_mode == 'save':
+                    self.signals.exportFinished.emit(
+                        f"Presentation saved with warnings: {self.output_path}"
+                    )
                 
-        except Exception as e:
-            error_message = f"Critical export error: {e}"
-            logger.error(f"[{worker_id_str}] {error_message}", exc_info=True)
-            self.signals.exportError.emit(error_message)
-        
         finally:
-            # Clean up resources
-            # Release COM objects properly
-            if new_pres is not None and self.output_mode == 'save':
+            # Cleanup handled in main finally block
+            pass
+    
+    def _process_single_slide(self, db_worker: DatabaseWorker, ppt_app, 
+                            new_pres, slide_id: int, worker_id_str: str):
+        """
+        Process a single slide for export.
+        
+        Args:
+            db_worker: Database worker instance.
+            ppt_app: PowerPoint application COM object.
+            new_pres: New presentation COM object.
+            slide_id: ID of slide to process.
+            worker_id_str: Worker identification string.
+            
+        Raises:
+            ResourceNotFoundError: If slide origin not found.
+            SlideExportError: If slide processing fails.
+        """
+        # Get source file path and slide index from database
+        try:
+            # Using the worker's connection to get slide origin
+            with db_worker.connection() as conn:
+                cursor = conn.cursor()
+                query = """
+                    SELECT p.folder_path, f.rel_path, s.slide_index 
+                    FROM slides s 
+                    JOIN files f ON s.file_id = f.id 
+                    JOIN projects p ON f.project_id = p.id 
+                    WHERE s.id = ?
+                """
+                cursor.execute(query, (slide_id,))
+                result = cursor.fetchone()
+                
+                if not result:
+                    raise ResourceNotFoundError("Slide", slide_id)
+                
+                folder_path = result['folder_path']
+                rel_path = result['rel_path']
+                slide_index = result['slide_index']
+                source_file_path = Path(folder_path) / rel_path
+                
+        except DatabaseError as e:
+            raise SlideExportError(f"Database error: {e}") from e
+        
+        # Validate source file exists
+        if not source_file_path.exists():
+            raise SlideExportError(
+                f"Source file not found: {source_file_path.name}"
+            )
+        
+        # Open source presentation and copy slide
+        source_pres = None
+        try:
+            logger.debug(
+                f"[{worker_id_str}] Inserting slide {slide_id} from "
+                f"{source_file_path.name} index {slide_index}"
+            )
+            
+            source_pres = ppt_app.Presentations.Open(
+                str(source_file_path), ReadOnly=True, WithWindow=False
+            )
+            
+            if slide_index > source_pres.Slides.Count:
+                raise SlideExportError(
+                    f"Slide index {slide_index} not found in {source_file_path.name}"
+                )
+            
+            # Copy the slide to the new presentation
+            source_pres.Slides(slide_index).Copy()
+            new_pres.Slides.Paste()
+            
+        except com_error as e:
+            raise PresentationAccessError(
+                f"Failed to access {source_file_path.name}: {str(e)}"
+            ) from e
+            
+        finally:
+            # Always close source presentation
+            if source_pres:
                 try:
-                    # Only close if we're in save mode
-                    if not new_pres.Saved:  # Check if presentation is already saved
-                        new_pres.Close()
-                except:
-                    pass
+                    source_pres.Close()
+                except Exception as e:
+                    logger.warning(f"Error closing source presentation: {e}")
+    
+    def _save_presentation(self, new_pres, ppt_app, worker_id_str: str):
+        """
+        Save the presentation to disk.
+        
+        Args:
+            new_pres: New presentation COM object.
+            ppt_app: PowerPoint application COM object.
+            worker_id_str: Worker identification string.
             
-            # Release COM references
-            new_pres = None
-            ppt_app = None
+        Raises:
+            SlideExportError: If save fails.
+        """
+        try:
+            save_path = str(self.output_path)
+            logger.info(f"[{worker_id_str}] Saving presentation to: {save_path}")
             
-            # Uninitialize COM
+            # Ensure parent directory exists
+            self.output_path.parent.mkdir(parents=True, exist_ok=True)
+            
+            # Save the presentation
+            new_pres.SaveAs(save_path)
+            new_pres.Close()
+            
+            # Re-open the saved presentation for the user
+            ppt_app.Visible = True
+            ppt_app.Presentations.Open(save_path, ReadOnly=False, WithWindow=True)
+            
+            success_message = f"Presentation saved to: {save_path}"
+            logger.info(f"[{worker_id_str}] {success_message}")
+            self.signals.exportFinished.emit(success_message)
+            
+        except com_error as e:
+            raise SlideExportError(f"Failed to save presentation: {e}") from e
+        except Exception as e:
+            raise SlideExportError(f"Save operation failed: {e}") from e
+    
+    def _cleanup(self, db_worker: Optional[DatabaseWorker], 
+                new_pres, ppt_app, com_initialized: bool):
+        """Clean up all resources."""
+        # Close database connection
+        if db_worker:
+            try:
+                db_worker.close()
+                logger.debug("Export worker: Closed database connection")
+            except Exception as e:
+                logger.error(f"Error closing database: {e}")
+        
+        # Clean up COM objects
+        if new_pres and self.output_mode == 'save':
+            try:
+                if hasattr(new_pres, 'Saved') and not new_pres.Saved:
+                    new_pres.Close()
+            except Exception as e:
+                logger.error(f"Error closing presentation: {e}")
+        
+        # Quit PowerPoint only in save mode
+        if ppt_app and self.output_mode == 'save':
+            try:
+                ppt_app.Quit()
+                logger.debug("Export worker: Quit PowerPoint application")
+            except Exception as e:
+                logger.error(f"Error quitting PowerPoint: {e}")
+        
+        # Uninitialize COM
+        if com_initialized:
             try:
                 pythoncom.CoUninitialize()
-            except:
-                pass
-            
-            logger.info(f"[{worker_id_str}] Export worker execution finished")
+                logger.debug("Export worker: COM uninitialized")
+            except Exception as e:
+                logger.warning(f"Error uninitializing COM: {e}")
     
     def cancel(self):
-        """Requests cancellation of the export process."""
-        logger.info("Cancellation requested for ExportWorker")
+        """Request cancellation of the export process."""
+        logger.info("Export cancellation requested")
         self.is_cancelled = True

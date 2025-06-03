@@ -4,11 +4,17 @@ from PySide6.QtCore import QSize, Qt, QModelIndex, QAbstractListModel, QAbstract
 import logging
 import json
 from pathlib import Path
+from typing import List, Optional, Dict, Any
 from ...app_state import app_state
 from ...models.slide import Slide
 from ...services.thumbnail_cache import thumbnail_cache
 from ...services.export_service import ExportWorker, ExportWorkerSignals
+from ...services.exceptions import (
+    DatabaseError, ResourceNotFoundError, ValidationError,
+    FileOperationError, PowerPointError
+)
 from ..widgets.delivery_preview_widget import DeliveryPreviewWidget
+
 
 class FinalReviewModel(QAbstractListModel):
     """Model for displaying and reordering the final slide set."""
@@ -39,46 +45,44 @@ class FinalReviewModel(QAbstractListModel):
         self._slides = []
         if ordered_ids:
             db = app_state.db_service
-            if not db or not db._conn:
-                self.logger.error("Database connection not available")
+            if not db:
+                self.logger.error("Database service not available")
                 self.endResetModel()
                 return
                 
-            conn = db._conn
-            cursor = conn.cursor()
-            
-            # Convert all IDs to integers to ensure proper comparison
-            ordered_ids_int = [int(sid) if isinstance(sid, str) else sid for sid in ordered_ids]
-            
-            # Create placeholder for SQL query
-            placeholder = ",".join("?" for _ in ordered_ids_int)
-            sql = f"SELECT id, file_id, slide_index, thumb_rel_path, image_rel_path FROM slides WHERE id IN ({placeholder})"
-            self.logger.debug(f"Executing SQL: {sql} with params: {ordered_ids_int}")
-            cursor.execute(sql, ordered_ids_int)
-            rows = cursor.fetchall()
-            self.logger.debug(f"Found {len(rows)} slides for {len(ordered_ids_int)} ordered IDs")
-            
-            # Create a map of slide ID (as integer) to Slide objects
-            slides_map = {}
-            for row in rows:
-                slide_id = row['id']
-                slides_map[slide_id] = Slide(
-                    id=slide_id, 
-                    file_id=row['file_id'], 
-                    slide_index=row['slide_index'],
-                    thumb_rel_path=row['thumb_rel_path'], 
-                    image_rel_path=row['image_rel_path']
-                )
-                self.logger.debug(f"Added slide ID {slide_id} to map")
-            
-            # Build the final slides list in the correct order
-            self._slides = []
-            for sid in ordered_ids_int:
-                if sid in slides_map:
-                    self._slides.append(slides_map[sid])
-                    self.logger.debug(f"Added slide ID {sid} to final slides list")
-                else:
-                    self.logger.warning(f"Slide ID {sid} not found in database results")
+            try:
+                # Convert all IDs to integers to ensure proper comparison
+                ordered_ids_int = [int(sid) if isinstance(sid, str) else sid for sid in ordered_ids]
+                
+                # Get slides using the database service method
+                slides_map = {}
+                for slide_id in ordered_ids_int:
+                    try:
+                        slide = db.get_slide(slide_id)
+                        if slide:
+                            slides_map[slide_id] = slide
+                            self.logger.debug(f"Added slide ID {slide_id} to map")
+                        else:
+                            self.logger.warning(f"Slide ID {slide_id} not found in database")
+                    except ResourceNotFoundError:
+                        self.logger.warning(f"Slide ID {slide_id} not found in database")
+                        continue
+                
+                # Build the final slides list in the correct order
+                self._slides = []
+                for sid in ordered_ids_int:
+                    if sid in slides_map:
+                        self._slides.append(slides_map[sid])
+                        self.logger.debug(f"Added slide ID {sid} to final slides list")
+                    else:
+                        self.logger.warning(f"Slide ID {sid} not found in database results")
+                        
+            except DatabaseError as e:
+                self.logger.error(f"Database error loading slides: {e}", exc_info=True)
+                self._slides = []
+            except Exception as e:
+                self.logger.error(f"Unexpected error loading slides: {e}", exc_info=True)
+                self._slides = []
             
             self.logger.debug(f"Final slide count in model: {len(self._slides)}")
         else:
@@ -421,48 +425,48 @@ class DeliveryPage(QWidget):
             
             # Get slide data from database
             db = app_state.db_service
-            if not db or not db._conn:
-                self.logger.error("Database connection not available")
+            if not db:
+                self.logger.error("Database service not available")
                 return
                 
-            # Convert all IDs to integers to ensure proper comparison
-            ordered_ids_int = [int(sid) if isinstance(sid, str) else sid for sid in ordered_ids]
-            
-            # Create placeholder for SQL query
-            placeholder = ",".join("?" for _ in ordered_ids_int)
-            sql = f"SELECT id, file_id, slide_index, thumb_rel_path, image_rel_path FROM slides WHERE id IN ({placeholder})"
-            
-            cursor = db._conn.cursor()
-            cursor.execute(sql, ordered_ids_int)
-            rows = cursor.fetchall()
-            
-            # Create a map of slide ID to Slide objects
+            # Get slides using the database service method
             slides_map = {}
-            for row in rows:
-                slide_id = row['id']
-                slides_map[slide_id] = Slide(
-                    id=slide_id, 
-                    file_id=row['file_id'], 
-                    slide_index=row['slide_index'],
-                    thumb_rel_path=row['thumb_rel_path'], 
-                    image_rel_path=row['image_rel_path']
-                )
+            for slide_id in ordered_ids:
+                try:
+                    slide = db.get_slide(slide_id)
+                    if slide:
+                        slides_map[slide_id] = slide
+                    else:
+                        self.logger.warning(f"Slide ID {slide_id} not found in database")
+                except ResourceNotFoundError:
+                    self.logger.warning(f"Slide ID {slide_id} not found in database")
+                    continue
+                except DatabaseError as e:
+                    self.logger.error(f"Database error loading slide {slide_id}: {e}", exc_info=True)
+                    continue
                 
             # Add slides in the correct order
             added_count = 0
-            for slide_id in ordered_ids_int:
+            for slide_id in ordered_ids:
                 if slide_id in slides_map:
                     slide = slides_map[slide_id]
                     pix = thumbnail_cache.get_thumbnail(slide.id)
                     if self.slide_preview.add_slide(slide.id, pix, {"KeywordId": None}):
                         added_count += 1
+                else:
+                    self.logger.warning(f"Slide ID {slide_id} not found in database results")
                         
             self.logger.debug(f"Added {added_count} slides to delivery preview")
             self._set_ui_busy(False)
             
+        except DatabaseError as e:
+            self.logger.error(f"Database error loading slides: {e}", exc_info=True)
+            self._set_ui_busy(False, f"Database error loading slides")
+            QMessageBox.critical(self, "Database Error", f"Failed to load slides from database:\n{e}")
         except Exception as e:
-            self.logger.error(f"Error loading slides: {e}", exc_info=True)
-            self._set_ui_busy(False, f"Error loading slides: {str(e)}")
+            self.logger.error(f"Unexpected error loading slides: {e}", exc_info=True)
+            self._set_ui_busy(False, f"Error loading slides")
+            QMessageBox.critical(self, "Error", f"An unexpected error occurred while loading slides:\n{e}")
 
     def _set_ui_busy(self, is_busy, status_message=""):
         """Set the UI to busy or normal state with optional status message."""
@@ -481,12 +485,51 @@ class DeliveryPage(QWidget):
             else:
                 self.status_bar.showMessage(status_message, 5000)  # Show for 5 seconds
     
+    def _validate_slides_exist(self) -> tuple[bool, List[int]]:
+        """Validate that all slides' source files exist.
+        
+        Returns:
+            Tuple of (all_exist, missing_slide_ids)
+        """
+        slide_ids = self.slide_preview.get_ordered_slide_indices()
+        missing_slides = []
+        
+        db = app_state.db_service
+        if not db:
+            return False, slide_ids
+            
+        for slide_id in slide_ids:
+            try:
+                slide_origin = db.get_slide_origin(slide_id)
+                if not slide_origin:
+                    missing_slides.append(slide_id)
+            except DatabaseError as e:
+                self.logger.error(f"Database error checking slide {slide_id}: {e}", exc_info=True)
+                missing_slides.append(slide_id)  # Consider it missing if we can't check
+                
+        return len(missing_slides) == 0, missing_slides
+    
     @Slot()
     def _handle_open_in_ppt(self):
         """Handle the 'Open in PowerPoint' action."""
         if self.slide_preview.count() == 0:
             QMessageBox.information(self, "No Slides", "There are no slides to open.")
             return
+            
+        # Validate slides exist
+        all_exist, missing_slides = self._validate_slides_exist()
+        if not all_exist:
+            response = QMessageBox.warning(
+                self, 
+                "Missing Slides",
+                f"{len(missing_slides)} slide(s) have missing source files.\n"
+                "These slides will be skipped during export.\n\n"
+                "Do you want to continue?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No
+            )
+            if response != QMessageBox.StandardButton.Yes:
+                return
             
         # Set UI to busy state
         self._is_exporting = True
@@ -521,6 +564,21 @@ class DeliveryPage(QWidget):
         if self._is_exporting:
             QMessageBox.information(self, "Already Exporting", "An export operation is already in progress.")
             return
+            
+        # Validate slides exist
+        all_exist, missing_slides = self._validate_slides_exist()
+        if not all_exist:
+            response = QMessageBox.warning(
+                self, 
+                "Missing Slides",
+                f"{len(missing_slides)} slide(s) have missing source files.\n"
+                "These slides will be skipped during export.\n\n"
+                "Do you want to continue?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No
+            )
+            if response != QMessageBox.StandardButton.Yes:
+                return
             
         # Get save location from user
         save_path, _ = QFileDialog.getSaveFileName(
