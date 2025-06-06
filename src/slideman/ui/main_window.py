@@ -138,13 +138,8 @@ class MainWindow(QMainWindow):
             nav_layout.addWidget(self.btn_assembly)
             nav_layout.addWidget(self.btn_delivery)
             
-            # Replace ugly white thumbnails with beautiful progress cards
-            if app_state.user_level == "beginner":
-                nav_layout.addSpacing(20)
-                
-                # Create elegant progress indicator instead of ugly checklist
-                progress_card = self._create_elegant_progress_card()
-                nav_layout.addWidget(progress_card)
+            # Clean navigation - no clutter
+            nav_layout.addSpacing(20)
             
             nav_layout.addStretch(1)  # Push buttons to top
             self.logger.debug("Added all buttons to navigation layout")
@@ -566,55 +561,54 @@ class MainWindow(QMainWindow):
             self.logger.error(f"Error checking platform capabilities: {e}", exc_info=True)
 
     def _setup_visual_styling(self):
-        """Set up enhanced visual styling following the established design system."""
+        """Set up sophisticated visual styling with proper contrast and hierarchy."""
         try:
-            # Enhanced navigation panel styling using EXACT welcome dialog gradient
+            # ELEGANT dark navigation panel - clean and supportive
             self.nav_frame.setStyleSheet("""
                 QFrame {
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                        stop:0 #667eea, stop:1 #764ba2);
-                    border-right: 1px solid rgba(255, 255, 255, 0.2);
-                    border-radius: 0px 15px 15px 0px;
+                    background-color: #1e1f26;
+                    border-right: 1px solid #2a2d3a;
+                    border-radius: 0px;
                 }
             """)
             
-            # Add time-based greeting at top of navigation
-            self._add_navigation_greeting()
+            # Clean navigation - no greeting clutter
             
-            # Enhanced navigation button styling matching welcome dialog aesthetic
+            # SOPHISTICATED navigation buttons - clean and minimal
             nav_button_style = """
                 QPushButton {
-                    background-color: rgba(255, 255, 255, 0.1);
-                    color: white;
+                    background-color: transparent;
+                    color: #9ca3af;
                     text-align: left;
-                    padding: 12px 20px;
+                    padding: 14px 20px;
                     font-size: 14px;
                     font-weight: 500;
-                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    border: none;
                     border-radius: 8px;
-                    margin: 4px 8px;
-                    min-height: 40px;
+                    margin: 2px 12px;
+                    min-height: 44px;
                 }
                 
                 QPushButton:hover {
-                    background-color: rgba(255, 255, 255, 0.2);
-                    border-color: rgba(255, 255, 255, 0.4);
-                    transform: translateY(-1px);
+                    background-color: #2a2d3a;
+                    color: #d1d5db;
                 }
                 
                 QPushButton:checked {
-                    background-color: #27ae60;
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                        stop:0 #667eea, stop:1 #764ba2);
                     color: white;
-                    font-weight: bold;
-                    border: 1px solid #2ecc71;
+                    font-weight: 600;
+                    border: none;
                 }
                 
                 QPushButton:checked:hover {
-                    background-color: #2ecc71;
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                        stop:0 #7c3aed, stop:1 #8b5cf6);
                 }
                 
                 QPushButton:pressed {
-                    background-color: rgba(255, 255, 255, 0.05);
+                    background-color: #1f2937;
                 }
             """
             
@@ -622,15 +616,14 @@ class MainWindow(QMainWindow):
             for btn in self.nav_buttons:
                 btn.setStyleSheet(nav_button_style)
                 
-            # Enhanced status bar styling following welcome dialog gradient design
+            # CLEAN status bar styling - subtle and professional
             self.status_bar.setStyleSheet("""
                 QStatusBar {
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                        stop:0 #667eea, stop:1 #764ba2);
-                    color: white;
+                    background-color: #f8fafc;
+                    color: #64748b;
                     font-size: 12px;
-                    padding: 8px 15px;
-                    border-top: 1px solid rgba(255, 255, 255, 0.2);
+                    padding: 8px 20px;
+                    border-top: 1px solid #e2e8f0;
                     font-weight: 500;
                 }
                 QStatusBar::item {
@@ -641,17 +634,15 @@ class MainWindow(QMainWindow):
             # Add contextual tips to status bar
             self._show_contextual_status_tip()
             
-            # Main window styling harmonized with welcome dialog gradient theme
+            # SOPHISTICATED main window styling - clean and professional
             self.setStyleSheet("""
                 QMainWindow {
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                        stop:0 #667eea, stop:1 #764ba2);
+                    background-color: #ffffff;
                 }
                 QMenuBar {
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                        stop:0 #667eea, stop:1 #764ba2);
-                    color: white;
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                    background-color: #f8fafc;
+                    color: #374151;
+                    border-bottom: 1px solid #e5e7eb;
                     font-weight: 500;
                     padding: 4px;
                 }
@@ -662,17 +653,17 @@ class MainWindow(QMainWindow):
                     margin: 2px 4px;
                 }
                 QMenuBar::item:selected {
-                    background-color: rgba(255, 255, 255, 0.2);
-                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    background-color: #667eea;
+                    color: white;
                 }
                 QMenuBar::item:pressed {
-                    background-color: rgba(255, 255, 255, 0.1);
+                    background-color: #5a67d8;
+                    color: white;
                 }
                 QMenu {
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                        stop:0 #667eea, stop:1 #764ba2);
-                    color: white;
-                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    background-color: #ffffff;
+                    color: #374151;
+                    border: 1px solid #e5e7eb;
                     border-radius: 8px;
                     padding: 8px;
                 }
@@ -683,18 +674,18 @@ class MainWindow(QMainWindow):
                     margin: 2px;
                 }
                 QMenu::item:selected {
-                    background-color: rgba(255, 255, 255, 0.2);
+                    background-color: #667eea;
+                    color: white;
                 }
                 QMenu::separator {
                     height: 1px;
-                    background-color: rgba(255, 255, 255, 0.2);
+                    background-color: #e5e7eb;
                     margin: 4px 10px;
                 }
                 QToolTip {
-                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                        stop:0 #667eea, stop:1 #764ba2);
+                    background-color: #1f2937;
                     color: white;
-                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    border: 1px solid #374151;
                     padding: 8px 12px;
                     border-radius: 8px;
                     font-size: 13px;

@@ -89,26 +89,25 @@ class ProjectsPage(QWidget):
         self.logger.info("Initializing Projects Page")
         self.db = db_service
 
-        # --- Main Layout with PERFECT spacing system ---
+        # --- SOPHISTICATED layout with proper breathing room ---
         main_layout = QHBoxLayout(self)
-        main_layout.setContentsMargins(20, 20, 20, 20)  # Uniform 20px margins
-        main_layout.setSpacing(20)  # Consistent 20px gap
+        main_layout.setContentsMargins(0, 0, 0, 0)  # No margins - clean edge-to-edge
+        main_layout.setSpacing(0)  # No spacing for seamless look
 
-        # --- Left Panel with PRECISE gradient styling and PERFECT alignment ---
+        # --- ELEGANT left panel with clean white background ---
         left_panel_widget = QWidget()
         left_panel_widget.setStyleSheet("""
             QWidget {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                    stop:0 #667eea, stop:1 #764ba2);
-                border-radius: 15px;
-                margin: 0px;  /* NO margin - let layout handle spacing */
+                background-color: #ffffff;
+                border-right: 1px solid #e5e7eb;
+                margin: 0px;
             }
         """)
         left_layout = QVBoxLayout(left_panel_widget)
-        left_layout.setContentsMargins(20, 20, 20, 20)  # Consistent 20px padding
-        left_layout.setSpacing(15)  # Perfect 15px internal spacing
+        left_layout.setContentsMargins(24, 24, 24, 24)  # Professional spacing
+        left_layout.setSpacing(20)  # Clean spacing hierarchy
 
-        # Toolbar with beautiful styling
+        # SOPHISTICATED toolbar - clean and professional
         self.toolbar = QToolBar("Projects Toolbar")
         self.toolbar.setMovable(False)
         self.toolbar.setStyleSheet("""
@@ -116,34 +115,35 @@ class ProjectsPage(QWidget):
                 background-color: transparent;
                 border: none;
                 spacing: 12px;
-                padding: 15px;
+                padding: 0px;
             }
             QToolBar QToolButton {
-                background-color: rgba(255, 255, 255, 0.1);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                border-radius: 10px;
-                padding: 12px 18px;
+                background-color: #667eea;
+                border: 1px solid #667eea;
+                border-radius: 8px;
+                padding: 12px 20px;
                 color: white;
                 font-size: 14px;
-                font-weight: 500;
+                font-weight: 600;
                 margin: 3px;
-                min-width: 100px;
+                min-width: 120px;
             }
             QToolBar QToolButton:hover {
-                background-color: rgba(255, 255, 255, 0.2);
-                border-color: rgba(255, 255, 255, 0.4);
+                background-color: #5a67d8;
+                border-color: #5a67d8;
                 transform: translateY(-1px);
             }
             QToolBar QToolButton:pressed {
-                background-color: rgba(255, 255, 255, 0.15);
+                background-color: #4c51bf;
+                transform: translateY(0px);
             }
             QToolBar QToolButton:disabled {
-                background-color: rgba(255, 255, 255, 0.05);
-                color: rgba(255, 255, 255, 0.4);
-                border-color: rgba(255, 255, 255, 0.1);
+                background-color: #e5e7eb;
+                color: #9ca3af;
+                border-color: #e5e7eb;
             }
             QToolBar::separator {
-                background-color: rgba(255, 255, 255, 0.3);
+                background-color: #e5e7eb;
                 width: 1px;
                 margin: 8px 4px;
             }
@@ -151,7 +151,7 @@ class ProjectsPage(QWidget):
         self._setup_toolbar_actions() # Helper for toolbar actions
         left_layout.addWidget(self.toolbar)
 
-        # Project List View with beautiful styling
+        # SOPHISTICATED project list with clean card design
         self.project_list_view = QListView()
         self.project_list_view.setAlternatingRowColors(False)
         self.project_list_view.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
@@ -162,39 +162,36 @@ class ProjectsPage(QWidget):
                 border: none;
                 outline: none;
                 selection-background-color: transparent;
-                font-size: 14px;
-                padding: 8px;
+                font-size: 15px;
+                padding: 0px;
             }
             QListView::item {
-                background-color: rgba(255, 255, 255, 0.1);
-                border: 1px solid rgba(255, 255, 255, 0.2);
+                background-color: #ffffff;
+                border: 1px solid #e5e7eb;
                 border-radius: 12px;
-                margin: 6px 4px;
-                padding: 18px 20px;
-                color: white;
+                margin: 8px 0px;
+                padding: 20px 24px;
+                color: #374151;
                 font-weight: 500;
-                min-height: 20px;
+                min-height: 24px;
             }
             QListView::item:hover {
-                background-color: rgba(255, 255, 255, 0.2);
-                border-color: rgba(255, 255, 255, 0.4);
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                background-color: #f8fafc;
+                border-color: #cbd5e1;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             }
             QListView::item:selected {
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                    stop:0 #27ae60, stop:1 #2ecc71);
-                border: 2px solid #2ecc71;
+                    stop:0 #667eea, stop:1 #764ba2);
+                border: 2px solid #667eea;
                 color: white;
-                font-weight: bold;
-                transform: translateY(-1px);
-                box-shadow: 0 6px 16px rgba(39, 174, 96, 0.3);
+                font-weight: 600;
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.25);
             }
             QListView::item:selected:hover {
                 background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                    stop:0 #2ecc71, stop:1 #27ae60);
-                transform: translateY(-3px);
-                box-shadow: 0 8px 20px rgba(39, 174, 96, 0.4);
+                    stop:0 #5a67d8, stop:1 #6b73ff);
+                box-shadow: 0 12px 30px rgba(102, 126, 234, 0.35);
             }
         """)
         self._setup_context_menu_actions() # Helper for context actions
@@ -229,13 +226,13 @@ class ProjectsPage(QWidget):
         self._conversion_processed_slides = 0
         # -----------------------------------------------
 
-        # --- Right Panel with PERFECT alignment and beautiful styling ---
+        # --- ELEGANT right panel with sophisticated styling ---
         self.right_panel = QStackedWidget()
         self.right_panel.setStyleSheet("""
             QStackedWidget {
-                background-color: transparent;
+                background-color: #f8fafc;
                 border: none;
-                margin: 0px;  /* NO margin - let layout handle spacing */
+                margin: 0px;
             }
         """)
         
@@ -969,53 +966,53 @@ class ProjectsPage(QWidget):
             )
     
     def _create_beautiful_welcome_widget(self):
-        """Create a beautiful welcome widget following the design system."""
+        """Create a sophisticated welcome widget with elegant design."""
         from PySide6.QtWidgets import QFrame, QGridLayout
         
         welcome_container = QFrame()
         welcome_container.setStyleSheet("""
             QFrame {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                    stop:0 #667eea, stop:1 #764ba2);
-                border-radius: 15px;
-                margin: 0px;  /* NO margin - consistent with design system */
+                background-color: #ffffff;
+                border-radius: 0px;
+                margin: 0px;
             }
         """)
         
         layout = QVBoxLayout(welcome_container)
-        layout.setContentsMargins(30, 30, 30, 30)  # Consistent with left panel proportions
-        layout.setSpacing(20)  # Matches design system rhythm
+        layout.setContentsMargins(48, 48, 48, 48)  # Generous professional spacing
+        layout.setSpacing(32)  # Sophisticated spacing hierarchy
         
-        # Main welcome message
-        welcome_label = QLabel("🚀 Ready to Organize!")
+        # SOPHISTICATED welcome message
+        welcome_label = QLabel("🎯 Ready to Organize")
         welcome_font = QFont()
-        welcome_font.setPointSize(24)
-        welcome_font.setBold(True)
+        welcome_font.setPointSize(28)
+        welcome_font.setWeight(QFont.Weight.DemiBold)
         welcome_label.setFont(welcome_font)
         welcome_label.setAlignment(Qt.AlignCenter)
-        welcome_label.setStyleSheet("color: white; margin-bottom: 10px;")
+        welcome_label.setStyleSheet("color: #1f2937; margin-bottom: 16px;")
         
-        # Subtitle
+        # ELEGANT subtitle
         subtitle_label = QLabel("Select a project from the left to start managing your slides")
         subtitle_font = QFont()
-        subtitle_font.setPointSize(14)
+        subtitle_font.setPointSize(16)
+        subtitle_font.setWeight(QFont.Weight.Normal)
         subtitle_label.setFont(subtitle_font)
         subtitle_label.setAlignment(Qt.AlignCenter)
         subtitle_label.setWordWrap(True)
-        subtitle_label.setStyleSheet("color: rgba(255, 255, 255, 0.9); margin-bottom: 20px;")
+        subtitle_label.setStyleSheet("color: #6b7280; margin-bottom: 24px; line-height: 1.5;")
         
         layout.addWidget(welcome_label)
         layout.addWidget(subtitle_label)
         
-        # Quick action cards with PERFECT spacing
+        # SOPHISTICATED action cards with elegant spacing
         actions_layout = QGridLayout()
-        actions_layout.setSpacing(20)  # More generous spacing for better visual breathing room
+        actions_layout.setSpacing(24)  # Professional spacing for clean visual hierarchy
         
         actions = [
-            ("📁", "Create\nProject", "Start a new project with your PowerPoint files"),
-            ("🔍", "Search\nSlides", "Find any slide across all your projects"),
-            ("🏷️", "Tag\nContent", "Organize slides with keywords for quick access"),
-            ("🎯", "Build\nPresentation", "Assemble new presentations from existing slides")
+            ("📁", "Create Project", "Start a new project with your PowerPoint files"),
+            ("🔍", "Search Slides", "Find any slide across all your projects"),
+            ("🏷️", "Tag Content", "Organize slides with keywords for quick access"),
+            ("🎯", "Build Presentation", "Assemble new presentations from existing slides")
         ]
         
         for i, (icon, title, desc) in enumerate(actions):
@@ -1030,54 +1027,54 @@ class ProjectsPage(QWidget):
         return welcome_container
     
     def _create_action_card(self, icon, title, description):
-        """Create an action card following welcome dialog pattern."""
+        """Create a sophisticated action card with elegant design."""
         card = QFrame()
         card.setStyleSheet("""
             QFrame {
-                background-color: rgba(255, 255, 255, 0.12);
-                border: 1px solid rgba(255, 255, 255, 0.25);
-                border-radius: 12px;
-                padding: 20px;
-                min-height: 90px;
+                background-color: #ffffff;
+                border: 1px solid #e5e7eb;
+                border-radius: 16px;
+                padding: 24px;
+                min-height: 120px;
             }
             QFrame:hover {
-                background-color: rgba(255, 255, 255, 0.2);
-                border-color: rgba(255, 255, 255, 0.4);
-                transform: translateY(-2px);
+                background-color: #f8fafc;
+                border-color: #667eea;
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
             }
         """)
         card.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         
         card_layout = QVBoxLayout(card)
         card_layout.setAlignment(Qt.AlignCenter)
-        card_layout.setSpacing(10)  # More generous spacing
+        card_layout.setSpacing(12)  # Professional spacing
         
-        # Icon
+        # ELEGANT icon
         icon_label = QLabel(icon)
         icon_font = QFont()
-        icon_font.setPointSize(20)
+        icon_font.setPointSize(24)
         icon_label.setFont(icon_font)
         icon_label.setAlignment(Qt.AlignCenter)
-        icon_label.setStyleSheet("color: white;")
+        icon_label.setStyleSheet("color: #667eea;")
         
-        # Title
+        # SOPHISTICATED title
         title_label = QLabel(title)
         title_font = QFont()
-        title_font.setPointSize(12)
-        title_font.setBold(True)
+        title_font.setPointSize(14)
+        title_font.setWeight(QFont.Weight.DemiBold)
         title_label.setFont(title_font)
         title_label.setAlignment(Qt.AlignCenter)
         title_label.setWordWrap(True)
-        title_label.setStyleSheet("color: white;")
+        title_label.setStyleSheet("color: #1f2937;")
         
-        # Description
+        # CLEAN description
         desc_label = QLabel(description)
         desc_font = QFont()
-        desc_font.setPointSize(9)
+        desc_font.setPointSize(11)
         desc_label.setFont(desc_font)
         desc_label.setAlignment(Qt.AlignCenter)
         desc_label.setWordWrap(True)
-        desc_label.setStyleSheet("color: rgba(255, 255, 255, 0.8);")
+        desc_label.setStyleSheet("color: #6b7280; line-height: 1.4;")
         
         card_layout.addWidget(icon_label)
         card_layout.addWidget(title_label)
@@ -1086,42 +1083,41 @@ class ProjectsPage(QWidget):
         return card
     
     def _create_project_details_widget(self):
-        """Create a beautiful project details widget."""
+        """Create a sophisticated project details widget."""
         details_container = QFrame()
         details_container.setStyleSheet("""
             QFrame {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                    stop:0 #667eea, stop:1 #764ba2);
-                border-radius: 15px;
-                margin: 0px;  /* NO margin - consistent with design system */
+                background-color: #ffffff;
+                border-radius: 0px;
+                margin: 0px;
             }
         """)
         
         layout = QVBoxLayout(details_container)
-        layout.setContentsMargins(30, 30, 30, 30)  # Consistent with design system
-        layout.setSpacing(20)  # Matches design system rhythm
+        layout.setContentsMargins(48, 48, 48, 48)  # Professional spacing
+        layout.setSpacing(32)  # Sophisticated spacing hierarchy
         
-        # Project title (will be updated dynamically)
+        # SOPHISTICATED project title (will be updated dynamically)
         self.project_title_label = QLabel("Project Overview")
         title_font = QFont()
-        title_font.setPointSize(20)
-        title_font.setBold(True)
+        title_font.setPointSize(24)
+        title_font.setWeight(QFont.Weight.DemiBold)
         self.project_title_label.setFont(title_font)
-        self.project_title_label.setStyleSheet("color: white;")
+        self.project_title_label.setStyleSheet("color: #1f2937;")
         
-        # Project stats cards container
+        # ELEGANT project stats cards container
         stats_container = QFrame()
         stats_container.setStyleSheet("""
             QFrame {
-                background-color: rgba(255, 255, 255, 0.1);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                border-radius: 10px;
-                padding: 20px;
+                background-color: #f8fafc;
+                border: 1px solid #e5e7eb;
+                border-radius: 16px;
+                padding: 24px;
             }
         """)
         
         stats_layout = QGridLayout(stats_container)
-        stats_layout.setSpacing(15)
+        stats_layout.setSpacing(20)
         
         # Create stat cards
         self.files_stat = self._create_stat_card("📁", "0", "Files")
@@ -1142,20 +1138,20 @@ class ProjectsPage(QWidget):
         self.convert_btn = QPushButton("🔄 Convert Slides")
         self.convert_btn.setStyleSheet("""
             QPushButton {
-                background-color: #27ae60;
+                background-color: #667eea;
                 color: white;
-                padding: 12px 20px;
+                padding: 14px 24px;
                 font-size: 14px;
-                font-weight: bold;
+                font-weight: 600;
                 border: none;
-                border-radius: 8px;
+                border-radius: 10px;
             }
             QPushButton:hover {
-                background-color: #2ecc71;
+                background-color: #5a67d8;
             }
             QPushButton:disabled {
-                background-color: rgba(255, 255, 255, 0.2);
-                color: rgba(255, 255, 255, 0.5);
+                background-color: #e5e7eb;
+                color: #9ca3af;
             }
         """)
         self.convert_btn.clicked.connect(self.handle_start_conversion)
@@ -1163,15 +1159,17 @@ class ProjectsPage(QWidget):
         self.view_slides_btn = QPushButton("👁️ View Slides")
         self.view_slides_btn.setStyleSheet("""
             QPushButton {
-                background-color: rgba(255, 255, 255, 0.1);
-                color: white;
-                padding: 12px 20px;
+                background-color: #ffffff;
+                color: #374151;
+                padding: 14px 24px;
                 font-size: 14px;
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                border-radius: 8px;
+                font-weight: 600;
+                border: 1px solid #d1d5db;
+                border-radius: 10px;
             }
             QPushButton:hover {
-                background-color: rgba(255, 255, 255, 0.2);
+                background-color: #f3f4f6;
+                border-color: #9ca3af;
             }
         """)
         # TODO: Connect to switch to SlideView page
@@ -1188,45 +1186,46 @@ class ProjectsPage(QWidget):
         return details_container
     
     def _create_stat_card(self, icon, value, label):
-        """Create a stat card widget."""
+        """Create a sophisticated stat card widget."""
         card = QFrame()
         card.setStyleSheet("""
             QFrame {
-                background-color: rgba(255, 255, 255, 0.1);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-                border-radius: 8px;
-                padding: 15px;
+                background-color: #ffffff;
+                border: 1px solid #e5e7eb;
+                border-radius: 12px;
+                padding: 20px;
             }
         """)
         
         layout = QVBoxLayout(card)
         layout.setAlignment(Qt.AlignCenter)
-        layout.setSpacing(5)
+        layout.setSpacing(8)
         
         # Icon
         icon_label = QLabel(icon)
         icon_font = QFont()
-        icon_font.setPointSize(16)
+        icon_font.setPointSize(20)
         icon_label.setFont(icon_font)
         icon_label.setAlignment(Qt.AlignCenter)
-        icon_label.setStyleSheet("color: white;")
+        icon_label.setStyleSheet("color: #667eea;")
         
         # Value
         value_label = QLabel(value)
         value_font = QFont()
-        value_font.setPointSize(18)
-        value_font.setBold(True)
+        value_font.setPointSize(24)
+        value_font.setWeight(QFont.Weight.Bold)
         value_label.setFont(value_font)
         value_label.setAlignment(Qt.AlignCenter)
-        value_label.setStyleSheet("color: white;")
+        value_label.setStyleSheet("color: #1f2937;")
         
         # Label
         label_label = QLabel(label)
         label_font = QFont()
-        label_font.setPointSize(10)
+        label_font.setPointSize(12)
+        label_font.setWeight(QFont.Weight.Medium)
         label_label.setFont(label_font)
         label_label.setAlignment(Qt.AlignCenter)
-        label_label.setStyleSheet("color: rgba(255, 255, 255, 0.8);")
+        label_label.setStyleSheet("color: #6b7280;")
         
         layout.addWidget(icon_label)
         layout.addWidget(value_label)

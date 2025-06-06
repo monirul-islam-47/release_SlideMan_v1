@@ -125,32 +125,74 @@ class SlideViewPage(QWidget):
         self._all_slides = []
         self._current_slide_elements = []  # Store elements for the current slide
 
-        # --- Main Layout (Horizontal) ---
+        # --- SOPHISTICATED main layout ---
         main_layout = QHBoxLayout(self)
-        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setContentsMargins(0, 0, 0, 0)  # Edge-to-edge clean design
         main_layout.setSpacing(0)
 
         # --- Splitter to divide Left and Right ---
         self.splitter = QSplitter(Qt.Orientation.Horizontal)
 
-        # --- Left Pane Widget (Canvas + Thumbs) ---
+        # --- ELEGANT left pane with sophisticated styling ---
         self.left_pane_widget = QWidget()
+        self.left_pane_widget.setStyleSheet("""
+            QWidget {
+                background-color: #ffffff;
+                border-right: 1px solid #e5e7eb;
+            }
+        """)
         left_pane_layout = QVBoxLayout(self.left_pane_widget)
-        left_pane_layout.setContentsMargins(5, 5, 5, 5)
-        left_pane_layout.setSpacing(5)
+        left_pane_layout.setContentsMargins(24, 24, 24, 24)  # Professional spacing
+        left_pane_layout.setSpacing(20)  # Clean hierarchy
         
-        # --- File Filter Toolbar ---
+        # --- SOPHISTICATED file filter toolbar ---
         filter_toolbar = QToolBar("File Filter")
         filter_toolbar.setMovable(False)
         filter_toolbar.setFloatable(False)
+        filter_toolbar.setStyleSheet("""
+            QToolBar {
+                background-color: transparent;
+                border: none;
+                padding: 0px;
+                spacing: 12px;
+            }
+        """)
         
-        # Add file filter label
+        # ELEGANT filter label
         filter_label = QLabel("File Filter:")
+        filter_label.setStyleSheet("""
+            color: #374151;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 8px;
+        """)
         filter_toolbar.addWidget(filter_label)
         
-        # Add file filter combobox
+        # SOPHISTICATED filter combobox
         self.file_filter_combo = QComboBox()
-        self.file_filter_combo.setMinimumWidth(150)
+        self.file_filter_combo.setMinimumWidth(180)
+        self.file_filter_combo.setStyleSheet("""
+            QComboBox {
+                background-color: #f8fafc;
+                border: 1px solid #d1d5db;
+                border-radius: 8px;
+                padding: 8px 12px;
+                font-size: 14px;
+                color: #374151;
+                min-height: 20px;
+            }
+            QComboBox:hover {
+                border-color: #667eea;
+            }
+            QComboBox::drop-down {
+                border: none;
+                width: 20px;
+            }
+            QComboBox::down-arrow {
+                width: 12px;
+                height: 12px;
+            }
+        """)
         self.file_filter_combo.addItem("All Files", -1)  # -1 means all files
         self.file_filter_combo.currentIndexChanged.connect(self._handle_file_filter_changed)
         filter_toolbar.addWidget(self.file_filter_combo)
@@ -187,11 +229,29 @@ class SlideViewPage(QWidget):
         self.thumbnail_list_view.setSpacing(5)
         self.thumbnail_list_view.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         
-        # Add a nice visible border for selected items
+        # SOPHISTICATED thumbnail list styling
         self.thumbnail_list_view.setStyleSheet("""
+            QListView {
+                background-color: #f8fafc;
+                border: 1px solid #e5e7eb;
+                border-radius: 12px;
+                padding: 12px;
+            }
+            QListView::item {
+                background-color: #ffffff;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                margin: 4px;
+                padding: 8px;
+            }
+            QListView::item:hover {
+                border-color: #cbd5e1;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
             QListView::item:selected {
-                border: 3px solid #3584e4;
-                background-color: rgba(53, 132, 228, 0.2);
+                border: 2px solid #667eea;
+                background-color: rgba(102, 126, 234, 0.05);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
             }
         """)
         
@@ -208,28 +268,53 @@ class SlideViewPage(QWidget):
         left_pane_layout.addWidget(self.thumbnail_list_view) # Add the real list view
         # ---------------------------------------
 
-        # --- Right Pane (Keywords Panel) ---
+        # --- SOPHISTICATED right pane (Keywords Panel) ---
         self.right_pane_widget = QWidget()
+        self.right_pane_widget.setStyleSheet("""
+            QWidget {
+                background-color: #f8fafc;
+            }
+        """)
         self.right_pane_layout = QVBoxLayout(self.right_pane_widget)
-        self.right_pane_layout.setContentsMargins(10, 10, 10, 10)
-        self.right_pane_layout.setSpacing(10)
+        self.right_pane_layout.setContentsMargins(32, 32, 32, 32)  # Professional spacing
+        self.right_pane_layout.setSpacing(24)  # Sophisticated hierarchy
 
-        # --- Slide Keywords Section ---
-        self.slide_keywords_label = QLabel("<b>Slide Keywords</b>")
+        # --- SOPHISTICATED slide keywords section ---
+        self.slide_keywords_label = QLabel("Slide Keywords")
         self.slide_keywords_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.slide_keywords_label.setStyleSheet("""
+            color: #1f2937;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        """)
         self.right_pane_layout.addWidget(self.slide_keywords_label)
         
-        # Topic Tags
+        # ELEGANT topic tags section
         topic_layout = QVBoxLayout()
-        topic_label = QLabel("Topic(s):")
+        topic_layout.setSpacing(8)
+        topic_label = QLabel("Topics:")
+        topic_label.setStyleSheet("""
+            color: #374151;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        """)
         self.topic_tag_edit = TagEdit(placeholder_text="Add topic tag...")
         topic_layout.addWidget(topic_label)
         topic_layout.addWidget(self.topic_tag_edit)
         self.right_pane_layout.addLayout(topic_layout)
         
-        # Title Tags
+        # ELEGANT title tags section
         title_layout = QVBoxLayout()
-        title_label = QLabel("Title(s):")
+        title_layout.setSpacing(8)
+        title_label = QLabel("Titles:")
+        title_label.setStyleSheet("""
+            color: #374151;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        """)
         self.title_tag_edit = TagEdit(placeholder_text="Add title tag...")
         title_layout.addWidget(title_label)
         title_layout.addWidget(self.title_tag_edit)
@@ -238,30 +323,85 @@ class SlideViewPage(QWidget):
         # Add a spacer between sections
         self.right_pane_layout.addSpacing(20)
         
-        # --- Element Keywords Section ---
-        self.element_keywords_label = QLabel("<b>Element Keywords</b>")
+        # --- SOPHISTICATED element keywords section ---
+        self.element_keywords_label = QLabel("Element Keywords")
         self.element_keywords_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.element_keywords_label.setStyleSheet("""
+            color: #1f2937;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        """)
         self.right_pane_layout.addWidget(self.element_keywords_label)
         
-        # Selected Element Info
+        # ELEGANT selected element info
         self.selected_element_label = QLabel("Selected Element: None")
+        self.selected_element_label.setStyleSheet("""
+            color: #6b7280;
+            font-size: 14px;
+            font-style: italic;
+            margin-bottom: 12px;
+            padding: 12px;
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        """)
         self.right_pane_layout.addWidget(self.selected_element_label)
         
-        # Name Tags
+        # ELEGANT name tags section
         name_layout = QVBoxLayout()
-        name_label = QLabel("Name Tag(s):")
+        name_layout.setSpacing(8)
+        name_label = QLabel("Name Tags:")
+        name_label.setStyleSheet("""
+            color: #374151;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        """)
         self.name_tag_edit = TagEdit(placeholder_text="Add name tag...")
         name_layout.addWidget(name_label)
         name_layout.addWidget(self.name_tag_edit)
         self.right_pane_layout.addLayout(name_layout)
         
-        # Tagged Elements List
+        # SOPHISTICATED tagged elements list label
         tagged_elements_label = QLabel("Tagged Elements:")
+        tagged_elements_label.setStyleSheet("""
+            color: #374151;
+            font-size: 14px;
+            font-weight: 500;
+            margin-top: 8px;
+            margin-bottom: 4px;
+        """)
         self.right_pane_layout.addWidget(tagged_elements_label)
         
+        # SOPHISTICATED tagged elements list
         self.tagged_elements_list = QListView()
-        self.tagged_elements_list.setMaximumHeight(100)  # Limit height to keep UI compact
+        self.tagged_elements_list.setMaximumHeight(120)  # Slightly taller for better usability
         self.tagged_elements_list.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.tagged_elements_list.setStyleSheet("""
+            QListView {
+                background-color: #ffffff;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                padding: 8px;
+            }
+            QListView::item {
+                background-color: transparent;
+                border: none;
+                padding: 8px 12px;
+                margin: 2px 0px;
+                border-radius: 6px;
+                color: #374151;
+                font-size: 13px;
+            }
+            QListView::item:hover {
+                background-color: #f3f4f6;
+            }
+            QListView::item:selected {
+                background-color: #667eea;
+                color: white;
+            }
+        """)
         
         self.tagged_elements_model = QStandardItemModel()
         self.tagged_elements_list.setModel(self.tagged_elements_model)

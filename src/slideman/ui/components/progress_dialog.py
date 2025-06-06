@@ -45,17 +45,23 @@ class EnhancedProgressDialog(QProgressDialog):
         layout.setSpacing(8)
         layout.setContentsMargins(20, 15, 20, 15)
         
-        # Main operation label
+        # SOPHISTICATED main operation label
         self.main_label = QLabel(f"Processing {self.operation_name}...")
         main_font = QFont()
-        main_font.setPointSize(11)
-        main_font.setBold(True)
+        main_font.setPointSize(14)
+        main_font.setWeight(QFont.Weight.DemiBold)
         self.main_label.setFont(main_font)
+        self.main_label.setStyleSheet("color: #1f2937; margin-bottom: 4px;")
         layout.addWidget(self.main_label)
         
-        # Current item label
+        # ELEGANT current item label
         self.item_label = QLabel("Preparing...")
-        self.item_label.setStyleSheet("color: #555; font-size: 10px;")
+        self.item_label.setStyleSheet("""
+            color: #6b7280; 
+            font-size: 12px; 
+            font-weight: 400;
+            margin-bottom: 8px;
+        """)
         layout.addWidget(self.item_label)
         
         # Progress bar
@@ -67,16 +73,24 @@ class EnhancedProgressDialog(QProgressDialog):
         # Stats layout
         stats_layout = QHBoxLayout()
         
-        # Items processed
+        # SOPHISTICATED items processed label
         self.items_label = QLabel("Items: 0 of 0")
-        self.items_label.setStyleSheet("font-size: 9px; color: #666;")
+        self.items_label.setStyleSheet("""
+            font-size: 11px; 
+            color: #9ca3af;
+            font-weight: 500;
+        """)
         stats_layout.addWidget(self.items_label)
         
         stats_layout.addStretch()
         
-        # ETA
+        # ELEGANT ETA label
         self.eta_label = QLabel("ETA: Calculating...")
-        self.eta_label.setStyleSheet("font-size: 9px; color: #666;")
+        self.eta_label.setStyleSheet("""
+            font-size: 11px; 
+            color: #9ca3af;
+            font-weight: 500;
+        """)
         stats_layout.addWidget(self.eta_label)
         
         layout.addLayout(stats_layout)
@@ -84,20 +98,26 @@ class EnhancedProgressDialog(QProgressDialog):
         # Set the custom widget as the label
         self.setLabel(self.progress_widget)
         
-        # Style the dialog
+        # SOPHISTICATED dialog styling
         self.setStyleSheet("""
             QProgressDialog {
-                background-color: white;
-                border: 1px solid #ccc;
+                background-color: #ffffff;
+                border: 1px solid #e5e7eb;
+                border-radius: 12px;
             }
             QProgressBar {
-                border: 1px solid #bbb;
-                border-radius: 3px;
+                border: none;
+                border-radius: 8px;
+                background-color: #f3f4f6;
                 text-align: center;
-                font-size: 11px;
+                font-size: 12px;
+                font-weight: 500;
+                color: #374151;
+                height: 16px;
             }
             QProgressBar::chunk {
-                background-color: #3498db;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #667eea, stop:1 #764ba2);
                 border-radius: 2px;
             }
         """)

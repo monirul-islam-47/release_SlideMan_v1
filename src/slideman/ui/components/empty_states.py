@@ -16,94 +16,109 @@ class EmptyStateWidget(QWidget):
         self._setup_base_layout()
         
     def _setup_base_layout(self):
-        """Set up the base layout for empty states."""
+        """Set up the sophisticated base layout for empty states."""
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setAlignment(Qt.AlignCenter)
-        self.main_layout.setSpacing(20)
-        self.main_layout.setContentsMargins(40, 40, 40, 40)
+        self.main_layout.setSpacing(32)  # Sophisticated spacing
+        self.main_layout.setContentsMargins(64, 64, 64, 64)  # Generous professional margins
         
     def _add_icon(self, icon_text: str, size: int = 48):
-        """Add an icon to the empty state."""
+        """Add a sophisticated icon to the empty state."""
         icon_label = QLabel(icon_text)
         icon_font = QFont()
         icon_font.setPointSize(size)
         icon_label.setFont(icon_font)
         icon_label.setAlignment(Qt.AlignCenter)
-        icon_label.setStyleSheet("color: #95a5a6;")
+        icon_label.setStyleSheet("color: #667eea; margin-bottom: 8px;")  # Purple accent color
         self.main_layout.addWidget(icon_label)
         return icon_label
         
     def _add_title(self, title: str):
-        """Add a title to the empty state."""
+        """Add a sophisticated title to the empty state."""
         title_label = QLabel(title)
         title_font = QFont()
-        title_font.setPointSize(18)
-        title_font.setBold(True)
+        title_font.setPointSize(24)  # Larger, more impressive
+        title_font.setWeight(QFont.Weight.DemiBold)  # Professional weight
         title_label.setFont(title_font)
         title_label.setAlignment(Qt.AlignCenter)
         title_label.setWordWrap(True)
-        title_label.setStyleSheet("color: #2c3e50; margin-bottom: 10px;")
+        title_label.setStyleSheet("color: #1f2937; margin-bottom: 16px;")  # Professional dark gray
         self.main_layout.addWidget(title_label)
         return title_label
         
     def _add_description(self, description: str):
-        """Add a description to the empty state."""
+        """Add a sophisticated description to the empty state."""
         desc_label = QLabel(description)
         desc_label.setAlignment(Qt.AlignCenter)
         desc_label.setWordWrap(True)
         desc_label.setStyleSheet("""
-            color: #7f8c8d;
-            font-size: 14px;
-            line-height: 1.4;
-            max-width: 400px;
+            color: #6b7280;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.6;
+            max-width: 480px;
+            margin-bottom: 8px;
         """)
         self.main_layout.addWidget(desc_label)
         return desc_label
         
     def _add_primary_button(self, text: str, tooltip: str = "") -> QPushButton:
-        """Add a primary action button."""
+        """Add a sophisticated primary action button."""
         button = QPushButton(text)
         if tooltip:
             button.setToolTip(tooltip)
         button.setStyleSheet("""
             QPushButton {
-                background-color: #3498db;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #667eea, stop:1 #764ba2);
                 color: white;
-                padding: 12px 24px;
-                font-size: 14px;
-                font-weight: bold;
+                padding: 16px 32px;
+                font-size: 15px;
+                font-weight: 600;
                 border: none;
-                border-radius: 6px;
-                min-width: 120px;
+                border-radius: 12px;
+                min-width: 160px;
             }
             QPushButton:hover {
-                background-color: #2980b9;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #5a67d8, stop:1 #6b73ff);
+                transform: translateY(-1px);
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.25);
             }
             QPushButton:pressed {
-                background-color: #21618c;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #4c51bf, stop:1 #553c9a);
+                transform: translateY(0px);
             }
         """)
         self.main_layout.addWidget(button, alignment=Qt.AlignCenter)
         return button
         
     def _add_secondary_button(self, text: str, tooltip: str = "") -> QPushButton:
-        """Add a secondary action button."""
+        """Add a sophisticated secondary action button."""
         button = QPushButton(text)
         if tooltip:
             button.setToolTip(tooltip)
         button.setStyleSheet("""
             QPushButton {
-                background-color: transparent;
-                color: #7f8c8d;
-                padding: 8px 16px;
-                font-size: 12px;
-                border: 1px solid #bdc3c7;
-                border-radius: 4px;
-                min-width: 100px;
+                background-color: #ffffff;
+                color: #374151;
+                padding: 14px 28px;
+                font-size: 14px;
+                font-weight: 500;
+                border: 1px solid #d1d5db;
+                border-radius: 10px;
+                min-width: 140px;
             }
             QPushButton:hover {
-                color: #2c3e50;
-                border-color: #95a5a6;
+                background-color: #f9fafb;
+                color: #1f2937;
+                border-color: #9ca3af;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            }
+            QPushButton:pressed {
+                background-color: #f3f4f6;
+                transform: translateY(0px);
             }
         """)
         self.main_layout.addWidget(button, alignment=Qt.AlignCenter)
