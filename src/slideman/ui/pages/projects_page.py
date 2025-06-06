@@ -27,6 +27,8 @@ from ...services.slide_converter import SlideConverter, SlideConverterSignals # 
 from ...commands.rename_project import RenameProjectCmd
 from ...commands.delete_project import DeleteProjectCmd
 from ...app_state import app_state # Need access to undo_stack
+from ..components.empty_states import NoProjectsEmptyState, LoadingState
+from ..components.progress_dialog import ProjectCopyProgressDialog, FileConversionProgressDialog
 
 
 # --- Project List Model ---
@@ -144,13 +146,23 @@ class ProjectsPage(QWidget):
         # --- Right Panel ---
         self.right_panel = QStackedWidget()
         self.right_panel.setStyleSheet("QStackedWidget { border-left: 1px solid #555; }")
-        welcome_widget = QLabel("<- Select or Create a Project")
+        
+        # Empty state for no projects
+        self.no_projects_empty_state = NoProjectsEmptyState()
+        self.no_projects_empty_state.createProjectRequested.connect(self.handle_new_project)
+        self.no_projects_empty_state.importDemoRequested.connect(self._handle_demo_project)
+        self.right_panel.addWidget(self.no_projects_empty_state) # Index 0
+        
+        # Welcome widget for when projects exist but none selected
+        welcome_widget = QLabel("<- Select a Project")
         welcome_widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
         welcome_widget.setStyleSheet("QLabel { color: grey; font-style: italic; }")
-        self.right_panel.addWidget(welcome_widget) # Index 0
+        self.right_panel.addWidget(welcome_widget) # Index 1
+        
+        # Project details placeholder
         details_placeholder = QLabel("Project Details Placeholder")
         details_placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.right_panel.addWidget(details_placeholder) # Index 1
+        self.right_panel.addWidget(details_placeholder) # Index 2
 
         # --- Assemble Main Layout ---
         main_layout.addWidget(left_panel_widget, 35)
@@ -261,15 +273,21 @@ class ProjectsPage(QWidget):
              QMessageBox.critical(self, "Error", f"Could not determine project directory:\n{e}")
              return
 
-        # 4. Start Background Worker
+        # 4. Start Background Worker with Progress Dialog
         try:
             self.logger.info("Setting up background file copy worker.")
+            
+            # Create progress dialog
+            self.copy_progress_dialog = ProjectCopyProgressDialog(project_name, self)
+            self.copy_progress_dialog.set_total_items(len(source_paths))
+            self.copy_progress_dialog.show()
+            
             copy_worker_signals = WorkerSignals() # Create signals object in main thread
             worker = FileCopyWorker(source_paths, project_folder_path, signals=copy_worker_signals)
 
-            # Connect signals using partial for finished signal context
+            # Connect signals
             self.logger.debug("Connecting worker signals...") # Log before connect
-            copy_worker_signals.progress.connect(self.update_task_progress)
+            copy_worker_signals.progress.connect(self.update_copy_progress)
             # Use partial to pass current project_name and path to the slot
             on_finish_partial = partial(self.handle_copy_finished, project_name, project_folder_path)
             copy_worker_signals.finished.connect(on_finish_partial)
@@ -280,7 +298,6 @@ class ProjectsPage(QWidget):
 
             # --- Update UI to Busy State ---
             self._set_ui_busy(True, f"Copying files for '{project_name}'...")
-            self.task_progress_bar.setFormat("Copying files... %p%")
 
             QThreadPool.globalInstance().start(worker)
             self.logger.info("FileCopyWorker submitted to thread pool.")
@@ -301,6 +318,12 @@ class ProjectsPage(QWidget):
         # We could add logic here later if we want different text formats
         # for copy vs. convert, but for now just update the value.
         self.task_progress_bar.setValue(percent)
+        
+    @Slot(str, int)
+    def update_copy_progress(self, file_name: str, files_copied: int):
+        """Update the copy progress dialog."""
+        if hasattr(self, 'copy_progress_dialog') and self.copy_progress_dialog:
+            self.copy_progress_dialog.update_file_copy(file_name, files_copied)
 
         # --- Replace your entire handle_copy_finished function with this ---
     @Slot(str, Path, dict)
@@ -370,9 +393,19 @@ class ProjectsPage(QWidget):
         # Always refresh to reflect current DB state, even if errors occurred during add_file
         self.load_projects_from_db()
 
+        # --- Close Progress Dialog ---
+        if hasattr(self, 'copy_progress_dialog') and self.copy_progress_dialog:
+            if db_success:
+                self.copy_progress_dialog.finish_copy_operation(len(copied_files_info))
+            else:
+                self.copy_progress_dialog.finish_with_error("Database error occurred")
+            
         # --- Final Status Update Based on DB Success ---
         if db_success:
             event_bus.statusMessageUpdate.emit(f"Project '{project_name}' created.", 3000)
+            # Track onboarding progress
+            app_state.increment_completed_actions()
+            event_bus.onboardingProgressUpdate.emit("project_created")
         # No automatic triggering of conversion here anymore
 
         # --- NOTE: UI state was already reset by _set_ui_busy at the start ---
@@ -384,6 +417,11 @@ class ProjectsPage(QWidget):
     def handle_copy_error(self, error_message: str):
         """Handles errors reported by the file copy worker."""
         self.logger.error(f"File copy worker failed: {error_message}")
+        
+        # Close progress dialog with error
+        if hasattr(self, 'copy_progress_dialog') and self.copy_progress_dialog:
+            self.copy_progress_dialog.finish_with_error(error_message)
+            
         self._set_ui_busy(False, f"File copy failed: {error_message}", is_error=True) # Reset UI
         QMessageBox.critical(self, "File Copy Failed", f"Could not copy project files:\n{error_message}")
 
@@ -753,6 +791,10 @@ class ProjectsPage(QWidget):
              else: projects = []; self.logger.error("DB service unavailable.")
              self.logger.info(f"Fetched {len(projects)} projects from database.")
              self.project_model.load_projects(projects)
+             
+             # Update UI based on whether projects exist
+             self._update_empty_state(len(projects) == 0)
+             
              event_bus.statusMessageUpdate.emit(f"Loaded {len(projects)} projects.", 3000)
          except DatabaseError as e:
              self.logger.error(f"Database error loading projects: {e}", exc_info=True)
@@ -762,3 +804,63 @@ class ProjectsPage(QWidget):
              self.logger.error(f"Unexpected error loading projects: {e}", exc_info=True)
              QMessageBox.critical(self, "Unexpected Error", f"An unexpected error occurred while loading projects:\n{e}")
              event_bus.statusMessageUpdate.emit("Error loading projects.", 5000)
+    
+    def _update_empty_state(self, is_empty: bool):
+        """Update the right panel to show appropriate state."""
+        if is_empty:
+            # Show empty state for no projects
+            self.right_panel.setCurrentIndex(0)
+        else:
+            # Show default selection message
+            self.right_panel.setCurrentIndex(1)
+    
+    def _handle_demo_project(self):
+        """Handle demo project request from empty state."""
+        self.logger.info("Demo project requested from empty state")
+        
+        try:
+            from ...services.demo_content import DemoContentService
+            demo_service = DemoContentService(self.db)
+            
+            # Check if demo project already exists
+            if demo_service.has_demo_project():
+                QMessageBox.information(
+                    self, 
+                    "Demo Project", 
+                    "Demo project already exists!\n\n"
+                    "Look for '🎯 SlideMan Demo Project' in your projects list."
+                )
+            else:
+                # Create demo project
+                project_id = demo_service.create_demo_project()
+                if project_id:
+                    # Also populate sample keywords
+                    demo_service.populate_sample_keywords()
+                    
+                    QMessageBox.information(
+                        self, 
+                        "Demo Project Created", 
+                        "Demo project created successfully!\n\n"
+                        "The demo includes 10 sample slides with keywords.\n"
+                        "Explore the SlideView and Keywords pages to see how SlideMan works."
+                    )
+                    
+                    # Refresh projects list
+                    self.load_projects_from_db()
+                    app_state.increment_completed_actions()
+                else:
+                    QMessageBox.warning(
+                        self, 
+                        "Demo Project Failed", 
+                        "Failed to create demo project.\n\n"
+                        "Please try creating a regular project instead."
+                    )
+                    
+        except Exception as e:
+            self.logger.error(f"Failed to handle demo project request: {e}", exc_info=True)
+            QMessageBox.critical(
+                self, 
+                "Error", 
+                f"Error creating demo project:\n{e}\n\n"
+                "Please try creating a regular project instead."
+            )

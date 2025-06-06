@@ -40,6 +40,9 @@ class EventBus(QObject):
     statusMessageUpdate = Signal(str, int) # message, timeout_ms
     errorMessageOccurred = Signal(str, str) # title, message (for dialogs/notifications)
 
+    # UX Enhancement Events
+    onboardingProgressUpdate = Signal(str) # action type for progress tracking
+
     # Theme change could also be here if preferred over direct call
     # themeChanged = Signal(str) # "light" / "dark"
 

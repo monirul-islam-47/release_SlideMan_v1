@@ -79,6 +79,10 @@ class AppState(QObject):
         # --- Add DB Service Reference ---
         # This will be set from outside after initialization
         self.db_service: Optional[Database] = None
+        
+        # --- UX Enhancement State ---
+        self.user_level = self._get_user_level()
+        
         # -----------------------------
 
         self._initialized = True
@@ -198,6 +202,71 @@ class AppState(QObject):
             self.assembly_final_slide_ids = ids_int
             self.settings.setValue("assemblyFinalSlideIds", ids_int)
         self.assemblyOrderChanged.emit(ids_int)
+
+    # --- UX Enhancement Methods ---
+    def is_first_run(self) -> bool:
+        """Check if this is the user's first time running the application."""
+        return not self.settings.value("first_run_completed", False, bool)
+    
+    def complete_first_run(self):
+        """Mark the first run as completed."""
+        self.settings.setValue("first_run_completed", True)
+        self.logger.info("First run completed")
+    
+    def _get_user_level(self) -> str:
+        """Determine user experience level based on completed actions."""
+        completed_actions = self.settings.value("completed_actions", 0, int)
+        if completed_actions < 5:
+            return "beginner"
+        elif completed_actions < 20:
+            return "intermediate"
+        else:
+            return "expert"
+    
+    def increment_completed_actions(self):
+        """Increment the count of completed actions."""
+        current = self.settings.value("completed_actions", 0, int)
+        self.settings.setValue("completed_actions", current + 1)
+        old_level = self.user_level
+        self.user_level = self._get_user_level()
+        if old_level != self.user_level:
+            self.logger.info(f"User level upgraded from {old_level} to {self.user_level}")
+    
+    def should_show_feature(self, feature_name: str) -> bool:
+        """Determine if a feature should be visible based on user level."""
+        feature_visibility = {
+            'beginner': {
+                'basic_search': True,
+                'simple_tags': True,
+                'export': True,
+                'advanced_search': False,
+                'bulk_operations': False,
+                'keyword_similarity': False
+            },
+            'intermediate': {
+                'basic_search': True,
+                'simple_tags': True,
+                'export': True,
+                'advanced_search': True,
+                'multi_select': True,
+                'custom_tags': True,
+                'bulk_operations': False,
+                'keyword_similarity': False
+            },
+            'expert': {
+                'basic_search': True,
+                'simple_tags': True,
+                'export': True,
+                'advanced_search': True,
+                'multi_select': True,
+                'custom_tags': True,
+                'bulk_operations': True,
+                'keyword_similarity': True
+            }
+        }
+        
+        level_features = feature_visibility.get(self.user_level, feature_visibility['expert'])
+        return level_features.get(feature_name, True)
 
     # --- Add methods to manage recent projects, caches etc. as needed ---
 
