@@ -1,0 +1,37 @@
+[run]
+source = src/slideman
+branch = True
+omit = 
+    */tests/*
+    */venv/*
+    */venv_linux/*
+    */__pycache__/*
+    */site-packages/*
+    src/slideman/__main__.py
+    src/slideman/resources_rc.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    def __str__
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    @abstractmethod
+    @abc.abstractmethod
+    except ImportError:
+    except Exception as e:
+    logger.exception
+
+ignore_errors = True
+skip_covered = False
+show_missing = True
+precision = 2
+
+[html]
+directory = htmlcov
+
+[xml]
+output = coverage.xml

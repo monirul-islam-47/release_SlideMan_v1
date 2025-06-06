@@ -1,0 +1,1 @@
+"""UI utility modules for consistent patterns across the application."""

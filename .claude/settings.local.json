@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(python:*)",
+      "Bash(rm:*)",
+      "Bash(awk:*)",
+      "Bash(rg:*)",
+      "Bash(pytest:*)",
+      "Bash(poetry run pytest:*)",
+      "Bash(pip3 install:*)",
+      "Bash(mkdir:*)",
+      "Bash(ls:*)",
+      "Bash(source:*)",
+      "Bash(pip install:*)",
+      "Bash(sudo apt-get:*)",
+      "Bash(sudo apt-get install:*)",
+      "Bash(PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest tests/models/ -c pytest_linux.ini --confcutdir=tests --conftest-trace -v)",
+      "Bash(mv:*)",
+      "Bash(chmod:*)"
+    ],
+    "deny": []
+  }
+}

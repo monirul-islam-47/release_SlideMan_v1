@@ -1,0 +1,24 @@
+# SLIDEMAN Requirements
+# Python >=3.9,<3.14
+
+# Core Dependencies
+pyside6>=6.6,<6.9          # Qt framework for GUI
+pywin32>=305               # Windows COM automation for PowerPoint
+pillow>=10.0               # Image processing for thumbnails
+rapidfuzz>=3.0             # Fuzzy string matching for keyword similarity
+appdirs>=1.4               # Platform-specific application directories
+python-pptx>=1.0.2,<2.0.0  # PowerPoint file manipulation
+pydantic>=2.11.4,<3.0.0    # Data validation for models
+
+# Testing Dependencies
+pytest>=7.0,<8.0           # Testing framework
+pytest-qt>=4.4.0           # Qt testing support
+pytest-cov>=4.0.0          # Coverage reporting
+
+# Development Dependencies
+pyinstaller>=6.13.0        # Create standalone executables
+
+# Optional Dependencies (for development)
+# black>=22.0               # Code formatting
+# ruff>=0.0.260            # Linting
+# mypy>=1.0                # Type checking
