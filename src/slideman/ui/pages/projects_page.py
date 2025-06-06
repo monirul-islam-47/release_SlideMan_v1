@@ -6,8 +6,8 @@ from functools import partial
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QListView,
                              QToolBar, QStackedWidget, QLabel, QAbstractItemView,
                              QSizePolicy, QStatusBar, QFileDialog, QInputDialog, QMessageBox, QApplication,
-                             QMenu, QProgressBar)
-from PySide6.QtGui import QAction, QIcon, QStandardItemModel, QStandardItem, QKeySequence
+                             QMenu, QProgressBar, QFrame, QGridLayout, QPushButton)
+from PySide6.QtGui import QAction, QIcon, QStandardItemModel, QStandardItem, QKeySequence, QFont
 from PySide6.QtCore import Qt, Slot, QAbstractListModel, QModelIndex, QObject, QItemSelectionModel, QThreadPool, QItemSelection
 from typing import List, Any, Optional, Dict, Union # Added Union
 
@@ -89,28 +89,114 @@ class ProjectsPage(QWidget):
         self.logger.info("Initializing Projects Page")
         self.db = db_service
 
-        # --- Main Layout ---
+        # --- Main Layout with PERFECT spacing system ---
         main_layout = QHBoxLayout(self)
-        main_layout.setContentsMargins(0, 0, 0, 0)
-        main_layout.setSpacing(0)
+        main_layout.setContentsMargins(20, 20, 20, 20)  # Uniform 20px margins
+        main_layout.setSpacing(20)  # Consistent 20px gap
 
-        # --- Left Panel ---
+        # --- Left Panel with PRECISE gradient styling and PERFECT alignment ---
         left_panel_widget = QWidget()
+        left_panel_widget.setStyleSheet("""
+            QWidget {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #667eea, stop:1 #764ba2);
+                border-radius: 15px;
+                margin: 0px;  /* NO margin - let layout handle spacing */
+            }
+        """)
         left_layout = QVBoxLayout(left_panel_widget)
-        left_layout.setContentsMargins(5, 5, 5, 5)
-        left_layout.setSpacing(5)
+        left_layout.setContentsMargins(20, 20, 20, 20)  # Consistent 20px padding
+        left_layout.setSpacing(15)  # Perfect 15px internal spacing
 
-        # Toolbar
+        # Toolbar with beautiful styling
         self.toolbar = QToolBar("Projects Toolbar")
         self.toolbar.setMovable(False)
+        self.toolbar.setStyleSheet("""
+            QToolBar {
+                background-color: transparent;
+                border: none;
+                spacing: 12px;
+                padding: 15px;
+            }
+            QToolBar QToolButton {
+                background-color: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 10px;
+                padding: 12px 18px;
+                color: white;
+                font-size: 14px;
+                font-weight: 500;
+                margin: 3px;
+                min-width: 100px;
+            }
+            QToolBar QToolButton:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.4);
+                transform: translateY(-1px);
+            }
+            QToolBar QToolButton:pressed {
+                background-color: rgba(255, 255, 255, 0.15);
+            }
+            QToolBar QToolButton:disabled {
+                background-color: rgba(255, 255, 255, 0.05);
+                color: rgba(255, 255, 255, 0.4);
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+            QToolBar::separator {
+                background-color: rgba(255, 255, 255, 0.3);
+                width: 1px;
+                margin: 8px 4px;
+            }
+        """)
         self._setup_toolbar_actions() # Helper for toolbar actions
         left_layout.addWidget(self.toolbar)
 
-        # Project List View
+        # Project List View with beautiful styling
         self.project_list_view = QListView()
-        self.project_list_view.setAlternatingRowColors(True)
+        self.project_list_view.setAlternatingRowColors(False)
         self.project_list_view.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.project_list_view.setContextMenuPolicy(Qt.ContextMenuPolicy.ActionsContextMenu)
+        self.project_list_view.setStyleSheet("""
+            QListView {
+                background-color: transparent;
+                border: none;
+                outline: none;
+                selection-background-color: transparent;
+                font-size: 14px;
+                padding: 8px;
+            }
+            QListView::item {
+                background-color: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 12px;
+                margin: 6px 4px;
+                padding: 18px 20px;
+                color: white;
+                font-weight: 500;
+                min-height: 20px;
+            }
+            QListView::item:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.4);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+            QListView::item:selected {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #27ae60, stop:1 #2ecc71);
+                border: 2px solid #2ecc71;
+                color: white;
+                font-weight: bold;
+                transform: translateY(-1px);
+                box-shadow: 0 6px 16px rgba(39, 174, 96, 0.3);
+            }
+            QListView::item:selected:hover {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #2ecc71, stop:1 #27ae60);
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(39, 174, 96, 0.4);
+            }
+        """)
         self._setup_context_menu_actions() # Helper for context actions
 
         self.project_model = ProjectListModel(self)
@@ -143,9 +229,15 @@ class ProjectsPage(QWidget):
         self._conversion_processed_slides = 0
         # -----------------------------------------------
 
-        # --- Right Panel ---
+        # --- Right Panel with PERFECT alignment and beautiful styling ---
         self.right_panel = QStackedWidget()
-        self.right_panel.setStyleSheet("QStackedWidget { border-left: 1px solid #555; }")
+        self.right_panel.setStyleSheet("""
+            QStackedWidget {
+                background-color: transparent;
+                border: none;
+                margin: 0px;  /* NO margin - let layout handle spacing */
+            }
+        """)
         
         # Empty state for no projects
         self.no_projects_empty_state = NoProjectsEmptyState()
@@ -153,40 +245,50 @@ class ProjectsPage(QWidget):
         self.no_projects_empty_state.importDemoRequested.connect(self._handle_demo_project)
         self.right_panel.addWidget(self.no_projects_empty_state) # Index 0
         
-        # Welcome widget for when projects exist but none selected
-        welcome_widget = QLabel("<- Select a Project")
-        welcome_widget.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        welcome_widget.setStyleSheet("QLabel { color: grey; font-style: italic; }")
-        self.right_panel.addWidget(welcome_widget) # Index 1
+        # Beautiful welcome widget following design system
+        self.welcome_widget = self._create_beautiful_welcome_widget()
+        self.right_panel.addWidget(self.welcome_widget) # Index 1
         
-        # Project details placeholder
-        details_placeholder = QLabel("Project Details Placeholder")
-        details_placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.right_panel.addWidget(details_placeholder) # Index 2
+        # Beautiful project details widget following design system
+        self.project_details_widget = self._create_project_details_widget()
+        self.right_panel.addWidget(self.project_details_widget) # Index 2
 
-        # --- Assemble Main Layout ---
-        main_layout.addWidget(left_panel_widget, 35)
-        main_layout.addWidget(self.right_panel, 65)
+        # --- Assemble Main Layout with OPTIMAL proportions ---
+        main_layout.addWidget(left_panel_widget, 40)  # Better proportion for content density
+        main_layout.addWidget(self.right_panel, 60)   # More balanced layout
 
         # --- Load initial data ---
         self.load_projects_from_db()
         self.logger.debug("Projects Page UI initialized.")
 
     def _setup_toolbar_actions(self):
-        """Creates and adds actions to the toolbar."""
-        self.refresh_action = QAction(QIcon(":/icons/cil-reload.png"), "Refresh List", self)
-        self.refresh_action.triggered.connect(self.handle_refresh_projects)
-        self.toolbar.addAction(self.refresh_action)
-
-        self.new_project_action = QAction(QIcon(":/icons/cil-file.png"), "New Project", self)
+        """Creates and adds actions to the toolbar with intuitive organization and beautiful styling."""
+        # Primary action - most important
+        self.new_project_action = QAction("➕ New Project", self)
+        self.new_project_action.setToolTip("Create a new project and import PowerPoint files")
         self.new_project_action.triggered.connect(self.handle_new_project)
         self.toolbar.addAction(self.new_project_action)
-
-        self.convert_action = QAction(QIcon(":/icons/cil-coffee.png"), "Convert Slides", self) # Changed Icon
+        
+        # Add separator for visual grouping
+        self.toolbar.addSeparator()
+        
+        # Secondary actions - project management
+        self.convert_action = QAction("⚡ Convert Slides", self)
         self.convert_action.setToolTip("Process slides for viewing and tagging (requires PowerPoint)")
         self.convert_action.triggered.connect(self.handle_start_conversion)
         self.toolbar.addAction(self.convert_action)
         self.convert_action.setEnabled(False) # Disabled initially
+        
+        # Add spacer to push refresh to the right
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.toolbar.addWidget(spacer)
+        
+        # Utility action - least important, placed at the end
+        self.refresh_action = QAction("🔄 Refresh", self)
+        self.refresh_action.setToolTip("Refresh the projects list")
+        self.refresh_action.triggered.connect(self.handle_refresh_projects)
+        self.toolbar.addAction(self.refresh_action)
 
     def _setup_context_menu_actions(self):
         """Creates and adds actions to the list view's context menu."""
@@ -744,15 +846,16 @@ class ProjectsPage(QWidget):
             index = selected_indexes[0]
             project = self.project_model.get_project(index)
             if project:
-                # TODO: Show project details in right panel (replace placeholder)
-                self.right_panel.setCurrentIndex(1) # Show details placeholder for now
+                # Show project details and update with actual data
+                self._update_project_details(project)
+                self.right_panel.setCurrentIndex(2) # Show project details
                 
                 # IMPORTANT: Set current project in AppState so other pages can access it
                 app_state.set_current_project(project.folder_path)
                 self.logger.info(f"Project selected: {project.name}")
         else:
-            # No selection, show welcome panel
-            self.right_panel.setCurrentIndex(0)
+            # No selection, show welcome panel  
+            self.right_panel.setCurrentIndex(1) # Show welcome widget
             
             # Clear current project in AppState
             app_state.close_project()
@@ -864,3 +967,340 @@ class ProjectsPage(QWidget):
                 f"Error creating demo project:\n{e}\n\n"
                 "Please try creating a regular project instead."
             )
+    
+    def _create_beautiful_welcome_widget(self):
+        """Create a beautiful welcome widget following the design system."""
+        from PySide6.QtWidgets import QFrame, QGridLayout
+        
+        welcome_container = QFrame()
+        welcome_container.setStyleSheet("""
+            QFrame {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #667eea, stop:1 #764ba2);
+                border-radius: 15px;
+                margin: 0px;  /* NO margin - consistent with design system */
+            }
+        """)
+        
+        layout = QVBoxLayout(welcome_container)
+        layout.setContentsMargins(30, 30, 30, 30)  # Consistent with left panel proportions
+        layout.setSpacing(20)  # Matches design system rhythm
+        
+        # Main welcome message
+        welcome_label = QLabel("🚀 Ready to Organize!")
+        welcome_font = QFont()
+        welcome_font.setPointSize(24)
+        welcome_font.setBold(True)
+        welcome_label.setFont(welcome_font)
+        welcome_label.setAlignment(Qt.AlignCenter)
+        welcome_label.setStyleSheet("color: white; margin-bottom: 10px;")
+        
+        # Subtitle
+        subtitle_label = QLabel("Select a project from the left to start managing your slides")
+        subtitle_font = QFont()
+        subtitle_font.setPointSize(14)
+        subtitle_label.setFont(subtitle_font)
+        subtitle_label.setAlignment(Qt.AlignCenter)
+        subtitle_label.setWordWrap(True)
+        subtitle_label.setStyleSheet("color: rgba(255, 255, 255, 0.9); margin-bottom: 20px;")
+        
+        layout.addWidget(welcome_label)
+        layout.addWidget(subtitle_label)
+        
+        # Quick action cards with PERFECT spacing
+        actions_layout = QGridLayout()
+        actions_layout.setSpacing(20)  # More generous spacing for better visual breathing room
+        
+        actions = [
+            ("📁", "Create\nProject", "Start a new project with your PowerPoint files"),
+            ("🔍", "Search\nSlides", "Find any slide across all your projects"),
+            ("🏷️", "Tag\nContent", "Organize slides with keywords for quick access"),
+            ("🎯", "Build\nPresentation", "Assemble new presentations from existing slides")
+        ]
+        
+        for i, (icon, title, desc) in enumerate(actions):
+            card = self._create_action_card(icon, title, desc)
+            row = i // 2
+            col = i % 2
+            actions_layout.addWidget(card, row, col)
+            
+        layout.addLayout(actions_layout)
+        layout.addStretch()
+        
+        return welcome_container
+    
+    def _create_action_card(self, icon, title, description):
+        """Create an action card following welcome dialog pattern."""
+        card = QFrame()
+        card.setStyleSheet("""
+            QFrame {
+                background-color: rgba(255, 255, 255, 0.12);
+                border: 1px solid rgba(255, 255, 255, 0.25);
+                border-radius: 12px;
+                padding: 20px;
+                min-height: 90px;
+            }
+            QFrame:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.4);
+                transform: translateY(-2px);
+            }
+        """)
+        card.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        
+        card_layout = QVBoxLayout(card)
+        card_layout.setAlignment(Qt.AlignCenter)
+        card_layout.setSpacing(10)  # More generous spacing
+        
+        # Icon
+        icon_label = QLabel(icon)
+        icon_font = QFont()
+        icon_font.setPointSize(20)
+        icon_label.setFont(icon_font)
+        icon_label.setAlignment(Qt.AlignCenter)
+        icon_label.setStyleSheet("color: white;")
+        
+        # Title
+        title_label = QLabel(title)
+        title_font = QFont()
+        title_font.setPointSize(12)
+        title_font.setBold(True)
+        title_label.setFont(title_font)
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setWordWrap(True)
+        title_label.setStyleSheet("color: white;")
+        
+        # Description
+        desc_label = QLabel(description)
+        desc_font = QFont()
+        desc_font.setPointSize(9)
+        desc_label.setFont(desc_font)
+        desc_label.setAlignment(Qt.AlignCenter)
+        desc_label.setWordWrap(True)
+        desc_label.setStyleSheet("color: rgba(255, 255, 255, 0.8);")
+        
+        card_layout.addWidget(icon_label)
+        card_layout.addWidget(title_label)
+        card_layout.addWidget(desc_label)
+        
+        return card
+    
+    def _create_project_details_widget(self):
+        """Create a beautiful project details widget."""
+        details_container = QFrame()
+        details_container.setStyleSheet("""
+            QFrame {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #667eea, stop:1 #764ba2);
+                border-radius: 15px;
+                margin: 0px;  /* NO margin - consistent with design system */
+            }
+        """)
+        
+        layout = QVBoxLayout(details_container)
+        layout.setContentsMargins(30, 30, 30, 30)  # Consistent with design system
+        layout.setSpacing(20)  # Matches design system rhythm
+        
+        # Project title (will be updated dynamically)
+        self.project_title_label = QLabel("Project Overview")
+        title_font = QFont()
+        title_font.setPointSize(20)
+        title_font.setBold(True)
+        self.project_title_label.setFont(title_font)
+        self.project_title_label.setStyleSheet("color: white;")
+        
+        # Project stats cards container
+        stats_container = QFrame()
+        stats_container.setStyleSheet("""
+            QFrame {
+                background-color: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 10px;
+                padding: 20px;
+            }
+        """)
+        
+        stats_layout = QGridLayout(stats_container)
+        stats_layout.setSpacing(15)
+        
+        # Create stat cards
+        self.files_stat = self._create_stat_card("📁", "0", "Files")
+        self.slides_stat = self._create_stat_card("🎞️", "0", "Slides") 
+        self.keywords_stat = self._create_stat_card("🏷️", "0", "Keywords")
+        self.status_stat = self._create_stat_card("⚡", "Ready", "Status")
+        
+        stats_layout.addWidget(self.files_stat, 0, 0)
+        stats_layout.addWidget(self.slides_stat, 0, 1)
+        stats_layout.addWidget(self.keywords_stat, 1, 0)
+        stats_layout.addWidget(self.status_stat, 1, 1)
+        
+        # Action buttons
+        actions_container = QFrame()
+        actions_layout = QHBoxLayout(actions_container)
+        actions_layout.setSpacing(10)
+        
+        self.convert_btn = QPushButton("🔄 Convert Slides")
+        self.convert_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #27ae60;
+                color: white;
+                padding: 12px 20px;
+                font-size: 14px;
+                font-weight: bold;
+                border: none;
+                border-radius: 8px;
+            }
+            QPushButton:hover {
+                background-color: #2ecc71;
+            }
+            QPushButton:disabled {
+                background-color: rgba(255, 255, 255, 0.2);
+                color: rgba(255, 255, 255, 0.5);
+            }
+        """)
+        self.convert_btn.clicked.connect(self.handle_start_conversion)
+        
+        self.view_slides_btn = QPushButton("👁️ View Slides")
+        self.view_slides_btn.setStyleSheet("""
+            QPushButton {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: white;
+                padding: 12px 20px;
+                font-size: 14px;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                border-radius: 8px;
+            }
+            QPushButton:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+            }
+        """)
+        # TODO: Connect to switch to SlideView page
+        
+        actions_layout.addWidget(self.convert_btn)
+        actions_layout.addWidget(self.view_slides_btn)
+        actions_layout.addStretch()
+        
+        layout.addWidget(self.project_title_label)
+        layout.addWidget(stats_container)
+        layout.addWidget(actions_container)
+        layout.addStretch()
+        
+        return details_container
+    
+    def _create_stat_card(self, icon, value, label):
+        """Create a stat card widget."""
+        card = QFrame()
+        card.setStyleSheet("""
+            QFrame {
+                background-color: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 8px;
+                padding: 15px;
+            }
+        """)
+        
+        layout = QVBoxLayout(card)
+        layout.setAlignment(Qt.AlignCenter)
+        layout.setSpacing(5)
+        
+        # Icon
+        icon_label = QLabel(icon)
+        icon_font = QFont()
+        icon_font.setPointSize(16)
+        icon_label.setFont(icon_font)
+        icon_label.setAlignment(Qt.AlignCenter)
+        icon_label.setStyleSheet("color: white;")
+        
+        # Value
+        value_label = QLabel(value)
+        value_font = QFont()
+        value_font.setPointSize(18)
+        value_font.setBold(True)
+        value_label.setFont(value_font)
+        value_label.setAlignment(Qt.AlignCenter)
+        value_label.setStyleSheet("color: white;")
+        
+        # Label
+        label_label = QLabel(label)
+        label_font = QFont()
+        label_font.setPointSize(10)
+        label_label.setFont(label_font)
+        label_label.setAlignment(Qt.AlignCenter)
+        label_label.setStyleSheet("color: rgba(255, 255, 255, 0.8);")
+        
+        layout.addWidget(icon_label)
+        layout.addWidget(value_label)
+        layout.addWidget(label_label)
+        
+        # Store references for updating
+        card.value_label = value_label
+        
+        return card
+    
+    def _update_project_details(self, project):
+        """Update the project details widget with real project data."""
+        try:
+            # Update project title
+            self.project_title_label.setText(f"📁 {project.name}")
+            
+            # Get project statistics from database
+            files = self.db.get_files_for_project(project.id)
+            file_count = len(files)
+            
+            # Count slides across all files
+            slide_count = 0
+            completed_files = 0
+            for file in files:
+                if file.conversion_status == "Completed":
+                    slides = self.db.get_slides_for_file(file.id)
+                    slide_count += len(slides)
+                    completed_files += 1
+            
+            # Count unique keywords for this project
+            keyword_count = 0
+            try:
+                # Get all keywords used in this project
+                all_keywords = set()
+                for file in files:
+                    if file.conversion_status == "Completed":
+                        slides = self.db.get_slides_for_file(file.id)
+                        for slide in slides:
+                            slide_keywords = self.db.get_keywords_for_slide(slide.id)
+                            all_keywords.update(kw.name for kw in slide_keywords)
+                keyword_count = len(all_keywords)
+            except Exception as e:
+                self.logger.warning(f"Could not count keywords for project {project.id}: {e}")
+            
+            # Determine status
+            if file_count == 0:
+                status = "Empty"
+            elif completed_files == 0:
+                status = "Pending"
+            elif completed_files == file_count:
+                status = "Ready"
+            else:
+                status = f"{completed_files}/{file_count} Ready"
+            
+            # Update stat cards
+            self.files_stat.value_label.setText(str(file_count))
+            self.slides_stat.value_label.setText(str(slide_count))
+            self.keywords_stat.value_label.setText(str(keyword_count))
+            self.status_stat.value_label.setText(status)
+            
+            # Update button states
+            has_unconverted = any(f.conversion_status in ["Pending", "Failed"] for f in files)
+            self.convert_btn.setEnabled(has_unconverted)
+            if not has_unconverted:
+                self.convert_btn.setText("✅ All Converted")
+            else:
+                pending_count = sum(1 for f in files if f.conversion_status in ["Pending", "Failed"])
+                self.convert_btn.setText(f"🔄 Convert {pending_count} Files")
+                
+        except Exception as e:
+            self.logger.error(f"Error updating project details: {e}", exc_info=True)
+            # Set default values on error
+            self.project_title_label.setText(f"📁 {project.name}")
+            self.files_stat.value_label.setText("?")
+            self.slides_stat.value_label.setText("?")
+            self.keywords_stat.value_label.setText("?")
+            self.status_stat.value_label.setText("Error")

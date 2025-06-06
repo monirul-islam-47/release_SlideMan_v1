@@ -213,6 +213,11 @@ class AppState(QObject):
         self.settings.setValue("first_run_completed", True)
         self.logger.info("First run completed")
     
+    def reset_first_run(self):
+        """Reset first run status to show welcome dialog again (for testing/demo)."""
+        self.settings.setValue("first_run_completed", False)
+        self.logger.info("First run status reset - welcome dialog will show again")
+    
     def _get_user_level(self) -> str:
         """Determine user experience level based on completed actions."""
         completed_actions = self.settings.value("completed_actions", 0, int)

@@ -7,7 +7,7 @@ import sys
 from PySide6.QtWidgets import (QApplication, QMainWindow, QStackedWidget,
                              QVBoxLayout, QWidget, QMenuBar, QStatusBar,
                              QMessageBox, QPushButton, QHBoxLayout, QFrame, QLabel) # Added QMessageBox for About dialog
-from PySide6.QtGui import QAction, QIcon, QKeySequence
+from PySide6.QtGui import QAction, QIcon, QKeySequence, QFont
 from PySide6.QtCore import Slot, QSettings, Qt, QCoreApplication, QSize, QTimer # Added QCoreApplication, QSize, and QTimer
 
 # Architecture Link: These imports will connect to other layers later
@@ -82,8 +82,8 @@ class MainWindow(QMainWindow):
             # --- Left Navigation Panel ---
             self.logger.debug("Creating navigation panel")
             self.nav_frame = QFrame()
-            self.nav_frame.setFixedWidth(150) # Example fixed width
-            self.nav_frame.setStyleSheet("background-color: #44475a;") # Example color (adjust theme)
+            self.nav_frame.setFixedWidth(200) # Increased width for enhanced styling
+            self.nav_frame.setStyleSheet("background-color: #44475a;") # Temporary - will be overridden in _setup_visual_styling
             nav_layout = QVBoxLayout(self.nav_frame)
             nav_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
             nav_layout.setContentsMargins(5, 10, 5, 10)
@@ -100,24 +100,16 @@ class MainWindow(QMainWindow):
         try:
             self.logger.info("Creating navigation buttons")
             
-            self.btn_projects = QPushButton(" Projects")
+            self.btn_projects = QPushButton("📁  Projects")
             self.btn_projects.setObjectName("navButton")
-            # Comment out icon - resource file is missing
-            # self.btn_projects.setIcon(QIcon(":/icons/cil-folder.png"))
-            # self.btn_projects.setIconSize(QSize(18, 18))
             self.logger.debug("Created Projects button")
             
-            self.btn_slideview = QPushButton(" SlideView")
+            self.btn_slideview = QPushButton("🎞️  SlideView")
             self.btn_slideview.setObjectName("navButton")
-            # Comment out icon - resource file is missing
-            # self.btn_slideview.setIcon(QIcon(":/icons/cil-image1.png"))
-            # self.btn_slideview.setIconSize(QSize(18, 18))
             self.logger.debug("Created SlideView button")
             
-            self.btn_keywords = QPushButton(" Keywords")
+            self.btn_keywords = QPushButton("🏷️  Keywords")
             self.btn_keywords.setObjectName("navButton")
-            # Comment out icon - resource file is missing
-            # self.btn_keywords.setIcon(QIcon(":/icons/cil-tags.png"))
             self.logger.debug("Created Keywords button")
         except Exception as e:
             self.logger.critical(f"Error creating navigation buttons: {e}", exc_info=True)
@@ -130,18 +122,12 @@ class MainWindow(QMainWindow):
         try:
             self.logger.info("Creating additional navigation buttons")
             
-            self.btn_assembly = QPushButton(" Assembly")
+            self.btn_assembly = QPushButton("🎯  Assembly")
             self.btn_assembly.setObjectName("navButton")
-            # Comment out icon - resource file is missing
-            # self.btn_assembly.setIcon(QIcon(":/icons/cil-layers.png"))
-            # self.btn_assembly.setIconSize(QSize(18, 18))
             self.logger.debug("Created Assembly button")
             
-            self.btn_delivery = QPushButton(" Delivery")
+            self.btn_delivery = QPushButton("🚚  Delivery")
             self.btn_delivery.setObjectName("navButton")
-            # Comment out icon - resource file is missing
-            # self.btn_delivery.setIcon(QIcon(":/icons/cil-truck.png"))
-            # self.btn_delivery.setIconSize(QSize(18, 18))
             self.logger.debug("Created Delivery button")
 
             # Add navigation buttons to layout
@@ -152,12 +138,13 @@ class MainWindow(QMainWindow):
             nav_layout.addWidget(self.btn_assembly)
             nav_layout.addWidget(self.btn_delivery)
             
-            # Add onboarding checklist for beginners
+            # Replace ugly white thumbnails with beautiful progress cards
             if app_state.user_level == "beginner":
                 nav_layout.addSpacing(20)
-                self.onboarding_checklist = OnboardingChecklist()
-                self.onboarding_checklist.taskCompleted.connect(self._on_onboarding_task_completed)
-                nav_layout.addWidget(self.onboarding_checklist)
+                
+                # Create elegant progress indicator instead of ugly checklist
+                progress_card = self._create_elegant_progress_card()
+                nav_layout.addWidget(progress_card)
             
             nav_layout.addStretch(1)  # Push buttons to top
             self.logger.debug("Added all buttons to navigation layout")
@@ -172,7 +159,13 @@ class MainWindow(QMainWindow):
         try:
             self.logger.info("Setting up content area with stacked widget")
             self.stacked_widget = QStackedWidget()
-            self.stacked_widget.setStyleSheet("background-color: #282a36;")
+            self.stacked_widget.setStyleSheet("""
+                QStackedWidget {
+                    background: transparent;
+                    border-radius: 15px 0px 0px 15px;
+                    margin-left: 5px;
+                }
+            """)
             self.logger.debug("Created stacked widget")
 
             # Create the individual pages and add them to the stacked widget
@@ -328,6 +321,7 @@ class MainWindow(QMainWindow):
         self.toggle_theme_action = QAction("Toggle &Theme", self, statusTip="Switch between light and dark themes", triggered=self.toggle_theme)
         # Help Menu Actions
         self.about_action = QAction("&About", self, statusTip="Show About box", triggered=self.show_about_dialog)
+        self.show_welcome_action = QAction("Show &Welcome Dialog", self, statusTip="Show the welcome dialog again", triggered=self._show_welcome_dialog_again)
         self.debug_info_action = QAction("Copy &Debug Info", self, statusTip="Copy debug information to clipboard", triggered=self._copy_debug_info)
         self.save_debug_action = QAction("&Save Debug Report", self, statusTip="Save debug report to file", triggered=self._save_debug_report)
 
@@ -345,6 +339,8 @@ class MainWindow(QMainWindow):
 
         help_menu = menu_bar.addMenu("&Help")
         help_menu.addAction(self.about_action)
+        help_menu.addSeparator()
+        help_menu.addAction(self.show_welcome_action)
         help_menu.addSeparator()
         help_menu.addAction(self.debug_info_action)
         help_menu.addAction(self.save_debug_action)
@@ -527,9 +523,10 @@ class MainWindow(QMainWindow):
                     if hasattr(self.projects_page, 'load_projects_from_db'):
                         self.projects_page.load_projects_from_db()
                         
-                    app_state.increment_completed_actions()
-                else:
-                    self.status_bar.showMessage("Failed to create demo project. Please try creating a project manually.", 5000)
+                    if hasattr(app_state, 'increment_completed_actions'):
+                        app_state.increment_completed_actions()
+                    else:
+                        self.status_bar.showMessage("Failed to create demo project. Please try creating a project manually.", 5000)
                     
         except Exception as e:
             self.logger.error(f"Failed to create demo project: {e}", exc_info=True)
@@ -569,44 +566,55 @@ class MainWindow(QMainWindow):
             self.logger.error(f"Error checking platform capabilities: {e}", exc_info=True)
 
     def _setup_visual_styling(self):
-        """Set up enhanced visual styling for better hierarchy."""
+        """Set up enhanced visual styling following the established design system."""
         try:
-            # Enhanced navigation panel styling
+            # Enhanced navigation panel styling using EXACT welcome dialog gradient
             self.nav_frame.setStyleSheet("""
                 QFrame {
-                    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                        stop:0 #2c3e50, stop:1 #34495e);
-                    border-right: 2px solid #1abc9c;
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                        stop:0 #667eea, stop:1 #764ba2);
+                    border-right: 1px solid rgba(255, 255, 255, 0.2);
+                    border-radius: 0px 15px 15px 0px;
                 }
             """)
             
-            # Enhanced navigation button styling
+            # Add time-based greeting at top of navigation
+            self._add_navigation_greeting()
+            
+            # Enhanced navigation button styling matching welcome dialog aesthetic
             nav_button_style = """
                 QPushButton {
-                    background-color: transparent;
-                    color: #ecf0f1;
-                    padding: 12px 8px;
+                    background-color: rgba(255, 255, 255, 0.1);
+                    color: white;
                     text-align: left;
-                    border: none;
-                    border-radius: 4px;
-                    margin: 2px 4px;
-                    font-size: 13px;
+                    padding: 12px 20px;
+                    font-size: 14px;
                     font-weight: 500;
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    border-radius: 8px;
+                    margin: 4px 8px;
+                    min-height: 40px;
                 }
+                
                 QPushButton:hover {
-                    background-color: rgba(52, 152, 219, 0.2);
-                    color: #3498db;
+                    background-color: rgba(255, 255, 255, 0.2);
+                    border-color: rgba(255, 255, 255, 0.4);
+                    transform: translateY(-1px);
                 }
+                
                 QPushButton:checked {
-                    background-color: #3498db;
+                    background-color: #27ae60;
                     color: white;
                     font-weight: bold;
+                    border: 1px solid #2ecc71;
                 }
+                
                 QPushButton:checked:hover {
-                    background-color: #2980b9;
+                    background-color: #2ecc71;
                 }
+                
                 QPushButton:pressed {
-                    background-color: #21618c;
+                    background-color: rgba(255, 255, 255, 0.05);
                 }
             """
             
@@ -614,41 +622,83 @@ class MainWindow(QMainWindow):
             for btn in self.nav_buttons:
                 btn.setStyleSheet(nav_button_style)
                 
-            # Enhanced status bar styling
+            # Enhanced status bar styling following welcome dialog gradient design
             self.status_bar.setStyleSheet("""
                 QStatusBar {
-                    background-color: #34495e;
-                    color: #bdc3c7;
-                    border-top: 1px solid #2c3e50;
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                        stop:0 #667eea, stop:1 #764ba2);
+                    color: white;
                     font-size: 12px;
-                    padding: 4px;
+                    padding: 8px 15px;
+                    border-top: 1px solid rgba(255, 255, 255, 0.2);
+                    font-weight: 500;
+                }
+                QStatusBar::item {
+                    border: none;
                 }
             """)
             
-            # Main window styling
+            # Add contextual tips to status bar
+            self._show_contextual_status_tip()
+            
+            # Main window styling harmonized with welcome dialog gradient theme
             self.setStyleSheet("""
                 QMainWindow {
-                    background-color: #2c3e50;
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                        stop:0 #667eea, stop:1 #764ba2);
                 }
                 QMenuBar {
-                    background-color: #2c3e50;
-                    color: #ecf0f1;
-                    border-bottom: 1px solid #34495e;
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                        stop:0 #667eea, stop:1 #764ba2);
+                    color: white;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                    font-weight: 500;
+                    padding: 4px;
                 }
                 QMenuBar::item {
                     background-color: transparent;
-                    padding: 6px 12px;
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    margin: 2px 4px;
                 }
                 QMenuBar::item:selected {
-                    background-color: #3498db;
+                    background-color: rgba(255, 255, 255, 0.2);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                }
+                QMenuBar::item:pressed {
+                    background-color: rgba(255, 255, 255, 0.1);
                 }
                 QMenu {
-                    background-color: #34495e;
-                    color: #ecf0f1;
-                    border: 1px solid #2c3e50;
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                        stop:0 #667eea, stop:1 #764ba2);
+                    color: white;
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    border-radius: 8px;
+                    padding: 8px;
+                }
+                QMenu::item {
+                    background-color: transparent;
+                    padding: 8px 20px;
+                    border-radius: 6px;
+                    margin: 2px;
                 }
                 QMenu::item:selected {
-                    background-color: #3498db;
+                    background-color: rgba(255, 255, 255, 0.2);
+                }
+                QMenu::separator {
+                    height: 1px;
+                    background-color: rgba(255, 255, 255, 0.2);
+                    margin: 4px 10px;
+                }
+                QToolTip {
+                    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                        stop:0 #667eea, stop:1 #764ba2);
+                    color: white;
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    padding: 8px 12px;
+                    border-radius: 8px;
+                    font-size: 13px;
+                    font-weight: 500;
                 }
             """)
             
@@ -659,12 +709,12 @@ class MainWindow(QMainWindow):
     def _setup_contextual_help(self):
         """Set up contextual help tooltips and help bubbles."""
         try:
-            # Add tooltips to navigation buttons
-            self.btn_projects.setToolTip("Manage your PowerPoint projects and files")
-            self.btn_slideview.setToolTip("Browse and search through all your slides")
-            self.btn_keywords.setToolTip("Organize slides with keywords and tags")
-            self.btn_assembly.setToolTip("Build new presentations from existing slides")
-            self.btn_delivery.setToolTip("Export and share your completed presentations")
+            # Add enhanced tooltips to navigation buttons following design guide
+            self.btn_projects.setToolTip("📁 Manage your PowerPoint projects and import files")
+            self.btn_slideview.setToolTip("🎞️ Browse, search, and organize all your slides")
+            self.btn_keywords.setToolTip("🏷️ Create and manage keywords for better organization")
+            self.btn_assembly.setToolTip("🎯 Build new presentations from existing slides")
+            self.btn_delivery.setToolTip("🚚 Export and share your completed presentations")
             
             # Set object names for help system
             self.btn_projects.setObjectName("projects_nav_button")
@@ -714,6 +764,79 @@ class MainWindow(QMainWindow):
                 )
         except Exception as e:
             self.logger.warning(f"Failed to show delayed help: {e}", exc_info=True)
+    
+    @Slot(str)
+    def _on_onboarding_task_completed(self, task_name):
+        """Handle completion of onboarding tasks."""
+        try:
+            self.logger.info(f"Onboarding task completed: {task_name}")
+            if hasattr(app_state, 'increment_completed_actions'):
+                app_state.increment_completed_actions()
+            self.status_bar.showMessage(f"Great! You completed: {task_name}", 3000)
+        except Exception as e:
+            self.logger.warning(f"Failed to handle onboarding task completion: {e}", exc_info=True)
+    
+    def _create_elegant_progress_card(self):
+        """Create an elegant progress card following welcome dialog standards - NO WHITE THUMBNAILS!"""
+        from PySide6.QtWidgets import QFrame, QVBoxLayout, QProgressBar
+        
+        progress_frame = QFrame()
+        progress_frame.setStyleSheet("""
+            QFrame {
+                background-color: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 12px;
+                padding: 20px;
+                margin: 8px;
+            }
+            QFrame:hover {
+                background-color: rgba(255, 255, 255, 0.15);
+                border-color: rgba(255, 255, 255, 0.3);
+            }
+        """)
+        
+        layout = QVBoxLayout(progress_frame)
+        layout.setSpacing(12)
+        layout.setContentsMargins(15, 15, 15, 15)
+        
+        # Elegant title with emoji
+        title_label = QLabel("🎯 Getting Started")
+        title_font = QFont()
+        title_font.setPointSize(14)
+        title_font.setBold(True)
+        title_label.setFont(title_font)
+        title_label.setStyleSheet("color: white; margin-bottom: 8px;")
+        
+        # Beautiful progress bar
+        progress_bar = QProgressBar()
+        progress_bar.setRange(0, 100)
+        progress_bar.setValue(getattr(app_state, 'completed_actions', 0) * 25)  # Assuming 4 key actions
+        progress_bar.setStyleSheet("""
+            QProgressBar {
+                background-color: rgba(255, 255, 255, 0.2);
+                border: none;
+                border-radius: 8px;
+                height: 16px;
+            }
+            QProgressBar::chunk {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #27ae60, stop:1 #2ecc71);
+                border-radius: 8px;
+            }
+        """)
+        
+        # Encouraging subtitle
+        subtitle_label = QLabel(f"You're {min(getattr(app_state, 'completed_actions', 0) * 25, 100)}% ready!")
+        subtitle_font = QFont()
+        subtitle_font.setPointSize(11)
+        subtitle_label.setFont(subtitle_font)
+        subtitle_label.setStyleSheet("color: rgba(255, 255, 255, 0.9);")
+        
+        layout.addWidget(title_label)
+        layout.addWidget(progress_bar)
+        layout.addWidget(subtitle_label)
+        
+        return progress_frame
 
     def _copy_debug_info(self):
         """Copy debug information to clipboard."""
@@ -747,6 +870,17 @@ class MainWindow(QMainWindow):
         except Exception as e:
             self.logger.error(f"Failed to save debug report: {e}", exc_info=True)
             QMessageBox.warning(self, "Error", f"Failed to save debug report: {e}")
+    
+    def _show_welcome_dialog_again(self):
+        """Show the welcome dialog again by resetting first run status."""
+        try:
+            self.logger.info("User requested to show welcome dialog again")
+            app_state.reset_first_run()
+            self._show_welcome_dialog()
+            self.status_bar.showMessage("Welcome dialog shown - first run status reset", 3000)
+        except Exception as e:
+            self.logger.error(f"Failed to show welcome dialog: {e}", exc_info=True)
+            QMessageBox.warning(self, "Error", f"Failed to show welcome dialog: {e}")
 
     def _on_onboarding_task_completed(self, task_id: str):
         """Handle completion of onboarding tasks."""
@@ -800,3 +934,93 @@ class MainWindow(QMainWindow):
         # Architecture Link: Uses QSettings for persistence
         settings = QSettings("SlidemanDev", "Slideman")
         settings.setValue("mainWindowGeometry", self.saveGeometry())
+    
+    def _add_navigation_greeting(self):
+        """Add time-based greeting to navigation panel following design guide."""
+        try:
+            import datetime
+            current_hour = datetime.datetime.now().hour
+            
+            if current_hour < 12:
+                greeting = "Good morning!"
+            elif current_hour < 18:
+                greeting = "Good afternoon!"
+            else:
+                greeting = "Good evening!"
+            
+            # Create greeting widget following welcome dialog pattern
+            greeting_widget = QWidget()
+            greeting_layout = QVBoxLayout(greeting_widget)
+            greeting_layout.setContentsMargins(15, 15, 15, 15)
+            greeting_layout.setSpacing(5)
+            
+            # Main greeting using welcome dialog styling
+            greeting_label = QLabel(greeting)
+            greeting_label.setStyleSheet("""
+                color: white;
+                font-size: 18px;
+                font-weight: bold;
+                background-color: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 10px;
+                padding: 15px;
+                margin: 5px;
+            """)
+            greeting_label.setAlignment(Qt.AlignCenter)
+            
+            # Subtitle using welcome dialog pattern
+            stats_label = QLabel("Transform how you manage PowerPoint slides")
+            stats_label.setStyleSheet("""
+                color: rgba(255, 255, 255, 0.9);
+                font-size: 12px;
+                padding: 8px;
+                margin: 2px;
+            """)
+            stats_label.setAlignment(Qt.AlignCenter)
+            stats_label.setWordWrap(True)
+            
+            greeting_layout.addWidget(greeting_label)
+            greeting_layout.addWidget(stats_label)
+            
+            # Insert at top of navigation layout
+            nav_layout = self.nav_frame.layout()
+            nav_layout.insertWidget(0, greeting_widget)
+            nav_layout.insertSpacing(1, 15)
+            
+            self.logger.debug("Navigation greeting added successfully")
+        except Exception as e:
+            self.logger.warning(f"Failed to add navigation greeting: {e}", exc_info=True)
+    
+    def _show_contextual_status_tip(self):
+        """Show contextual tips in status bar based on user level."""
+        try:
+            if app_state.user_level == "beginner":
+                tips = [
+                    "💡 Tip: Start by creating your first project in the Projects tab",
+                    "🔍 Tip: Use keywords to organize your slides for quick searching",
+                    "✨ Tip: Hover over buttons to see helpful tooltips",
+                    "🎯 Tip: Build presentations faster using the Assembly feature"
+                ]
+            elif app_state.user_level == "intermediate":
+                tips = [
+                    "⚡ Pro tip: Use Ctrl+F to quickly search slides",
+                    "🏷️ Pro tip: Bulk tag slides to save time organizing",
+                    "🔄 Pro tip: Use the Assembly page to reuse slides across projects",
+                    "📊 Pro tip: Keywords help you find slides across all projects"
+                ]
+            else:  # expert
+                tips = [
+                    "🚀 Expert mode: Try advanced search operators",
+                    "⌨️ Expert tip: Use keyboard shortcuts for faster workflow",
+                    "🔧 Advanced: Customize your keyword organization system",
+                    "📈 Power user: Export templates for reusable presentations"
+                ]
+            
+            import random
+            tip = random.choice(tips)
+            
+            # Show tip after a delay to not interfere with other status messages
+            QTimer.singleShot(3000, lambda: self.status_bar.showMessage(tip, 10000))
+            
+        except Exception as e:
+            self.logger.warning(f"Failed to show contextual status tip: {e}", exc_info=True)
