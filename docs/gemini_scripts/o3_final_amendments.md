@@ -7,9 +7,6 @@ Here are two comprehensive checklists—one for enhancing your **landing pages**
 * [ ] **Onboarding Teaser**
   Include a short GIF or 60-second video walkthrough of the five-step guided tour to show how painless first-run is .
 
-* [ ] **Developer Quickstart**
-  Add a “Built for developers” band with public endpoint highlights, SDK links, rate-limit notes and an example cURL call .
-
 * [ ] **Security & Trust Panel**
   Surface GDPR, SOC 2, SSO & data-retention policies with icons/logos—none of the current pages mention compliance .
 
