@@ -415,29 +415,332 @@ class UnifiedMainWindow(QMainWindow):
     def _new_project(self):
         """Create a new project."""
         self.logger.info("New project requested")
-        # Implementation will use existing project creation logic
-        pass
+        
+        try:
+            # 1. Select PowerPoint files
+            selected_files, _ = QFileDialog.getOpenFileNames(
+                self, 
+                "Select PowerPoint Files", 
+                "", 
+                "PowerPoint Files (*.pptx);;All Files (*)"
+            )
+            if not selected_files:
+                return
+                
+            source_paths = [Path(f) for f in selected_files]
+            self.logger.info(f"Selected {len(source_paths)} files for new project")
+
+            # 2. Get project name
+            project_name, ok = QInputDialog.getText(
+                self, 
+                "New Project Name", 
+                "Enter a name for your new project:"
+            )
+            if not ok or not project_name.strip():
+                return
+                
+            project_name = project_name.strip()
+
+            # 3. Create project using existing logic
+            from ..services import file_io
+            project_folder_path = file_io.create_new_project_folder(project_name)
+            
+            # 4. Create project in database
+            try:
+                project = self.db_service.create_project(project_name, str(project_folder_path))
+                self.logger.info(f"Created project: {project.name} at {project_folder_path}")
+                
+                # 5. Update current project
+                app_state.set_current_project_path(str(project_folder_path))
+                
+                # 6. Start file import process
+                self._import_files_to_project(source_paths, project)
+                
+                # 7. Refresh UI
+                self.header_widget.refresh_projects()
+                self.status_bar.showMessage(f"Created project '{project_name}' and importing files...", 5000)
+                
+            except Exception as e:
+                self.logger.error(f"Failed to create project in database: {e}")
+                QMessageBox.critical(self, "Project Creation Error", 
+                                   f"Failed to create project in database:\n{e}")
+                
+        except Exception as e:
+            self.logger.error(f"Error creating new project: {e}")
+            QMessageBox.critical(self, "Error", f"Failed to create new project:\n{e}")
         
     @Slot()
     def _open_project(self):
         """Open an existing project."""
         self.logger.info("Open project requested")
-        # Implementation will use existing project opening logic
-        pass
+        
+        try:
+            # Get list of existing projects
+            projects = self.db_service.get_all_projects()
+            if not projects:
+                QMessageBox.information(self, "No Projects", 
+                                      "No projects found. Create a new project to get started.")
+                return
+                
+            # Create a simple selection dialog
+            from PySide6.QtWidgets import QDialog, QVBoxLayout, QListWidget, QDialogButtonBox, QPushButton
+            
+            dialog = QDialog(self)
+            dialog.setWindowTitle("Open Project")
+            dialog.setModal(True)
+            dialog.resize(400, 300)
+            
+            layout = QVBoxLayout(dialog)
+            
+            # Project list
+            project_list = QListWidget()
+            for project in projects:
+                item_text = f"{project.name} ({project.folder_path})"
+                project_list.addItem(item_text)
+                project_list.item(project_list.count() - 1).setData(Qt.UserRole, project.folder_path)
+            
+            layout.addWidget(QLabel("Select a project to open:"))
+            layout.addWidget(project_list)
+            
+            # Buttons
+            button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+            button_box.accepted.connect(dialog.accept)
+            button_box.rejected.connect(dialog.reject)
+            layout.addWidget(button_box)
+            
+            # Connect double-click to accept
+            project_list.itemDoubleClicked.connect(dialog.accept)
+            
+            if dialog.exec() == QDialog.Accepted:
+                current_item = project_list.currentItem()
+                if current_item:
+                    project_path = current_item.data(Qt.UserRole)
+                    if project_path:
+                        # Set as current project
+                        app_state.set_current_project_path(project_path)
+                        self.status_bar.showMessage(f"Opened project at: {project_path}", 3000)
+                        
+        except Exception as e:
+            self.logger.error(f"Error opening project: {e}")
+            QMessageBox.critical(self, "Open Project Error", f"Failed to open project:\n{e}")
         
     @Slot()
     def _import_files(self):
         """Import PowerPoint files."""
         self.logger.info("Import files requested")
-        # Implementation will use existing file import logic
-        pass
+        
+        # Check if we have a current project
+        if not app_state.current_project_path:
+            reply = QMessageBox.question(
+                self, 
+                "No Project Selected",
+                "You need to select or create a project first.\n\nWould you like to create a new project?",
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.Yes
+            )
+            if reply == QMessageBox.Yes:
+                self._new_project()
+            return
+            
+        try:
+            # Get current project
+            project = self.db_service.get_project_by_path(app_state.current_project_path)
+            if not project:
+                QMessageBox.warning(self, "Project Error", "Current project not found in database.")
+                return
+                
+            # Select PowerPoint files
+            selected_files, _ = QFileDialog.getOpenFileNames(
+                self, 
+                "Import PowerPoint Files", 
+                "", 
+                "PowerPoint Files (*.pptx);;All Files (*)"
+            )
+            if not selected_files:
+                return
+                
+            source_paths = [Path(f) for f in selected_files]
+            self.logger.info(f"Selected {len(source_paths)} files to import to project {project.name}")
+            
+            # Start import process
+            self._import_files_to_project(source_paths, project)
+            
+            self.status_bar.showMessage(f"Importing {len(source_paths)} files to {project.name}...", 5000)
+            
+        except Exception as e:
+            self.logger.error(f"Error importing files: {e}")
+            QMessageBox.critical(self, "Import Error", f"Failed to import files:\n{e}")
+            
+    def _import_files_to_project(self, source_paths: List[Path], project):
+        """Import files to a specific project (used by both new project and import files)."""
+        try:
+            from ..services.background_tasks import FileCopyWorker
+            from ..services.slide_converter import SlideConverter
+            
+            # Copy files to project folder
+            project_folder = Path(project.folder_path)
+            
+            # Create worker for file copying
+            copy_worker = FileCopyWorker(source_paths, project_folder)
+            
+            # Connect signals for progress tracking
+            def on_copy_progress(percent):
+                self.status_bar.showMessage(f"Copying files... {percent}%", 0)
+                
+            def on_copy_finished(copied_files):
+                self.logger.info(f"File copy completed: {len(copied_files)} files")
+                
+                # Start slide conversion
+                self._start_slide_conversion(copied_files, project)
+                
+            def on_copy_error(error_msg):
+                self.logger.error(f"File copy error: {error_msg}")
+                QMessageBox.critical(self, "Copy Error", f"Failed to copy files:\n{error_msg}")
+                
+            copy_worker.signals.progress.connect(on_copy_progress)
+            copy_worker.signals.finished.connect(on_copy_finished)
+            copy_worker.signals.error.connect(on_copy_error)
+            
+            # Start the copy operation
+            from PySide6.QtCore import QThreadPool
+            QThreadPool.globalInstance().start(copy_worker)
+            
+        except Exception as e:
+            self.logger.error(f"Error setting up file import: {e}")
+            QMessageBox.critical(self, "Import Setup Error", f"Failed to setup file import:\n{e}")
+            
+    def _start_slide_conversion(self, copied_files: List[Path], project):
+        """Start slide conversion after files are copied."""
+        try:
+            from ..services.slide_converter import SlideConverter
+            
+            # Create slide converter
+            converter = SlideConverter()
+            
+            # Register files in database and start conversion
+            for file_path in copied_files:
+                try:
+                    # Register file in database
+                    file_obj = self.db_service.create_file(
+                        project_id=project.id,
+                        filename=file_path.name,
+                        file_path=str(file_path)
+                    )
+                    
+                    # Start conversion for this file
+                    def on_conversion_finished(file_id):
+                        self.logger.info(f"Conversion completed for file {file_id}")
+                        # Refresh slide library when conversion completes
+                        self.slide_library.refresh_for_project()
+                        self.left_panel.refresh_all()
+                        
+                    def on_conversion_error(file_id, error_msg):
+                        self.logger.error(f"Conversion error for file {file_id}: {error_msg}")
+                        
+                    # Connect converter signals
+                    converter.signals.conversionFinished.connect(on_conversion_finished)
+                    converter.signals.conversionError.connect(on_conversion_error)
+                    
+                    # Start conversion
+                    converter.convert_file(file_obj.id, str(file_path))
+                    
+                except Exception as e:
+                    self.logger.error(f"Error processing file {file_path}: {e}")
+                    
+            self.status_bar.showMessage("Converting slides... This may take a few moments.", 0)
+            
+        except Exception as e:
+            self.logger.error(f"Error starting slide conversion: {e}")
+            QMessageBox.critical(self, "Conversion Error", f"Failed to start slide conversion:\n{e}")
         
     @Slot()
     def _export_assembly(self):
         """Export current assembly."""
         self.logger.info("Export assembly requested")
-        # Implementation will use existing export logic
-        pass
+        
+        # Get slide IDs from assembly panel
+        slide_ids = self.assembly_panel.get_assembly_slide_ids()
+        if not slide_ids:
+            QMessageBox.information(self, "Export Assembly", 
+                                  "Your assembly is empty. Add some slides to export a presentation.")
+            return
+            
+        try:
+            # Get export file location
+            project = self.db_service.get_project_by_path(app_state.current_project_path) if app_state.current_project_path else None
+            default_name = f"{project.name}_assembly.pptx" if project else "assembly.pptx"
+            
+            export_path, _ = QFileDialog.getSaveFileName(
+                self,
+                "Export Assembly to PowerPoint",
+                default_name,
+                "PowerPoint Files (*.pptx);;All Files (*)"
+            )
+            
+            if not export_path:
+                return
+                
+            # Show progress
+            self.assembly_panel.show_progress("Preparing export...", len(slide_ids))
+            
+            # Use existing export service
+            from ..services.export_service import ExportService
+            
+            export_service = ExportService(self.db_service)
+            
+            # Connect progress signals
+            def on_export_progress(current, total):
+                self.assembly_panel.update_progress(current)
+                self.status_bar.showMessage(f"Exporting slide {current} of {total}...", 0)
+                
+            def on_export_finished():
+                self.assembly_panel.hide_progress()
+                self.status_bar.showMessage("Export completed successfully!", 5000)
+                
+                # Ask if user wants to open the file
+                reply = QMessageBox.question(
+                    self,
+                    "Export Complete",
+                    f"Assembly exported successfully to:\n{export_path}\n\nWould you like to open it?",
+                    QMessageBox.Yes | QMessageBox.No,
+                    QMessageBox.Yes
+                )
+                
+                if reply == QMessageBox.Yes:
+                    import subprocess
+                    import os
+                    if os.name == 'nt':  # Windows
+                        os.startfile(export_path)
+                    elif os.name == 'posix':  # macOS and Linux
+                        subprocess.call(['open', export_path])
+                        
+            def on_export_error(error_msg):
+                self.assembly_panel.hide_progress()
+                self.status_bar.showMessage("Export failed", 5000)
+                QMessageBox.critical(self, "Export Error", f"Failed to export assembly:\n{error_msg}")
+                
+            # Connect signals if export service supports them
+            if hasattr(export_service, 'progress'):
+                export_service.progress.connect(on_export_progress)
+            if hasattr(export_service, 'finished'):
+                export_service.finished.connect(on_export_finished)
+            if hasattr(export_service, 'error'):
+                export_service.error.connect(on_export_error)
+            
+            # Start export
+            try:
+                success = export_service.export_slides_to_pptx(slide_ids, export_path)
+                if success:
+                    on_export_finished()
+                else:
+                    on_export_error("Export service returned failure")
+            except Exception as e:
+                on_export_error(str(e))
+                
+        except Exception as e:
+            self.logger.error(f"Error exporting assembly: {e}")
+            self.assembly_panel.hide_progress()
+            QMessageBox.critical(self, "Export Error", f"Failed to export assembly:\n{e}")
         
     @Slot()
     def _preview_assembly(self):
@@ -502,23 +805,28 @@ class UnifiedMainWindow(QMainWindow):
     def _on_project_selected(self, project_path: str):
         """Handle project selection from header."""
         self.logger.info(f"Project selected: {project_path}")
+        
+        # Update app state - this will trigger currentProjectChanged signal
         app_state.set_current_project_path(project_path)
+        
+        # Update status bar
+        project = self.db_service.get_project_by_path(project_path)
+        if project:
+            self.status_bar.showMessage(f"Switched to project: {project.name}", 3000)
         
     @Slot(str)
     def _on_search_query_changed(self, query: str):
         """Handle search query change from header."""
         self.logger.debug(f"Search query changed: {query}")
         # Apply search filter to slide library
-        if hasattr(self.slide_library, 'apply_search_filter'):
-            self.slide_library.apply_search_filter(query)
+        self.slide_library.apply_search_filter(query)
             
     @Slot(list)
     def _on_keyword_filter_changed(self, keyword_ids: List[int]):
         """Handle keyword filter change from left panel."""
         self.logger.debug(f"Keyword filter changed: {keyword_ids}")
         # Apply keyword filter to slide library
-        if hasattr(self.slide_library, 'apply_keyword_filter'):
-            self.slide_library.apply_keyword_filter(keyword_ids)
+        self.slide_library.apply_keyword_filter(keyword_ids)
             
     @Slot(str)
     def _on_current_project_changed(self, project_path: str):
@@ -528,8 +836,7 @@ class UnifiedMainWindow(QMainWindow):
         
         # Refresh all panels
         self.left_panel.refresh_all()
-        if hasattr(self.slide_library, 'refresh_for_project'):
-            self.slide_library.refresh_for_project()
+        self.slide_library.refresh_for_project()
             
     @Slot(bool)
     def _update_window_title(self, is_clean: bool = True):

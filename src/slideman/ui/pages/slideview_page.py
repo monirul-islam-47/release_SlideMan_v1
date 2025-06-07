@@ -5,8 +5,8 @@ from typing import Optional, List, Dict
 from PySide6.QtWidgets import (QWidget, QHBoxLayout, QVBoxLayout, QSplitter,
                              QLabel, QFrame, QListView, QAbstractItemView, QMessageBox,
                              QComboBox, QToolBar, QSizePolicy)
-from PySide6.QtCore import Qt, Slot, QAbstractListModel, QObject, QModelIndex, QSize
-from PySide6.QtGui import QPixmap, QAction, QStandardItemModel, QStandardItem
+from PySide6.QtCore import Qt, Slot, QAbstractListModel, QObject, QModelIndex, QSize, QMimeData
+from PySide6.QtGui import QPixmap, QAction, QStandardItemModel, QStandardItem, QDrag
 from typing import Any
 from pathlib import Path
 # Import other dependencies later as needed
@@ -28,6 +28,48 @@ from ...commands.manage_slide_keyword import LinkSlideKeywordCmd, UnlinkSlideKey
 from ...commands.manage_element_keyword import LinkElementKeywordCmd, UnlinkElementKeywordCmd
 
 logger = logging.getLogger(__name__)
+
+
+class DraggableThumbnailListView(QListView):
+    """Custom list view that supports dragging slide thumbnails."""
+    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setDragEnabled(True)
+        self.setDragDropMode(QAbstractItemView.DragOnly)
+        self.logger = logging.getLogger(__name__)
+        
+    def startDrag(self, supportedActions):
+        """Start drag operation with slide data."""
+        index = self.currentIndex()
+        if not index.isValid():
+            return
+            
+        # Get slide ID from model
+        slide_id = index.data(SlideThumbnailModel.SlideIdRole)
+        if slide_id is None:
+            return
+            
+        # Create mime data
+        mime_data = QMimeData()
+        mime_data.setData("application/x-slide-id", str(slide_id).encode())
+        
+        # Create drag with thumbnail as pixmap
+        drag = QDrag(self)
+        drag.setMimeData(mime_data)
+        
+        # Use the thumbnail as drag pixmap
+        pixmap = index.data(Qt.DecorationRole)
+        if isinstance(pixmap, QPixmap):
+            # Scale down for drag representation
+            drag_pixmap = pixmap.scaled(80, 60, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            drag.setPixmap(drag_pixmap)
+            drag.setHotSpot(drag_pixmap.rect().center())
+        
+        # Execute drag
+        self.logger.debug(f"Starting drag for slide ID: {slide_id}")
+        drop_action = drag.exec_(Qt.CopyAction)
+
 
 class SlideThumbnailModel(QAbstractListModel):
     """
@@ -215,8 +257,8 @@ class SlideViewPage(QWidget):
         # Connect the elementSelected signal to our handler
         self.slide_canvas.elementSelected.connect(self.handle_element_selected)
 
-        # --- Thumbnail Bar (Real QListView) ---
-        self.thumbnail_list_view = QListView()
+        # --- Thumbnail Bar (Real QListView with Drag Support) ---
+        self.thumbnail_list_view = DraggableThumbnailListView()
         self.thumbnail_list_view.setViewMode(QListView.ViewMode.IconMode)
         self.thumbnail_list_view.setFlow(QListView.Flow.LeftToRight)
         self.thumbnail_list_view.setResizeMode(QListView.ResizeMode.Adjust)
@@ -588,6 +630,103 @@ class SlideViewPage(QWidget):
             self.thumbnail_list_view.setCurrentIndex(first_index)
             self.handle_thumbnail_selected(first_index)
             self.logger.debug("Auto-selected first thumbnail")
+
+    def apply_search_filter(self, query: str):
+        """Filter slides based on search query."""
+        if not hasattr(self, '_all_slides') or not self._all_slides:
+            return
+            
+        if not query.strip():
+            # If empty query, show all slides (respecting file filter)
+            current_file_filter = self.file_filter_combo.itemData(self.file_filter_combo.currentIndex())
+            if current_file_filter == -1:  # All files
+                self.thumbnail_model.load_slides(self._all_slides)
+            else:
+                filtered_slides = [slide for slide in self._all_slides if slide.file_id == current_file_filter]
+                self.thumbnail_model.load_slides(filtered_slides)
+            return
+            
+        # Search in slide titles and notes
+        query_lower = query.lower()
+        matching_slides = []
+        
+        for slide in self._all_slides:
+            # Search in slide title (if available)
+            title_match = False
+            if hasattr(slide, 'title') and slide.title:
+                title_match = query_lower in slide.title.lower()
+            
+            # Search in slide notes (if available)  
+            notes_match = False
+            if hasattr(slide, 'notes') and slide.notes:
+                notes_match = query_lower in slide.notes.lower()
+                
+            # Search in file name
+            file_match = False
+            if hasattr(slide, 'file_id') and self._project_files:
+                for file_obj in self._project_files:
+                    if file_obj.id == slide.file_id and file_obj.filename:
+                        file_match = query_lower in file_obj.filename.lower()
+                        break
+            
+            # Include slide if any field matches
+            if title_match or notes_match or file_match:
+                matching_slides.append(slide)
+                
+        # Apply current file filter to search results
+        current_file_filter = self.file_filter_combo.itemData(self.file_filter_combo.currentIndex())
+        if current_file_filter != -1:  # Specific file selected
+            matching_slides = [slide for slide in matching_slides if slide.file_id == current_file_filter]
+            
+        self.thumbnail_model.load_slides(matching_slides)
+        self.logger.debug(f"Search for '{query}' found {len(matching_slides)} slides")
+
+    def apply_keyword_filter(self, keyword_ids: List[int]):
+        """Filter slides based on selected keywords."""
+        if not hasattr(self, '_all_slides') or not self._all_slides:
+            return
+            
+        if not keyword_ids:
+            # If no keywords selected, show all slides (respecting file filter)
+            self._handle_file_filter_changed(self.file_filter_combo.currentIndex())
+            return
+            
+        try:
+            # Get slides that have ALL selected keywords (AND logic)
+            matching_slide_ids = set()
+            first_keyword = True
+            
+            for keyword_id in keyword_ids:
+                slides_for_keyword = self.db.get_slides_for_keyword(keyword_id)
+                slide_ids_for_keyword = {slide.id for slide in slides_for_keyword}
+                
+                if first_keyword:
+                    matching_slide_ids = slide_ids_for_keyword
+                    first_keyword = False
+                else:
+                    # Intersection for AND logic
+                    matching_slide_ids &= slide_ids_for_keyword
+                    
+            # Filter all slides to only include matching ones
+            matching_slides = [slide for slide in self._all_slides if slide.id in matching_slide_ids]
+            
+            # Apply current file filter to keyword results
+            current_file_filter = self.file_filter_combo.itemData(self.file_filter_combo.currentIndex())
+            if current_file_filter != -1:  # Specific file selected
+                matching_slides = [slide for slide in matching_slides if slide.file_id == current_file_filter]
+                
+            self.thumbnail_model.load_slides(matching_slides)
+            self.logger.debug(f"Keyword filter found {len(matching_slides)} slides")
+            
+        except Exception as e:
+            self.logger.error(f"Error applying keyword filter: {e}")
+
+    def refresh_for_project(self):
+        """Reload slides when project changes."""
+        if app_state.current_project_path:
+            self._load_data_for_current_project(app_state.current_project_path)
+        else:
+            self._clear_view()
 
     @Slot()
     def _clear_view(self):
