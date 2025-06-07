@@ -323,3 +323,55 @@ class SearchResultsWidget(QWidget):
     def get_results_container(self) -> QFrame:
         """Get the container widget for results."""
         return self.results_container
+
+
+class DebouncedSearchEdit(QLineEdit):
+    """
+    Simple debounced search line edit widget.
+    Lighter alternative to DebouncedSearchWidget for cases where you just need a search input.
+    """
+    
+    # Signals
+    searchChanged = Signal(str)  # Emitted when search term changes (debounced)
+    
+    def __init__(self, placeholder: str = "Search...", debounce_ms: int = 300, parent=None):
+        super().__init__(parent)
+        self.setPlaceholderText(placeholder)
+        self.setClearButtonEnabled(True)
+        
+        # Timer for debouncing
+        self.debounce_timer = QTimer()
+        self.debounce_timer.setSingleShot(True)
+        self.debounce_timer.timeout.connect(self._emit_search_changed)
+        self.debounce_delay = debounce_ms
+        
+        # Connect text changed signal
+        self.textChanged.connect(self._on_text_changed)
+        self.returnPressed.connect(self._on_return_pressed)
+        
+        self._last_emitted_text = ""
+        
+    def _on_text_changed(self, text: str):
+        """Handle text changes with debouncing."""
+        # Stop any existing timer
+        self.debounce_timer.stop()
+        
+        if text.strip() != self._last_emitted_text:
+            # Start debounce timer
+            self.debounce_timer.start(self.debounce_delay)
+            
+    def _on_return_pressed(self):
+        """Handle return key press - immediate search."""
+        self.debounce_timer.stop()
+        self._emit_search_changed()
+        
+    def _emit_search_changed(self):
+        """Emit the search changed signal."""
+        current_text = self.text().strip()
+        if current_text != self._last_emitted_text:
+            self._last_emitted_text = current_text
+            self.searchChanged.emit(current_text)
+            
+    def set_debounce_delay(self, delay_ms: int):
+        """Update the debounce delay."""
+        self.debounce_delay = delay_ms

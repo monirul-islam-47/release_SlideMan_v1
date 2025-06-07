@@ -1663,6 +1663,71 @@ class Database:
         self.logger.debug(f"Replaced {kind} keywords for slide {slide_id}")
         return True
 
+    def get_slide_count_for_project(self, project_id: int) -> int:
+        """Get the total number of slides for a project."""
+        try:
+            with self.get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    SELECT COUNT(DISTINCT s.id)
+                    FROM slides s
+                    JOIN files f ON s.file_id = f.id
+                    WHERE f.project_id = ?
+                """, (project_id,))
+                result = cursor.fetchone()
+                return result[0] if result else 0
+        except Exception as e:
+            self.logger.error(f"Failed to get slide count for project {project_id}: {e}")
+            return 0
+            
+    def get_file_count_for_project(self, project_id: int) -> int:
+        """Get the total number of files for a project."""
+        try:
+            with self.get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("SELECT COUNT(*) FROM files WHERE project_id = ?", (project_id,))
+                result = cursor.fetchone()
+                return result[0] if result else 0
+        except Exception as e:
+            self.logger.error(f"Failed to get file count for project {project_id}: {e}")
+            return 0
+            
+    def get_keywords_for_project(self, project_id: int) -> List[Keyword]:
+        """Get all keywords used in a project."""
+        try:
+            with self.get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    SELECT DISTINCT k.id, k.text, k.kind, COUNT(*) as usage_count
+                    FROM keywords k
+                    JOIN slide_keywords sk ON k.id = sk.keyword_id
+                    JOIN slides s ON sk.slide_id = s.id
+                    JOIN files f ON s.file_id = f.id
+                    WHERE f.project_id = ?
+                    GROUP BY k.id, k.text, k.kind
+                    ORDER BY k.text
+                """, (project_id,))
+                
+                keywords = []
+                for row in cursor.fetchall():
+                    keyword = Keyword(
+                        id=row[0],
+                        text=row[1],
+                        kind=KeywordKind(row[2]) if row[2] else KeywordKind.GENERIC
+                    )
+                    # Add usage_count as an attribute
+                    keyword.usage_count = row[3]
+                    keywords.append(keyword)
+                    
+                return keywords
+        except Exception as e:
+            self.logger.error(f"Failed to get keywords for project {project_id}: {e}")
+            return []
+            
+    def get_slide_by_id(self, slide_id: int) -> Optional[Slide]:
+        """Get a slide by its ID. Alias for get_slide method."""
+        return self.get_slide(slide_id)
+
     def get_slides_for_keyword(self, keyword_id: int) -> List[Slide]:
         """
         Retrieves all slides associated with a keyword.

@@ -5,6 +5,7 @@ import logging
 import logging.handlers
 import traceback
 import platform # For potential OS-specific adjustments
+import argparse  # For command line argument parsing
 from pathlib import Path
 import appdirs # For log path
 
@@ -12,8 +13,9 @@ from PySide6.QtWidgets import QApplication, QMessageBox
 from PySide6.QtCore import QSettings, QCoreApplication, Qt
 
 # --- Architecture Link: Import necessary components ---
-# Import the main window (Presentation Layer)
-from .ui.main_window import MainWindow
+# Import both main window versions
+from .ui.main_window import MainWindow as OriginalMainWindow
+from .ui.main_window_unified import UnifiedMainWindow
 # Import resource module (registers icons, qss)
 from . import resources_rc
 # Import theme handler (Utility / Presentation Support)
@@ -96,8 +98,43 @@ def global_exception_hook(exc_type, exc_value, exc_tb):
     sys.exit(1) # Exit after showing the message
 
 
+# --- Command Line Argument Parsing ---
+def parse_arguments():
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description="SlideMan - PowerPoint Slide Library and Assembly Tool",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python main.py                    # Run with default UI (new unified)
+  python main.py --ui new           # Run with new unified UI
+  python main.py --ui old           # Run with original multi-page UI
+  python main.py --ui legacy        # Run with original UI (same as --ui old)
+  python main.py --help             # Show this help message
+        """
+    )
+    
+    parser.add_argument(
+        '--ui', 
+        choices=['new', 'old', 'legacy', 'unified'], 
+        default='new',
+        help='Choose UI version: "new" (default) for unified workspace, "old"/"legacy" for original multi-page UI'
+    )
+    
+    parser.add_argument(
+        '--debug',
+        action='store_true',
+        help='Enable debug logging level'
+    )
+    
+    return parser.parse_args()
+
+
 # --- Main Application Execution ---
 def main():
+    # --- Parse command line arguments ---
+    args = parse_arguments()
+    
     # --- Architecture: Application Setup & Orchestration ---
 
     # Set application details used by QSettings, etc.
@@ -115,7 +152,23 @@ def main():
     # Setup logging and exception handling
     setup_logging()
     sys.excepthook = global_exception_hook
-    logging.info(f"Starting {APP_NAME} v{APP_VERSION} on {platform.system()} {platform.release()}")
+    
+    # Set debug logging level if requested
+    if args.debug:
+        logging.getLogger().setLevel(logging.DEBUG)
+        logging.info("Debug logging enabled")
+    
+    # Determine which UI to use
+    ui_choice = args.ui
+    if ui_choice in ['old', 'legacy']:
+        MainWindow = OriginalMainWindow
+        ui_name = "Original Multi-Page UI"
+    else:  # 'new' or 'unified'
+        MainWindow = UnifiedMainWindow
+        ui_name = "New Unified Workspace UI"
+    
+    logging.info(f"Starting {APP_NAME} v{APP_VERSION} with {ui_name} on {platform.system()} {platform.release()}")
+    logging.info(f"UI Mode: {ui_choice} -> {ui_name}")
 
     # --- Architecture Link: Initialize Shared State (Deferred) ---
     logging.info("Initializing AppState and EventBus...")
@@ -168,20 +221,20 @@ def main():
         logging.error(f"Failed to apply initial theme: {e}", exc_info=True)
 
     # --- Architecture: Instantiate and Show Presentation Layer ---
-    logging.info("Creating MainWindow...")
+    logging.info(f"Creating {ui_name}...")
     # Pass db_service instance created above
     try:
         main_win = MainWindow(db_service=db_service)
-        logging.info("MainWindow created successfully, now showing...")
+        logging.info(f"{ui_name} created successfully, now showing...")
         main_win.show()
-        logging.info("Application started successfully.")
+        logging.info(f"Application started successfully with {ui_name}.")
     except Exception as e:
-        logging.critical(f"Failed to create or show MainWindow: {e}", exc_info=True)
+        logging.critical(f"Failed to create or show {ui_name}: {e}", exc_info=True)
         # Show error message to user
         error_dialog = QMessageBox()
         error_dialog.setIcon(QMessageBox.Critical)
         error_dialog.setWindowTitle("Application Error")
-        error_dialog.setText(f"Failed to initialize application: {e}")
+        error_dialog.setText(f"Failed to initialize application with {ui_name}: {e}")
         error_dialog.setDetailedText(traceback.format_exc())
         error_dialog.exec()
         sys.exit(1)

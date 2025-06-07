@@ -46,6 +46,14 @@ class EventBus(QObject):
     # Theme change could also be here if preferred over direct call
     # themeChanged = Signal(str) # "light" / "dark"
 
+    # New UI Events for unified workspace
+    addKeywordRequested = Signal()         # Request to add a new keyword
+    slideDoubleClicked = Signal(int)       # slide_id when double-clicked in library
+    assemblySlidesUpdated = Signal(list)   # list of slide_ids in assembly
+    
+    # Project Management Events  
+    projectLoaded = Signal(str)            # project_folder_path when project loads
+
     def __new__(cls):
         if cls._instance is None:
             logging.debug("Creating EventBus instance")
