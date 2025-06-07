@@ -481,9 +481,9 @@ class LeftPanelWidget(QWidget):
             recent_files = sorted(files, key=lambda f: f.created_at, reverse=True)[:5]
             
             for file in recent_files:
-                filename = Path(file.path).name
+                filename = Path(file.rel_path).name
                 item = QListWidgetItem(filename)
-                item.setToolTip(file.path)
+                item.setToolTip(file.rel_path)
                 self.recent_files_list.addItem(item)
                 
         except DatabaseError as e:

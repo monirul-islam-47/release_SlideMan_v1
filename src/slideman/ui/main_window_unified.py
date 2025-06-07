@@ -807,7 +807,7 @@ class UnifiedMainWindow(QMainWindow):
         self.logger.info(f"Project selected: {project_path}")
         
         # Update app state - this will trigger currentProjectChanged signal
-        app_state.set_current_project_path(project_path)
+        app_state.set_current_project(project_path)
         
         # Update status bar
         project = self.db_service.get_project_by_path(project_path)
