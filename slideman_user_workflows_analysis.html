@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SlideMan User Workflows & GUI Integration Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        h2 {
+            font-size: 32px;
+            margin: 60px 0 30px 0;
+            color: #ffffff;
+        }
+        
+        h3 {
+            font-size: 24px;
+            margin: 30px 0 20px 0;
+            color: #a78bfa;
+        }
+        
+        .workflow-section {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+            border: 1px solid #2a2a2a;
+        }
+        
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+        
+        .workflow-card {
+            background: #0f0f0f;
+            border-radius: 8px;
+            padding: 24px;
+            border: 1px solid #2a2a2a;
+            transition: all 0.3s;
+        }
+        
+        .workflow-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .workflow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .step-number {
+            min-width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            color: #e5e7eb;
+            margin-bottom: 4px;
+        }
+        
+        .step-description {
+            color: #9ca3af;
+            font-size: 14px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            margin-top: 16px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            color: #9ca3af;
+        }
+        
+        .feature-icon {
+            color: #10b981;
+        }
+        
+        .pain-point {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        
+        .pain-point-title {
+            color: #ef4444;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .solution {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        
+        .solution-title {
+            color: #10b981;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .ui-mockup {
+            background: #0f0f0f;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+        
+        .mockup-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #a78bfa;
+        }
+        
+        .code-block {
+            background: #0f0f0f;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+        
+        .keyword-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 14px;
+            margin: 2px;
+        }
+        
+        .workflow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 32px 0;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+        
+        .diagram-node {
+            text-align: center;
+        }
+        
+        .node-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 12px;
+        }
+        
+        .node-label {
+            font-weight: 600;
+            color: #e5e7eb;
+        }
+        
+        .arrow {
+            font-size: 24px;
+            color: #667eea;
+        }
+        
+        .alert {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+        }
+        
+        .alert-title {
+            color: #fbbf24;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SlideMan User Workflows Analysis</h1>
+        <p style="font-size: 20px; color: #9ca3af; margin-bottom: 40px;">
+            Understanding the real user journeys before integrating AI
+        </p>
+        
+        <!-- Current State Analysis -->
+        <div class="workflow-section">
+            <h2>📸 Current SlideMan State (From Screenshots)</h2>
+            <div class="workflow-grid">
+                <div class="workflow-card">
+                    <h3>What I See Working</h3>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <span class="feature-icon">✅</span>
+                            <span>Beautiful gradient UI with purple theme</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-icon">✅</span>
+                            <span>Projects listed in left sidebar</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-icon">✅</span>
+                            <span>SlideView page with thumbnail preview</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-icon">✅</span>
+                            <span>Keyword system implemented</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-icon">✅</span>
+                            <span>Assembly functionality exists</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="workflow-card">
+                    <h3>What's Missing/Unclear</h3>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <span class="feature-icon">❓</span>
+                            <span>How do users tag slides with keywords?</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-icon">❓</span>
+                            <span>Where's the search functionality?</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-icon">❓</span>
+                            <span>How does PowerPoint import work?</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-icon">❓</span>
+                            <span>Assembly building process unclear</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-icon">❓</span>
+                            <span>Keyword filtering implementation?</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Core User Workflows -->
+        <h2>🎯 Core User Workflows in SlideMan</h2>
+        
+        <!-- Workflow 1: Project Setup -->
+        <div class="workflow-section">
+            <h3>1. Project Setup & Import Workflow</h3>
+            <div class="workflow-diagram">
+                <div class="diagram-node">
+                    <div class="node-icon">📁</div>
+                    <div class="node-label">Create Project</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="diagram-node">
+                    <div class="node-icon">📤</div>
+                    <div class="node-label">Import PPTs</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="diagram-node">
+                    <div class="node-icon">⚙️</div>
+                    <div class="node-label">Convert Slides</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="diagram-node">
+                    <div class="node-icon">🖼️</div>
+                    <div class="node-label">View Slides</div>
+                </div>
+            </div>
+            
+            <div class="pain-point">
+                <div class="pain-point-title">⚠️ Critical Missing Piece</div>
+                <div>The PowerPoint conversion process (COM automation) is not visible in the UI. Users don't know:</div>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>How long conversion will take</li>
+                    <li>If conversion is happening</li>
+                    <li>What to do if it fails</li>
+                </ul>
+            </div>
+            
+            <div class="solution">
+                <div class="solution-title">💡 AI Integration Opportunity</div>
+                <div>PREZI could guide users through the import process:</div>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>"I'll help you import these 5 PowerPoint files"</li>
+                    <li>"Converting slide 23 of 150... this usually takes 2-3 minutes"</li>
+                    <li>"I noticed some slides failed to convert. Want me to retry?"</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Workflow 2: Slide Organization -->
+        <div class="workflow-section">
+            <h3>2. Slide Organization & Tagging Workflow</h3>
+            
+            <div class="workflow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">Browse Slides</div>
+                    <div class="step-description">User views slide thumbnails in grid/list view</div>
+                </div>
+            </div>
+            
+            <div class="workflow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">Select Slide(s)</div>
+                    <div class="step-description">Click to select one or multiple slides</div>
+                </div>
+            </div>
+            
+            <div class="workflow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">Add Keywords</div>
+                    <div class="step-description">Tag slides with relevant keywords</div>
+                </div>
+            </div>
+            
+            <div class="workflow-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <div class="step-title">View by Keywords</div>
+                    <div class="step-description">Filter slides by clicking keywords</div>
+                </div>
+            </div>
+            
+            <div class="ui-mockup">
+                <div class="mockup-header">Current Keyword System</div>
+                <div>Slides can be tagged with:</div>
+                <div style="margin-top: 12px;">
+                    <span class="keyword-tag">#sales</span>
+                    <span class="keyword-tag">#Q4-2024</span>
+                    <span class="keyword-tag">#revenue</span>
+                    <span class="keyword-tag">#forecast</span>
+                    <span class="keyword-tag">#team</span>
+                </div>
+            </div>
+            
+            <div class="solution">
+                <div class="solution-title">💡 AI Enhancement</div>
+                <div>PREZI could auto-suggest keywords based on slide content:</div>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>"I analyzed these slides and suggest: #financial, #growth, #2024"</li>
+                    <li>"These 5 slides seem related. Tag them all with #product-launch?"</li>
+                    <li>"I notice you use #sales differently than before. Should I update?"</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Workflow 3: Search & Discovery -->
+        <div class="workflow-section">
+            <h3>3. Search & Discovery Workflow</h3>
+            
+            <div class="workflow-grid">
+                <div class="workflow-card">
+                    <h4>Current Search Methods</h4>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <span>1.</span>
+                            <span>Keyword filtering (click tags)</span>
+                        </li>
+                        <li class="feature-item">
+                            <span>2.</span>
+                            <span>Visual browsing (thumbnails)</span>
+                        </li>
+                        <li class="feature-item">
+                            <span>3.</span>
+                            <span>Text search (if implemented)</span>
+                        </li>
+                        <li class="feature-item">
+                            <span>4.</span>
+                            <span>Project-based filtering</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="workflow-card">
+                    <h4>AI-Enhanced Search</h4>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <span>🧠</span>
+                            <span>"Find slides about our Q4 performance"</span>
+                        </li>
+                        <li class="feature-item">
+                            <span>🧠</span>
+                            <span>"Show me all charts and graphs"</span>
+                        </li>
+                        <li class="feature-item">
+                            <span>🧠</span>
+                            <span>"Which slides mention competitors?"</span>
+                        </li>
+                        <li class="feature-item">
+                            <span>🧠</span>
+                            <span>"Find slides similar to this one"</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Workflow 4: Assembly Building -->
+        <div class="workflow-section">
+            <h3>4. Assembly Building Workflow</h3>
+            
+            <div class="workflow-diagram">
+                <div class="diagram-node">
+                    <div class="node-icon">🔍</div>
+                    <div class="node-label">Find Slides</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="diagram-node">
+                    <div class="node-icon">➕</div>
+                    <div class="node-label">Add to Assembly</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="diagram-node">
+                    <div class="node-icon">📑</div>
+                    <div class="node-label">Arrange Order</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="diagram-node">
+                    <div class="node-icon">👁️</div>
+                    <div class="node-label">Preview</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="diagram-node">
+                    <div class="node-icon">📤</div>
+                    <div class="node-label">Export</div>
+                </div>
+            </div>
+            
+            <div class="alert">
+                <div class="alert-title">🔄 Current Process</div>
+                <div>Users must manually:</div>
+                <ol style="margin-left: 20px; margin-top: 8px;">
+                    <li>Search/browse for each slide</li>
+                    <li>Add slides one by one</li>
+                    <li>Manually arrange order</li>
+                    <li>Check for flow and consistency</li>
+                    <li>Export and hope it works</li>
+                </ol>
+            </div>
+            
+            <div class="solution">
+                <div class="solution-title">✨ AI Revolution</div>
+                <div>PREZI transforms this into:</div>
+                <div class="code-block">
+User: "Create a 10-minute investor pitch"
+
+PREZI: "I'll build that for you. Here's my plan:
+1. Company overview (2 slides)
+2. Problem & solution (3 slides)
+3. Market opportunity (2 slides)
+4. Financial projections (3 slides)
+5. Team & ask (2 slides)
+
+[Execute] [Modify] [Cancel]"
+
+*PREZI automatically assembles the presentation*
+                </div>
+            </div>
+        </div>
+        
+        <!-- Workflow 5: Export & Delivery -->
+        <div class="workflow-section">
+            <h3>5. Export & Delivery Workflow</h3>
+            
+            <div class="workflow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">Review Assembly</div>
+                    <div class="step-description">Check slide order and content</div>
+                </div>
+            </div>
+            
+            <div class="workflow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">Choose Export Format</div>
+                    <div class="step-description">PowerPoint, PDF, or other formats</div>
+                </div>
+            </div>
+            
+            <div class="workflow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">Select Destination</div>
+                    <div class="step-description">Save location or direct email</div>
+                </div>
+            </div>
+            
+            <div class="workflow-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <div class="step-title">Export & Open</div>
+                    <div class="step-description">Generate file and open in PowerPoint</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Unified GUI Concept -->
+        <h2>🎨 Refined Single-Window GUI Concept</h2>
+        
+        <div class="ui-mockup">
+            <div class="mockup-header">Proposed Layout Structure</div>
+            <div class="code-block">
+┌─────────────────────────────────────────────────────────────────────────┐
+│ HEADER BAR                                                               │
+│ [SlideMan] [Project: Marketing ▼] [🔍 Search...] [👤] [Export]          │
+├─────────────────────────────────────────────────────────────────────────┤
+│ LEFT SIDEBAR     │ MAIN CONTENT AREA          │ RIGHT SIDEBAR           │
+│                  │                             │                         │
+│ 📁 Projects      │ ┌─────────────────────────┐│ 🎯 Assembly Panel      │
+│ └─ Marketing ✓   │ │ Slide Grid View         ││ ┌─────────────────┐   │
+│ └─ Sales Q4      │ │ ┌────┐ ┌────┐ ┌────┐   ││ │ 3 slides added   │   │
+│ └─ Training      │ │ │ 📊 │ │ 📈 │ │ 🎯 │   ││ │ ─────────────── │   │
+│                  │ │ └────┘ └────┘ └────┘   ││ │ 1. Overview      │   │
+│ 🏷️ Keywords      │ │ ┌────┐ ┌────┐ ┌────┐   ││ │ 2. Revenue       │   │
+│ #sales (45)      │ │ │ 💡 │ │ 👥 │ │ 🌍 │   ││ │ 3. Team          │   │
+│ #marketing (32)  │ │ └────┘ └────┘ └────┘   ││ └─────────────────┘   │
+│ #Q4-2024 (28)    │ │                         ││                         │
+│ #strategy (19)   │ │ Selected: 2 slides      ││ ✨ PREZI AI Assistant  │
+│                  │ │ [Add Tags] [To Assembly]││ ┌─────────────────┐   │
+│ ⚡ Quick Actions │ └─────────────────────────┘│ │ How can I help?  │   │
+│ [+ Import Files] │                             │ │                  │   │
+│ [🏷️ Manage Tags] │ 📍 Keyword Bar:            │ │ [💬 Chat with    │   │
+│ [📊 Statistics]  │ [#sales] [#Q4] [+ Add]     │ │     PREZI]       │   │
+│                  │                             │ └─────────────────┘   │
+└──────────────────┴─────────────────────────────┴───────────────────────┘
+            </div>
+        </div>
+        
+        <!-- Critical Integration Points -->
+        <h2>🔗 Critical AI Integration Points</h2>
+        
+        <div class="workflow-grid">
+            <div class="workflow-card">
+                <h3>1. Import Assistant</h3>
+                <p>PREZI guides through PowerPoint conversion</p>
+                <ul style="margin-top: 12px; color: #9ca3af;">
+                    <li>• Progress tracking</li>
+                    <li>• Error recovery</li>
+                    <li>• Bulk operations</li>
+                </ul>
+            </div>
+            
+            <div class="workflow-card">
+                <h3>2. Smart Tagging</h3>
+                <p>AI suggests and applies keywords</p>
+                <ul style="margin-top: 12px; color: #9ca3af;">
+                    <li>• Content analysis</li>
+                    <li>• Pattern recognition</li>
+                    <li>• Consistency checks</li>
+                </ul>
+            </div>
+            
+            <div class="workflow-card">
+                <h3>3. Natural Search</h3>
+                <p>Conversational slide discovery</p>
+                <ul style="margin-top: 12px; color: #9ca3af;">
+                    <li>• Semantic understanding</li>
+                    <li>• Multi-criteria search</li>
+                    <li>• Similar slide finding</li>
+                </ul>
+            </div>
+            
+            <div class="workflow-card">
+                <h3>4. Assembly Builder</h3>
+                <p>AI creates complete presentations</p>
+                <ul style="margin-top: 12px; color: #9ca3af;">
+                    <li>• Template understanding</li>
+                    <li>• Flow optimization</li>
+                    <li>• Time estimation</li>
+                </ul>
+            </div>
+            
+            <div class="workflow-card">
+                <h3>5. Quality Checker</h3>
+                <p>Reviews and improves presentations</p>
+                <ul style="margin-top: 12px; color: #9ca3af;">
+                    <li>• Consistency analysis</li>
+                    <li>• Missing content detection</li>
+                    <li>• Style recommendations</li>
+                </ul>
+            </div>
+            
+            <div class="workflow-card">
+                <h3>6. Export Helper</h3>
+                <p>Ensures perfect output</p>
+                <ul style="margin-top: 12px; color: #9ca3af;">
+                    <li>• Format optimization</li>
+                    <li>• Compatibility checks</li>
+                    <li>• Distribution assistance</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Next Steps -->
+        <h2>🚀 Next Steps</h2>
+        
+        <div class="workflow-section">
+            <h3>Priority Order for Implementation</h3>
+            
+            <div class="workflow-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">Finalize Single-Window GUI</div>
+                    <div class="step-description">Complete the unified interface with all current features working</div>
+                </div>
+            </div>
+            
+            <div class="workflow-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">Fix PowerPoint Import Process</div>
+                    <div class="step-description">Add proper progress tracking and error handling</div>
+                </div>
+            </div>
+            
+            <div class="workflow-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">Implement Core Search</div>
+                    <div class="step-description">Basic text search before AI enhancement</div>
+                </div>
+            </div>
+            
+            <div class="workflow-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <div class="step-title">Add PREZI AI Panel</div>
+                    <div class="step-description">Integrate AI as a helpful assistant, not a replacement</div>
+                </div>
+            </div>
+            
+            <div class="workflow-step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <div class="step-title">Enhance with AI Features</div>
+                    <div class="step-description">Gradually add smart features based on user feedback</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="alert">
+            <div class="alert-title">💡 Key Insight</div>
+            <div>
+                The AI should enhance the existing workflow, not replace it. Users need to understand
+                and trust the basic functionality before we add the "magic" of AI. PREZI should feel
+                like a knowledgeable assistant sitting next to them, not a black box doing things
+                they don't understand.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

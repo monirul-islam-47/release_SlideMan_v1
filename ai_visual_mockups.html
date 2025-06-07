@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SlideMan + PREZI AI Visual Mockups</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        h2 {
+            font-size: 32px;
+            margin: 60px 0 30px 0;
+            color: #ffffff;
+        }
+        
+        h3 {
+            font-size: 24px;
+            margin: 30px 0 20px 0;
+            color: #a78bfa;
+        }
+        
+        .subtitle {
+            font-size: 20px;
+            color: #9ca3af;
+            margin-bottom: 60px;
+        }
+        
+        /* Mockup Container */
+        .mockup {
+            background: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            margin-bottom: 40px;
+            border: 1px solid #2a2a2a;
+        }
+        
+        /* Window Chrome */
+        .window-chrome {
+            background: #2a2a2a;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid #3a3a3a;
+        }
+        
+        .window-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .window-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .close { background: #ff5f56; }
+        .minimize { background: #ffbd2e; }
+        .maximize { background: #27c93f; }
+        
+        .window-title {
+            flex: 1;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+        
+        /* App Layout */
+        .app-container {
+            display: flex;
+            height: 800px;
+            background: #0f0f0f;
+        }
+        
+        /* Header */
+        .app-header {
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            gap: 24px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .project-selector {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: white;
+            min-width: 200px;
+            cursor: pointer;
+        }
+        
+        .search-bar {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            padding: 8px 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .search-bar::before {
+            content: "🔍";
+        }
+        
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            flex: 1;
+        }
+        
+        /* Left Panel */
+        .left-panel {
+            width: 240px;
+            background: #1a1a1a;
+            border-right: 1px solid #2a2a2a;
+            padding: 24px;
+        }
+        
+        .panel-section {
+            margin-bottom: 32px;
+        }
+        
+        .panel-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #6b7280;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .keyword-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .keyword-tag:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Center Content */
+        .center-content {
+            flex: 1;
+            background: #0f0f0f;
+            padding: 32px;
+            overflow-y: auto;
+        }
+        
+        .slide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 24px;
+        }
+        
+        .slide-card {
+            background: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+        }
+        
+        .slide-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 48px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+        
+        .slide-thumbnail {
+            height: 120px;
+            background: linear-gradient(135deg, #2a2a2a, #3a3a3a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #4a4a4a;
+        }
+        
+        .slide-info {
+            padding: 12px;
+        }
+        
+        .slide-title {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .slide-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        
+        .mini-tag {
+            font-size: 11px;
+            background: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        
+        /* Right Panel - Assembly + AI */
+        .right-panel {
+            width: 340px;
+            background: #1a1a1a;
+            border-left: 1px solid #2a2a2a;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .assembly-section {
+            flex: 1;
+            padding: 24px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        
+        .assembly-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .assembly-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .slide-count {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 14px;
+        }
+        
+        .assembly-slides {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .assembly-slide {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            cursor: move;
+        }
+        
+        .assembly-slide-thumb {
+            width: 60px;
+            height: 40px;
+            background: #3a3a3a;
+            border-radius: 4px;
+        }
+        
+        /* AI Section - PREZI */
+        .ai-section {
+            flex: 1;
+            background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .ai-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 40% 60% 60% 40% / 60% 40% 60% 40%;
+            animation: breathe 4s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+        
+        .ai-status {
+            flex: 1;
+        }
+        
+        .ai-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #a78bfa;
+        }
+        
+        .ai-state {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .ai-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+            padding: 16px 0;
+        }
+        
+        .ai-message {
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 90%;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            background: #667eea;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        
+        .ai-response {
+            background: #2a2a2a;
+            align-self: flex-start;
+        }
+        
+        .ai-plan {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 8px 0;
+        }
+        
+        .plan-header {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #a78bfa;
+        }
+        
+        .plan-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            color: #e5e7eb;
+        }
+        
+        .step-icon {
+            width: 24px;
+            height: 24px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .plan-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .plan-button {
+            flex: 1;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .execute-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .execute-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .modify-button {
+            background: transparent;
+            color: #a78bfa;
+            border: 1px solid #a78bfa;
+        }
+        
+        .ai-input-area {
+            display: flex;
+            gap: 12px;
+            padding-top: 16px;
+            border-top: 1px solid #2a2a2a;
+        }
+        
+        .ai-input {
+            flex: 1;
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            border-radius: 24px;
+            padding: 12px 20px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .ai-input::placeholder {
+            color: #6b7280;
+        }
+        
+        .ai-send {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .ai-send:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Floating Elements */
+        .floating-stop {
+            position: absolute;
+            bottom: 80px;
+            right: 370px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        
+        .floating-stop.visible {
+            opacity: 1;
+        }
+        
+        /* States */
+        .state-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .thinking { background: #3b82f6; }
+        .ready { background: #10b981; }
+        .working { background: #f59e0b; }
+        
+        /* Feature Highlights */
+        .feature-section {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-top: 32px;
+        }
+        
+        .feature-card {
+            background: #0f0f0f;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #2a2a2a;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            border-color: #667eea;
+            transform: translateY(-4px);
+        }
+        
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+        
+        .feature-title {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: #a78bfa;
+        }
+        
+        .feature-description {
+            color: #9ca3af;
+            line-height: 1.6;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .app-container {
+                height: 600px;
+            }
+            
+            .right-panel {
+                width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SlideMan + PREZI AI</h1>
+        <p class="subtitle">Visual Mockups for AI Integration</p>
+        
+        <!-- Main Mockup -->
+        <h2>1. Unified Workspace with AI Panel</h2>
+        <div class="mockup">
+            <div class="window-chrome">
+                <div class="window-buttons">
+                    <div class="window-button close"></div>
+                    <div class="window-button minimize"></div>
+                    <div class="window-button maximize"></div>
+                </div>
+                <div class="window-title">SlideMan - Marketing Presentation Project</div>
+            </div>
+            
+            <div class="app-header">
+                <div class="logo">SlideMan</div>
+                <select class="project-selector">
+                    <option>Marketing Presentation</option>
+                </select>
+                <div class="search-bar">Search slides...</div>
+                <button style="background: white; color: #667eea; border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">Export</button>
+            </div>
+            
+            <div class="app-container">
+                <div class="main-layout">
+                    <!-- Left Panel -->
+                    <div class="left-panel">
+                        <div class="panel-section">
+                            <div class="panel-title">Project Info</div>
+                            <div style="color: #9ca3af; font-size: 14px;">
+                                <div>📊 156 Slides</div>
+                                <div>📁 12 Files</div>
+                                <div>🏷️ 24 Keywords</div>
+                            </div>
+                        </div>
+                        
+                        <div class="panel-section">
+                            <div class="panel-title">Keywords</div>
+                            <div>
+                                <span class="keyword-tag">#sales</span>
+                                <span class="keyword-tag">#marketing</span>
+                                <span class="keyword-tag">#Q4-2024</span>
+                                <span class="keyword-tag">#strategy</span>
+                            </div>
+                        </div>
+                        
+                        <div class="panel-section">
+                            <div class="panel-title">Quick Actions</div>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <button style="background: #2a2a2a; border: 1px solid #3a3a3a; color: white; padding: 8px; border-radius: 8px; cursor: pointer;">➕ Import Files</button>
+                                <button style="background: #2a2a2a; border: 1px solid #3a3a3a; color: white; padding: 8px; border-radius: 8px; cursor: pointer;">🏷️ Manage Keywords</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Center Content -->
+                    <div class="center-content">
+                        <div class="slide-grid">
+                            <div class="slide-card">
+                                <div class="slide-thumbnail">📈</div>
+                                <div class="slide-info">
+                                    <div class="slide-title">Q4 Revenue Growth</div>
+                                    <div class="slide-tags">
+                                        <span class="mini-tag">#sales</span>
+                                        <span class="mini-tag">#Q4-2024</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slide-card">
+                                <div class="slide-thumbnail">🎯</div>
+                                <div class="slide-info">
+                                    <div class="slide-title">Target Market Analysis</div>
+                                    <div class="slide-tags">
+                                        <span class="mini-tag">#strategy</span>
+                                        <span class="mini-tag">#marketing</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slide-card">
+                                <div class="slide-thumbnail">👥</div>
+                                <div class="slide-info">
+                                    <div class="slide-title">Team Introduction</div>
+                                    <div class="slide-tags">
+                                        <span class="mini-tag">#team</span>
+                                        <span class="mini-tag">#about</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slide-card">
+                                <div class="slide-thumbnail">💡</div>
+                                <div class="slide-info">
+                                    <div class="slide-title">Innovation Pipeline</div>
+                                    <div class="slide-tags">
+                                        <span class="mini-tag">#product</span>
+                                        <span class="mini-tag">#future</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slide-card">
+                                <div class="slide-thumbnail">🌍</div>
+                                <div class="slide-info">
+                                    <div class="slide-title">Global Expansion</div>
+                                    <div class="slide-tags">
+                                        <span class="mini-tag">#strategy</span>
+                                        <span class="mini-tag">#growth</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slide-card">
+                                <div class="slide-thumbnail">📊</div>
+                                <div class="slide-info">
+                                    <div class="slide-title">Market Share 2024</div>
+                                    <div class="slide-tags">
+                                        <span class="mini-tag">#data</span>
+                                        <span class="mini-tag">#analysis</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Panel -->
+                <div class="right-panel">
+                    <!-- Assembly Section -->
+                    <div class="assembly-section">
+                        <div class="assembly-header">
+                            <div class="assembly-title">🎯 Assembly</div>
+                            <div class="slide-count">3 slides</div>
+                        </div>
+                        <div class="assembly-slides">
+                            <div class="assembly-slide">
+                                <div class="assembly-slide-thumb"></div>
+                                <div>
+                                    <div style="font-size: 14px;">Company Overview</div>
+                                    <div style="font-size: 12px; color: #6b7280;">Slide 1</div>
+                                </div>
+                            </div>
+                            <div class="assembly-slide">
+                                <div class="assembly-slide-thumb"></div>
+                                <div>
+                                    <div style="font-size: 14px;">Q4 Revenue Growth</div>
+                                    <div style="font-size: 12px; color: #6b7280;">Slide 2</div>
+                                </div>
+                            </div>
+                            <div class="assembly-slide">
+                                <div class="assembly-slide-thumb"></div>
+                                <div>
+                                    <div style="font-size: 14px;">Target Market Analysis</div>
+                                    <div style="font-size: 12px; color: #6b7280;">Slide 3</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Section -->
+                    <div class="ai-section">
+                        <div class="ai-header">
+                            <div class="ai-avatar">✨</div>
+                            <div class="ai-status">
+                                <div class="ai-name">PREZI</div>
+                                <div class="ai-state"><span class="state-indicator ready"></span>Ready to help</div>
+                            </div>
+                        </div>
+                        
+                        <div class="ai-chat">
+                            <div class="ai-message ai-response">
+                                Hi! I'm PREZI, your presentation intelligence assistant. I can help you search slides, build presentations, and analyze your content. What would you like to create today?
+                            </div>
+                            
+                            <div class="ai-message user-message">
+                                Create a 5-minute investor pitch focusing on our Q4 growth
+                            </div>
+                            
+                            <div class="ai-message ai-response">
+                                I'll create a compelling investor pitch highlighting your Q4 growth. Here's my plan:
+                            </div>
+                            
+                            <div class="ai-plan">
+                                <div class="plan-header">Presentation Plan (5 minutes)</div>
+                                <div class="plan-step">
+                                    <div class="step-icon">1</div>
+                                    <div>Find and add company overview slide</div>
+                                </div>
+                                <div class="plan-step">
+                                    <div class="step-icon">2</div>
+                                    <div>Add Q4 revenue growth charts</div>
+                                </div>
+                                <div class="plan-step">
+                                    <div class="step-icon">3</div>
+                                    <div>Include market expansion data</div>
+                                </div>
+                                <div class="plan-step">
+                                    <div class="step-icon">4</div>
+                                    <div>Add team credentials slide</div>
+                                </div>
+                                <div class="plan-step">
+                                    <div class="step-icon">5</div>
+                                    <div>Create strong closing with call-to-action</div>
+                                </div>
+                                <div class="plan-actions">
+                                    <button class="plan-button execute-button">✨ Execute Plan</button>
+                                    <button class="plan-button modify-button">Modify Steps</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ai-input-area">
+                            <input class="ai-input" placeholder="Ask PREZI anything...">
+                            <button class="ai-send">→</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Floating Stop Button (visible during operations) -->
+                <div class="floating-stop">⏹ Stop</div>
+            </div>
+        </div>
+        
+        <!-- Feature Highlights -->
+        <h2>2. Key AI Features</h2>
+        <div class="feature-section">
+            <h3>PREZI's Capabilities</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <div class="feature-title">Natural Language Search</div>
+                    <div class="feature-description">
+                        "Find all slides about revenue from Q4" - PREZI understands context and intent, not just keywords.
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <div class="feature-title">Smart Assembly</div>
+                    <div class="feature-description">
+                        "Build a 10-minute pitch for healthcare investors" - PREZI selects and arranges slides intelligently.
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <div class="feature-title">Content Analysis</div>
+                    <div class="feature-description">
+                        "What's missing from this presentation?" - PREZI identifies gaps and suggests improvements.
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <div class="feature-title">Visual Planning</div>
+                    <div class="feature-description">
+                        See exactly what PREZI will do before it happens with step-by-step execution plans.
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <div class="feature-title">Style Consistency</div>
+                    <div class="feature-description">
+                        "Make these slides look professional" - PREZI ensures visual harmony across your deck.
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <div class="feature-title">Full Automation</div>
+                    <div class="feature-description">
+                        Watch as PREZI builds your presentation in real-time with human-in-the-loop approval.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Interaction States -->
+        <h2>3. AI Interaction States</h2>
+        <div class="mockup" style="height: 400px;">
+            <div class="ai-section" style="height: 100%; max-width: 400px; margin: 0 auto;">
+                <div class="ai-header">
+                    <div class="ai-avatar" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">🤔</div>
+                    <div class="ai-status">
+                        <div class="ai-name">PREZI</div>
+                        <div class="ai-state"><span class="state-indicator thinking"></span>Analyzing your request...</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 32px; text-align: center;">
+                    <div style="display: inline-block; padding: 16px 24px; background: rgba(59, 130, 246, 0.1); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.3);">
+                        <div style="font-size: 16px; margin-bottom: 8px;">Currently analyzing:</div>
+                        <div style="color: #3b82f6; font-weight: 600;">
+                            <div>📊 Scanning 156 slides for revenue data</div>
+                            <div style="margin-top: 8px;">🔍 Identifying Q4 metrics</div>
+                            <div style="margin-top: 8px;">📈 Calculating presentation flow</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Visual Flow Diagram -->
+        <h2>4. Workflow Visualization</h2>
+        <div class="feature-section">
+            <h3>The Magic Flow</h3>
+            <div style="text-align: center; padding: 40px 0;">
+                <div style="display: inline-flex; align-items: center; gap: 32px; flex-wrap: wrap; justify-content: center;">
+                    <div style="text-align: center;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 12px;">💭</div>
+                        <div style="font-weight: 600;">User Intent</div>
+                        <div style="color: #6b7280; font-size: 14px;">"Create investor pitch"</div>
+                    </div>
+                    <div style="font-size: 24px; color: #667eea;">→</div>
+                    <div style="text-align: center;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 12px;">🧠</div>
+                        <div style="font-weight: 600;">AI Understanding</div>
+                        <div style="color: #6b7280; font-size: 14px;">Context analysis</div>
+                    </div>
+                    <div style="font-size: 24px; color: #667eea;">→</div>
+                    <div style="text-align: center;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 12px;">📋</div>
+                        <div style="font-weight: 600;">Visual Plan</div>
+                        <div style="color: #6b7280; font-size: 14px;">Step-by-step preview</div>
+                    </div>
+                    <div style="font-size: 24px; color: #667eea;">→</div>
+                    <div style="text-align: center;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 12px;">✨</div>
+                        <div style="font-weight: 600;">Execution</div>
+                        <div style="color: #6b7280; font-size: 14px;">Real-time assembly</div>
+                    </div>
+                    <div style="font-size: 24px; color: #667eea;">→</div>
+                    <div style="text-align: center;">
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 12px;">🎉</div>
+                        <div style="font-weight: 600;">Success</div>
+                        <div style="color: #6b7280; font-size: 14px;">Perfect presentation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Design Details -->
+        <h2>5. Design Language</h2>
+        <div class="feature-section">
+            <h3>Visual Elements</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-top: 32px;">
+                <div>
+                    <h4 style="color: #a78bfa; margin-bottom: 12px;">AI States</h4>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="state-indicator ready"></span>
+                            <span>Ready - Waiting for input</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="state-indicator thinking"></span>
+                            <span>Thinking - Processing request</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="state-indicator working"></span>
+                            <span>Working - Executing plan</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="color: #a78bfa; margin-bottom: 12px;">Interaction Patterns</h4>
+                    <ul style="color: #9ca3af; line-height: 1.8;">
+                        <li>Hover effects on all interactive elements</li>
+                        <li>Smooth transitions (0.3s cubic-bezier)</li>
+                        <li>Visual feedback for all actions</li>
+                        <li>Progressive disclosure of complexity</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: #a78bfa; margin-bottom: 12px;">Color Psychology</h4>
+                    <ul style="color: #9ca3af; line-height: 1.8;">
+                        <li>Purple gradient - Creative intelligence</li>
+                        <li>Blue accents - Trust and stability</li>
+                        <li>Green success - Achievement</li>
+                        <li>Amber warnings - Attention needed</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Technical Notes -->
+        <h2>6. Implementation Notes</h2>
+        <div class="feature-section">
+            <h3>Key UI Components Needed</h3>
+            <div style="color: #9ca3af; line-height: 1.8;">
+                <ul>
+                    <li><strong>AIPanelWidget</strong> - Main container for PREZI interface</li>
+                    <li><strong>AIAvatar</strong> - Animated visual representation with state management</li>
+                    <li><strong>AIChatInterface</strong> - Message display with typing indicators</li>
+                    <li><strong>AIPlanVisualizer</strong> - Step-by-step plan display with actions</li>
+                    <li><strong>AIProgressIndicator</strong> - Real-time operation feedback</li>
+                    <li><strong>EmergencyStopButton</strong> - Floating, context-aware stop control</li>
+                </ul>
+            </div>
+            
+            <h3 style="margin-top: 32px;">Animation Requirements</h3>
+            <div style="color: #9ca3af; line-height: 1.8;">
+                <ul>
+                    <li>Avatar breathing animation (CSS keyframes)</li>
+                    <li>Message fade-in animations</li>
+                    <li>Plan step progression animations</li>
+                    <li>Slide movement visualizations during assembly</li>
+                    <li>State transition animations</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate AI thinking state
+            const executeButtons = document.querySelectorAll('.execute-button');
+            executeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const avatar = document.querySelector('.ai-avatar');
+                    const stateText = document.querySelector('.ai-state');
+                    const stopButton = document.querySelector('.floating-stop');
+                    
+                    // Change to working state
+                    avatar.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+                    stateText.innerHTML = '<span class="state-indicator working"></span>Executing plan...';
+                    stopButton.classList.add('visible');
+                    
+                    // Reset after 3 seconds
+                    setTimeout(() => {
+                        avatar.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                        stateText.innerHTML = '<span class="state-indicator ready"></span>Plan executed successfully!';
+                        stopButton.classList.remove('visible');
+                    }, 3000);
+                });
+            });
+            
+            // Keyword hover effects
+            const keywords = document.querySelectorAll('.keyword-tag');
+            keywords.forEach(tag => {
+                tag.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05) rotate(-2deg)';
+                });
+                tag.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1) rotate(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

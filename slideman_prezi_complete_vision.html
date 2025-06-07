@@ -1,0 +1,2280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SlideMan + PREZI: The Complete Vision</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e7eb;
+            --text-muted: #9ca3af;
+            --border-color: #3a3a3a;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4a4a4a;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveGrid 20s linear infinite;
+        }
+        
+        @keyframes moveGrid {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            padding: 40px;
+        }
+        
+        .hero h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            margin-bottom: 24px;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            letter-spacing: -2px;
+        }
+        
+        .hero .tagline {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 48px;
+            font-weight: 300;
+        }
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-20px); }
+            60% { transform: translateX(-50%) translateY(-10px); }
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 80px 40px;
+        }
+        
+        .section-title {
+            font-size: 3rem;
+            margin-bottom: 24px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+        
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        /* Main Mockup */
+        .main-mockup {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.8), 0 30px 60px -30px rgba(0,0,0,0.5);
+            margin: 80px 0;
+            border: 1px solid var(--border-color);
+        }
+        
+        /* Window Chrome */
+        .window-chrome {
+            background: var(--bg-tertiary);
+            height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .window-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .window-button {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .window-button:hover {
+            opacity: 0.8;
+        }
+        
+        .close { background: #ff5f56; }
+        .minimize { background: #ffbd2e; }
+        .maximize { background: #27c93f; }
+        
+        .window-title {
+            flex: 1;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        /* Unified Command Bar */
+        .command-bar {
+            height: 72px;
+            background: linear-gradient(90deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(102,126,234,0.2);
+            display: flex;
+            align-items: center;
+            padding: 0 32px;
+            gap: 24px;
+        }
+        
+        .app-logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-right: 24px;
+        }
+        
+        .unified-search {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 36px;
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: text;
+        }
+        
+        .unified-search:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(102,126,234,0.5);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.2);
+        }
+        
+        .unified-search:focus-within {
+            background: rgba(255,255,255,0.1);
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.2);
+        }
+        
+        .search-icon {
+            font-size: 20px;
+            opacity: 0.6;
+        }
+        
+        .search-input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .prezi-status {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            animation: breathe 3s ease-in-out infinite;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .prezi-status::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 12px;
+            height: 12px;
+            background: var(--success-color);
+            border-radius: 50%;
+            border: 2px solid var(--bg-primary);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Main Workspace */
+        .workspace {
+            display: flex;
+            height: 900px;
+            background: var(--bg-primary);
+        }
+        
+        /* Smart Sidebar */
+        .smart-sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .project-info {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(102,126,234,0.05);
+        }
+        
+        .project-name {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .project-stats {
+            display: flex;
+            gap: 16px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .quick-actions {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .action-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            background: rgba(102,126,234,0.1);
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .action-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .action-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        /* Keywords Section */
+        .keywords-section {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+        
+        .section-header {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        .keyword-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .keyword-pill {
+            background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(139,92,246,0.2));
+            border: 1px solid rgba(139,92,246,0.3);
+            padding: 8px 16px;
+            border-radius: 24px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .keyword-pill:hover {
+            background: linear-gradient(135deg, rgba(59,130,246,0.3), rgba(139,92,246,0.3));
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(139,92,246,0.3);
+        }
+        
+        .keyword-pill.active {
+            background: var(--primary-gradient);
+            border-color: transparent;
+        }
+        
+        .keyword-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #667eea;
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        
+        /* Main Canvas */
+        .main-canvas {
+            flex: 1;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        /* View Controls */
+        .view-controls {
+            height: 60px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+        
+        .view-tabs {
+            display: flex;
+            gap: 24px;
+        }
+        
+        .view-tab {
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .view-tab:hover {
+            background: rgba(102,126,234,0.1);
+        }
+        
+        .view-tab.active {
+            background: var(--primary-gradient);
+            color: white;
+        }
+        
+        .view-options {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .view-option {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .view-option:hover {
+            background: rgba(102,126,234,0.1);
+            border-color: #667eea;
+        }
+        
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        /* Slide Grid */
+        .slide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .slide-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            position: relative;
+            group: slide;
+        }
+        
+        .slide-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(102,126,234,0.3);
+            border-color: #667eea;
+        }
+        
+        .slide-thumbnail {
+            aspect-ratio: 16/9;
+            background: var(--bg-tertiary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .slide-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .slide-card:hover .slide-image {
+            transform: scale(1.05);
+        }
+        
+        /* Element Overlays */
+        .element-overlays {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .slide-card:hover .element-overlays {
+            opacity: 1;
+        }
+        
+        .element-overlay {
+            position: absolute;
+            border: 2px solid rgba(139,92,246,0.5);
+            background: rgba(139,92,246,0.1);
+            border-radius: 4px;
+            pointer-events: all;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .element-overlay:hover {
+            border-color: #8b5cf6;
+            background: rgba(139,92,246,0.2);
+        }
+        
+        .element-overlay.tagged {
+            border-color: rgba(16,185,129,0.5);
+            background: rgba(16,185,129,0.1);
+        }
+        
+        .slide-info {
+            padding: 16px;
+        }
+        
+        .slide-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+        
+        .slide-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .slide-source {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .slide-actions {
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .slide-card:hover .slide-actions {
+            opacity: 1;
+        }
+        
+        .slide-action {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .slide-action:hover {
+            background: rgba(102,126,234,0.2);
+            border-color: #667eea;
+        }
+        
+        .slide-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .slide-tag {
+            font-size: 12px;
+            background: rgba(139,92,246,0.2);
+            color: #a78bfa;
+            padding: 4px 10px;
+            border-radius: 16px;
+            transition: all 0.2s;
+        }
+        
+        .slide-tag.element {
+            background: rgba(16,185,129,0.2);
+            color: #10b981;
+        }
+        
+        /* Right Panel - Assembly + PREZI */
+        .right-panel {
+            width: 420px;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Assembly Section */
+        .assembly-section {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(102,126,234,0.02);
+        }
+        
+        .assembly-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .assembly-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .assembly-stats {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        
+        .slide-counter {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .duration-estimate {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        .assembly-drop-zone {
+            min-height: 200px;
+            background: var(--bg-primary);
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .assembly-drop-zone.drag-over {
+            border-color: #667eea;
+            background: rgba(102,126,234,0.05);
+        }
+        
+        .drop-message {
+            text-align: center;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+        
+        .drop-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+        
+        .assembly-slides {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 12px;
+        }
+        
+        .assembly-slide {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            cursor: move;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .assembly-slide:hover {
+            background: rgba(102,126,234,0.1);
+            transform: translateX(4px);
+        }
+        
+        .assembly-slide.dragging {
+            opacity: 0.5;
+        }
+        
+        .slide-handle {
+            font-size: 16px;
+            color: var(--text-muted);
+            cursor: grab;
+        }
+        
+        .slide-handle:active {
+            cursor: grabbing;
+        }
+        
+        .assembly-slide-thumb {
+            width: 80px;
+            height: 45px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .assembly-slide-info {
+            flex: 1;
+        }
+        
+        .assembly-slide-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        
+        .assembly-slide-tags {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        
+        .mini-tag {
+            font-size: 11px;
+            background: rgba(139,92,246,0.2);
+            color: #a78bfa;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        
+        .remove-slide {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(239,68,68,0.1);
+            color: #ef4444;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .remove-slide:hover {
+            background: rgba(239,68,68,0.2);
+        }
+        
+        /* Assembly Actions */
+        .assembly-actions {
+            padding: 16px 24px;
+            background: var(--bg-tertiary);
+            display: flex;
+            gap: 12px;
+        }
+        
+        .assembly-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .preview-btn {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .preview-btn:hover {
+            background: rgba(102,126,234,0.1);
+            border-color: #667eea;
+        }
+        
+        .export-btn {
+            background: var(--primary-gradient);
+            color: white;
+        }
+        
+        .export-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(102,126,234,0.4);
+        }
+        
+        /* PREZI AI Section */
+        .prezi-section {
+            flex: 1;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        /* PREZI Header */
+        .prezi-header {
+            padding: 24px;
+            background: rgba(102,126,234,0.05);
+            border-bottom: 1px solid rgba(102,126,234,0.1);
+        }
+        
+        .prezi-identity {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .prezi-avatar {
+            width: 56px;
+            height: 56px;
+            background: var(--primary-gradient);
+            border-radius: 40% 60% 60% 40% / 60% 40% 60% 40%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            animation: morph 8s ease-in-out infinite;
+            box-shadow: 0 8px 32px rgba(102,126,234,0.3);
+            position: relative;
+        }
+        
+        @keyframes morph {
+            0%, 100% { border-radius: 40% 60% 60% 40% / 60% 40% 60% 40%; }
+            25% { border-radius: 60% 40% 40% 60% / 40% 60% 60% 40%; }
+            50% { border-radius: 40% 60% 60% 40% / 40% 60% 60% 40%; }
+            75% { border-radius: 60% 40% 40% 60% / 60% 40% 40% 60%; }
+        }
+        
+        .prezi-info {
+            flex: 1;
+        }
+        
+        .prezi-name {
+            font-size: 24px;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .prezi-state {
+            font-size: 14px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        
+        .state-indicator {
+            width: 8px;
+            height: 8px;
+            background: var(--success-color);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        /* PREZI Conversation */
+        .prezi-conversation {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .prezi-message {
+            animation: messageSlide 0.3s ease-out;
+        }
+        
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .user-message {
+            align-self: flex-end;
+            max-width: 85%;
+        }
+        
+        .user-bubble {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 14px 20px;
+            border-radius: 20px 20px 4px 20px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        .prezi-response {
+            align-self: flex-start;
+            max-width: 85%;
+        }
+        
+        .prezi-bubble {
+            background: var(--bg-tertiary);
+            padding: 14px 20px;
+            border-radius: 20px 20px 20px 4px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        /* PREZI Plan Visualization */
+        .prezi-plan {
+            background: rgba(102,126,234,0.05);
+            border: 1px solid rgba(102,126,234,0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 12px 0;
+        }
+        
+        .plan-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .plan-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .plan-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #a78bfa;
+        }
+        
+        .plan-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .plan-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 12px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+        
+        .plan-step:hover {
+            background: rgba(102,126,234,0.1);
+            transform: translateX(4px);
+        }
+        
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-tertiary);
+            border: 2px solid #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+        }
+        
+        .step-description {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        
+        .step-status {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .step-status.pending {
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+        }
+        
+        .step-status.in-progress {
+            background: var(--warning-color);
+            color: white;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .step-status.completed {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        /* Plan Actions */
+        .plan-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .plan-btn {
+            flex: 1;
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .execute-plan {
+            background: var(--primary-gradient);
+            color: white;
+        }
+        
+        .execute-plan:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(102,126,234,0.4);
+        }
+        
+        .modify-plan {
+            background: transparent;
+            color: #a78bfa;
+            border: 2px solid #a78bfa;
+        }
+        
+        .modify-plan:hover {
+            background: rgba(139,92,246,0.1);
+        }
+        
+        /* PREZI Suggestions */
+        .prezi-suggestions {
+            background: rgba(16,185,129,0.05);
+            border: 1px solid rgba(16,185,129,0.2);
+            border-radius: 16px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+        
+        .suggestion-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            color: var(--success-color);
+            font-weight: 600;
+        }
+        
+        .suggestion-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .suggestion-item:hover {
+            background: rgba(16,185,129,0.1);
+            transform: translateX(4px);
+        }
+        
+        /* PREZI Input */
+        .prezi-input-area {
+            padding: 20px 24px;
+            background: var(--bg-tertiary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        
+        .prezi-input-wrapper {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 12px 16px;
+            transition: all 0.2s;
+        }
+        
+        .prezi-input-wrapper:focus-within {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+        
+        .prezi-input {
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 15px;
+            resize: none;
+            outline: none;
+            min-height: 24px;
+            max-height: 120px;
+        }
+        
+        .prezi-input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .send-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        
+        .send-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 24px rgba(102,126,234,0.4);
+        }
+        
+        .send-button:active {
+            transform: scale(0.95);
+        }
+        
+        /* Floating Elements */
+        .floating-stop {
+            position: fixed;
+            bottom: 100px;
+            right: 480px;
+            background: rgba(239,68,68,0.9);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 8px 24px rgba(239,68,68,0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .floating-stop.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .floating-stop:hover {
+            background: #ef4444;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(239,68,68,0.4);
+        }
+        
+        /* Progress Overlay */
+        .progress-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .progress-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .progress-modal {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+        
+        .progress-overlay.active .progress-modal {
+            transform: scale(1);
+        }
+        
+        .progress-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        
+        .progress-content {
+            margin-bottom: 32px;
+        }
+        
+        .progress-bar-wrapper {
+            background: var(--bg-primary);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: var(--primary-gradient);
+            width: 65%;
+            transition: width 0.3s ease-out;
+        }
+        
+        .progress-status {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        .progress-details {
+            margin-top: 24px;
+            padding: 20px;
+            background: var(--bg-primary);
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+        
+        /* Feature Cards Section */
+        .features-section {
+            padding: 80px 0;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 32px;
+        }
+        
+        .feature-card {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(102,126,234,0.1);
+            border-color: rgba(102,126,234,0.3);
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 24px;
+            display: inline-block;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .feature-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+        
+        .feature-description {
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            color: var(--text-muted);
+        }
+        
+        .feature-check {
+            color: var(--success-color);
+            flex-shrink: 0;
+        }
+        
+        /* Workflow Section */
+        .workflow-section {
+            padding: 80px 0;
+            background: var(--bg-secondary);
+        }
+        
+        .workflow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            margin: 60px 0;
+            flex-wrap: wrap;
+        }
+        
+        .workflow-node {
+            text-align: center;
+            position: relative;
+        }
+        
+        .node-circle {
+            width: 120px;
+            height: 120px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin: 0 auto 20px;
+            box-shadow: 0 20px 40px rgba(102,126,234,0.3);
+            transition: all 0.3s;
+        }
+        
+        .workflow-node:hover .node-circle {
+            transform: scale(1.1);
+            box-shadow: 0 30px 60px rgba(102,126,234,0.4);
+        }
+        
+        .node-label {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        .workflow-arrow {
+            font-size: 36px;
+            color: #667eea;
+            opacity: 0.6;
+        }
+        
+        /* Interactive Demo */
+        .demo-section {
+            padding: 80px 0;
+            text-align: center;
+        }
+        
+        .demo-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 40px;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(102,126,234,0.3);
+        }
+        
+        .demo-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(102,126,234,0.4);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1400px) {
+            .right-panel {
+                width: 380px;
+            }
+            
+            .smart-sidebar {
+                width: 240px;
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .hero h1 {
+                font-size: 4rem;
+            }
+            
+            .slide-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .workspace {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .smart-sidebar,
+            .right-panel {
+                width: 100%;
+            }
+            
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>SlideMan + PREZI</h1>
+            <p class="tagline">From Chaos to Clarity • From Intent to Professional Presentation</p>
+            <div class="scroll-indicator">
+                <svg width="32" height="32" fill="white" viewBox="0 0 24 24">
+                    <path d="M7 10l5 5 5-5z"/>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Vision Statement -->
+        <section>
+            <h2 class="section-title">The Complete Vision</h2>
+            <p class="section-subtitle">Where AI Intelligence Meets Professional Presentation Excellence</p>
+        </section>
+
+        <!-- Main Application Mockup -->
+        <div class="main-mockup">
+            <!-- Window Chrome -->
+            <div class="window-chrome">
+                <div class="window-buttons">
+                    <div class="window-button close"></div>
+                    <div class="window-button minimize"></div>
+                    <div class="window-button maximize"></div>
+                </div>
+                <div class="window-title">SlideMan Professional - Your Presentation Studio</div>
+            </div>
+
+            <!-- Unified Command Bar -->
+            <div class="command-bar">
+                <div class="app-logo">SlideMan</div>
+                <div class="unified-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" placeholder="Search slides, create presentations, or ask PREZI anything...">
+                </div>
+                <div class="prezi-status" title="PREZI is ready to help">
+                    <span>✨</span>
+                </div>
+            </div>
+
+            <!-- Main Workspace -->
+            <div class="workspace">
+                <!-- Smart Sidebar -->
+                <aside class="smart-sidebar">
+                    <!-- Project Info -->
+                    <div class="project-info">
+                        <div class="project-name">Q4 Marketing Campaign</div>
+                        <div class="project-stats">
+                            <span class="stat">📑 245 slides</span>
+                            <span class="stat">📁 12 files</span>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <div class="section-header">Quick Actions</div>
+                        <div class="action-grid">
+                            <div class="action-btn">
+                                <div class="action-icon">📤</div>
+                                <div class="action-label">Import</div>
+                            </div>
+                            <div class="action-btn">
+                                <div class="action-icon">🏷️</div>
+                                <div class="action-label">Tag All</div>
+                            </div>
+                            <div class="action-btn">
+                                <div class="action-icon">🔄</div>
+                                <div class="action-label">Sync</div>
+                            </div>
+                            <div class="action-btn">
+                                <div class="action-icon">📊</div>
+                                <div class="action-label">Analyze</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Keywords Section -->
+                    <div class="keywords-section">
+                        <div class="section-header">Smart Keywords</div>
+                        <div class="keyword-cloud">
+                            <div class="keyword-pill active">
+                                #revenue
+                                <span class="keyword-count">23</span>
+                            </div>
+                            <div class="keyword-pill">
+                                #Q4-results
+                                <span class="keyword-count">18</span>
+                            </div>
+                            <div class="keyword-pill">
+                                #team
+                                <span class="keyword-count">12</span>
+                            </div>
+                            <div class="keyword-pill">
+                                #growth
+                                <span class="keyword-count">15</span>
+                            </div>
+                            <div class="keyword-pill">
+                                #strategy
+                                <span class="keyword-count">9</span>
+                            </div>
+                            <div class="keyword-pill">
+                                #2025-forecast
+                                <span class="keyword-count">7</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Main Canvas -->
+                <main class="main-canvas">
+                    <!-- View Controls -->
+                    <div class="view-controls">
+                        <div class="view-tabs">
+                            <div class="view-tab active">Library</div>
+                            <div class="view-tab">Recent</div>
+                            <div class="view-tab">Favorites</div>
+                            <div class="view-tab">PREZI Created</div>
+                        </div>
+                        <div class="view-options">
+                            <div class="view-option" title="Grid View">⊞</div>
+                            <div class="view-option" title="List View">☰</div>
+                            <div class="view-option" title="Filter">🔽</div>
+                        </div>
+                    </div>
+
+                    <!-- Content Area -->
+                    <div class="content-area">
+                        <div class="slide-grid">
+                            <!-- Slide Card 1 -->
+                            <div class="slide-card">
+                                <div class="slide-thumbnail">
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 225'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea'/%3E%3Cstop offset='100%25' style='stop-color:%23764ba2'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='400' height='225' fill='url(%23bg)'/%3E%3Ctext x='200' y='60' text-anchor='middle' fill='white' font-size='28' font-weight='bold'%3EQ4 Revenue Overview%3C/text%3E%3Crect x='50' y='100' width='80' height='80' fill='rgba(255,255,255,0.2)' rx='8'/%3E%3Crect x='160' y='90' width='80' height='90' fill='rgba(255,255,255,0.3)' rx='8'/%3E%3Crect x='270' y='80' width='80' height='100' fill='rgba(255,255,255,0.4)' rx='8'/%3E%3C/svg%3E" class="slide-image" alt="Q4 Revenue Overview">
+                                    <div class="element-overlays">
+                                        <div class="element-overlay tagged" style="left: 12.5%; top: 44%; width: 20%; height: 35%;" title="Revenue Chart"></div>
+                                        <div class="element-overlay" style="left: 40%; top: 40%; width: 20%; height: 40%;" title="Growth Metrics"></div>
+                                        <div class="element-overlay tagged" style="left: 67.5%; top: 35%; width: 20%; height: 44%;" title="YoY Comparison"></div>
+                                    </div>
+                                </div>
+                                <div class="slide-info">
+                                    <div class="slide-title">Q4 Revenue Overview</div>
+                                    <div class="slide-meta">
+                                        <span class="slide-source">Q4_Results_Final.pptx</span>
+                                        <div class="slide-actions">
+                                            <div class="slide-action" title="Add to Assembly">➕</div>
+                                            <div class="slide-action" title="Preview">👁️</div>
+                                        </div>
+                                    </div>
+                                    <div class="slide-tags">
+                                        <span class="slide-tag">#revenue</span>
+                                        <span class="slide-tag">#Q4-results</span>
+                                        <span class="slide-tag element">#chart</span>
+                                        <span class="slide-tag element">#comparison</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Slide Card 2 -->
+                            <div class="slide-card">
+                                <div class="slide-thumbnail">
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 225'%3E%3Crect width='400' height='225' fill='%232a2a2a'/%3E%3Ctext x='200' y='50' text-anchor='middle' fill='white' font-size='24' font-weight='bold'%3ETeam Achievements%3C/text%3E%3Ccircle cx='100' cy='140' r='40' fill='%23667eea' opacity='0.8'/%3E%3Ccircle cx='200' cy='140' r='40' fill='%23764ba2' opacity='0.8'/%3E%3Ccircle cx='300' cy='140' r='40' fill='%238b5cf6' opacity='0.8'/%3E%3C/svg%3E" class="slide-image" alt="Team Achievements">
+                                    <div class="element-overlays">
+                                        <div class="element-overlay" style="left: 15%; top: 40%; width: 20%; height: 35%;" title="Sales Team"></div>
+                                        <div class="element-overlay" style="left: 40%; top: 40%; width: 20%; height: 35%;" title="Marketing Team"></div>
+                                        <div class="element-overlay" style="left: 65%; top: 40%; width: 20%; height: 35%;" title="Product Team"></div>
+                                    </div>
+                                </div>
+                                <div class="slide-info">
+                                    <div class="slide-title">Team Achievements</div>
+                                    <div class="slide-meta">
+                                        <span class="slide-source">Team_Update_Dec.pptx</span>
+                                        <div class="slide-actions">
+                                            <div class="slide-action" title="Add to Assembly">➕</div>
+                                            <div class="slide-action" title="Preview">👁️</div>
+                                        </div>
+                                    </div>
+                                    <div class="slide-tags">
+                                        <span class="slide-tag">#team</span>
+                                        <span class="slide-tag">#achievements</span>
+                                        <span class="slide-tag">#Q4-results</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Slide Card 3 - AI Suggested -->
+                            <div class="slide-card" style="border-color: rgba(16,185,129,0.3);">
+                                <div class="slide-thumbnail">
+                                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 225'%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2310b981'/%3E%3Cstop offset='100%25' style='stop-color:%23059669'/%3E%3C/linearGradient%3E%3Crect width='400' height='225' fill='url(%23grad)'/%3E%3Ctext x='200' y='60' text-anchor='middle' fill='white' font-size='26' font-weight='bold'%3E2025 Growth Strategy%3C/text%3E%3Cpath d='M 50 180 Q 150 100 250 120 T 350 60' stroke='white' stroke-width='4' fill='none'/%3E%3C/svg%3E" class="slide-image" alt="2025 Growth Strategy">
+                                    <div style="position: absolute; top: 8px; right: 8px; background: var(--success-color); color: white; padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: 600;">
+                                        PREZI Suggested
+                                    </div>
+                                </div>
+                                <div class="slide-info">
+                                    <div class="slide-title">2025 Growth Strategy</div>
+                                    <div class="slide-meta">
+                                        <span class="slide-source">Strategy_Planning.pptx</span>
+                                        <div class="slide-actions">
+                                            <div class="slide-action" title="Add to Assembly">➕</div>
+                                            <div class="slide-action" title="Preview">👁️</div>
+                                        </div>
+                                    </div>
+                                    <div class="slide-tags">
+                                        <span class="slide-tag">#growth</span>
+                                        <span class="slide-tag">#strategy</span>
+                                        <span class="slide-tag">#2025-forecast</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- More slide cards would go here... -->
+                        </div>
+                    </div>
+                </main>
+
+                <!-- Right Panel - Assembly + PREZI -->
+                <aside class="right-panel">
+                    <!-- Assembly Section -->
+                    <div class="assembly-section">
+                        <div class="assembly-header">
+                            <h3 class="assembly-title">Assembly Workshop</h3>
+                            <div class="assembly-stats">
+                                <span class="slide-counter">5 slides</span>
+                                <span class="duration-estimate">~8 min</span>
+                            </div>
+                        </div>
+
+                        <div class="assembly-drop-zone">
+                            <div class="assembly-slides">
+                                <!-- Assembly Slide 1 -->
+                                <div class="assembly-slide">
+                                    <span class="slide-handle">⋮⋮</span>
+                                    <div class="assembly-slide-thumb">
+                                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'%3E%3Crect width='160' height='90' fill='%23667eea'/%3E%3C/svg%3E" style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+                                    <div class="assembly-slide-info">
+                                        <div class="assembly-slide-title">Introduction</div>
+                                        <div class="assembly-slide-tags">
+                                            <span class="mini-tag">#intro</span>
+                                            <span class="mini-tag">#overview</span>
+                                        </div>
+                                    </div>
+                                    <div class="remove-slide">×</div>
+                                </div>
+
+                                <!-- Assembly Slide 2 -->
+                                <div class="assembly-slide">
+                                    <span class="slide-handle">⋮⋮</span>
+                                    <div class="assembly-slide-thumb">
+                                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 90'%3E%3Crect width='160' height='90' fill='%23764ba2'/%3E%3C/svg%3E" style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+                                    <div class="assembly-slide-info">
+                                        <div class="assembly-slide-title">Q4 Revenue Overview</div>
+                                        <div class="assembly-slide-tags">
+                                            <span class="mini-tag">#revenue</span>
+                                            <span class="mini-tag">#Q4</span>
+                                        </div>
+                                    </div>
+                                    <div class="remove-slide">×</div>
+                                </div>
+
+                                <!-- More assembly slides... -->
+                            </div>
+                        </div>
+
+                        <div class="assembly-actions">
+                            <button class="assembly-btn preview-btn">
+                                <span>👁️</span>
+                                <span>Preview</span>
+                            </button>
+                            <button class="assembly-btn export-btn">
+                                <span>📤</span>
+                                <span>Export PPTX</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PREZI AI Section -->
+                    <div class="prezi-section">
+                        <!-- PREZI Header -->
+                        <div class="prezi-header">
+                            <div class="prezi-identity">
+                                <div class="prezi-avatar">🤖</div>
+                                <div class="prezi-info">
+                                    <div class="prezi-name">PREZI</div>
+                                    <div class="prezi-state">
+                                        <span class="state-indicator"></span>
+                                        <span>Ready to assist</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PREZI Conversation -->
+                        <div class="prezi-conversation">
+                            <!-- User Message -->
+                            <div class="prezi-message user-message">
+                                <div class="user-bubble">
+                                    Create a 10-minute investor pitch focusing on our Q4 results and 2025 growth strategy
+                                </div>
+                            </div>
+
+                            <!-- PREZI Response -->
+                            <div class="prezi-message prezi-response">
+                                <div class="prezi-bubble">
+                                    I'll create a compelling investor pitch for you. Let me analyze your Q4 results and growth strategy slides.
+                                </div>
+                            </div>
+
+                            <!-- PREZI Plan -->
+                            <div class="prezi-plan">
+                                <div class="plan-header">
+                                    <div class="plan-icon">📋</div>
+                                    <div class="plan-title">Presentation Plan</div>
+                                </div>
+                                <div class="plan-steps">
+                                    <div class="plan-step">
+                                        <div class="step-number">1</div>
+                                        <div class="step-content">
+                                            <div class="step-title">Opening Hook</div>
+                                            <div class="step-description">Start with impressive Q4 revenue growth to capture attention</div>
+                                        </div>
+                                        <div class="step-status completed">✓</div>
+                                    </div>
+                                    <div class="plan-step">
+                                        <div class="step-number">2</div>
+                                        <div class="step-content">
+                                            <div class="step-title">Team Achievements</div>
+                                            <div class="step-description">Showcase the people behind the success</div>
+                                        </div>
+                                        <div class="step-status completed">✓</div>
+                                    </div>
+                                    <div class="plan-step">
+                                        <div class="step-number">3</div>
+                                        <div class="step-content">
+                                            <div class="step-title">Market Analysis</div>
+                                            <div class="step-description">Position our growth in market context</div>
+                                        </div>
+                                        <div class="step-status in-progress">⟳</div>
+                                    </div>
+                                    <div class="plan-step">
+                                        <div class="step-number">4</div>
+                                        <div class="step-content">
+                                            <div class="step-title">2025 Strategy</div>
+                                            <div class="step-description">Present clear growth roadmap</div>
+                                        </div>
+                                        <div class="step-status pending">○</div>
+                                    </div>
+                                    <div class="plan-step">
+                                        <div class="step-number">5</div>
+                                        <div class="step-content">
+                                            <div class="step-title">Call to Action</div>
+                                            <div class="step-description">End with compelling investment opportunity</div>
+                                        </div>
+                                        <div class="step-status pending">○</div>
+                                    </div>
+                                </div>
+                                <div class="plan-actions">
+                                    <button class="plan-btn execute-plan">
+                                        <span>🚀</span>
+                                        <span>Execute Plan</span>
+                                    </button>
+                                    <button class="plan-btn modify-plan">
+                                        <span>✏️</span>
+                                        <span>Modify</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- PREZI Suggestions -->
+                            <div class="prezi-suggestions">
+                                <div class="suggestion-header">
+                                    <span>💡</span>
+                                    <span>Smart Suggestions</span>
+                                </div>
+                                <div class="suggestion-list">
+                                    <div class="suggestion-item">
+                                        <span>📊</span>
+                                        <span>Add competitive analysis slide for context</span>
+                                    </div>
+                                    <div class="suggestion-item">
+                                        <span>🎯</span>
+                                        <span>Include customer testimonials for credibility</span>
+                                    </div>
+                                    <div class="suggestion-item">
+                                        <span>✨</span>
+                                        <span>Apply consistent McKinsey-style formatting</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PREZI Input -->
+                        <div class="prezi-input-area">
+                            <div class="prezi-input-wrapper">
+                                <textarea class="prezi-input" placeholder="Ask PREZI anything... (Ctrl+K for quick access)" rows="1"></textarea>
+                            </div>
+                            <button class="send-button">
+                                <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <!-- Floating Emergency Stop -->
+        <div class="floating-stop" id="emergencyStop">
+            <span>⏹</span>
+            <span>Stop PREZI</span>
+        </div>
+
+        <!-- Progress Overlay -->
+        <div class="progress-overlay" id="progressOverlay">
+            <div class="progress-modal">
+                <h3 class="progress-title">PREZI is Building Your Presentation</h3>
+                <div class="progress-content">
+                    <div class="progress-bar-wrapper">
+                        <div class="progress-bar"></div>
+                    </div>
+                    <div class="progress-status">Analyzing slides and applying professional formatting...</div>
+                </div>
+                <div class="progress-details">
+                    <strong>Current Action:</strong> Ensuring visual consistency across all slides<br>
+                    <strong>Slides Processed:</strong> 8 of 12<br>
+                    <strong>Time Remaining:</strong> ~45 seconds
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <h2 class="section-title">Revolutionary Features</h2>
+            <p class="section-subtitle">Where every interaction feels like magic</p>
+            
+            <div class="features-grid">
+                <!-- Feature 1 -->
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3 class="feature-title">Natural Language Everything</h3>
+                    <p class="feature-description">
+                        One search bar that understands everything. Search for slides, create presentations, or chat with PREZI - all from one place.
+                    </p>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>"Find all slides about revenue from Q4"</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>"Create a 5-minute pitch for investors"</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>"Make this presentation more professional"</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card">
+                    <div class="feature-icon">🏷️</div>
+                    <h3 class="feature-title">Element-Level Intelligence</h3>
+                    <p class="feature-description">
+                        Tag and search individual elements within slides. Find that specific chart, table, or image instantly across thousands of slides.
+                    </p>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>Click on any element to tag it</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>PREZI auto-detects and suggests tags</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>Search finds elements, not just slides</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h3 class="feature-title">Professional Output Guarantee</h3>
+                    <p class="feature-description">
+                        Every presentation looks McKinsey-level professional. Consistent formatting, proper margins, brand identity - all automatic.
+                    </p>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>Automatic style harmonization</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>Brand guideline enforcement</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>Visual consistency across all slides</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3 class="feature-title">PREZI: Your AI Partner</h3>
+                    <p class="feature-description">
+                        Professional, witty, and analytically precise. PREZI shows you the plan, then executes it perfectly with your approval.
+                    </p>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>Visual plan before execution</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>Human-in-the-loop control</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>Learns your style over time</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3 class="feature-title">80-90% Time Reduction</h3>
+                    <p class="feature-description">
+                        What used to take 4-5 hours now takes minutes. From hunting slides to building professional presentations - everything is faster.
+                    </p>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>Instant slide discovery</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>Automated assembly building</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>One-click professional export</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3 class="feature-title">Living, Breathing Interface</h3>
+                    <p class="feature-description">
+                        Every interaction feels alive. Smooth animations, intelligent responses, and a UI that adapts to your workflow.
+                    </p>
+                    <ul class="feature-list">
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>Contextual UI adaptations</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>Micro-interactions everywhere</span>
+                        </li>
+                        <li class="feature-item">
+                            <span class="feature-check">✓</span>
+                            <span>Feels like creative studio, not database</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Workflow Section -->
+        <section class="workflow-section">
+            <div class="container">
+                <h2 class="section-title">The Magic Workflow</h2>
+                <p class="section-subtitle">From chaos to professional presentation in minutes</p>
+                
+                <div class="workflow-diagram">
+                    <div class="workflow-node">
+                        <div class="node-circle">💭</div>
+                        <div class="node-label">Express Intent</div>
+                    </div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-node">
+                        <div class="node-circle">📋</div>
+                        <div class="node-label">See PREZI's Plan</div>
+                    </div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-node">
+                        <div class="node-circle">🚀</div>
+                        <div class="node-label">Execute with Approval</div>
+                    </div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-node">
+                        <div class="node-circle">✨</div>
+                        <div class="node-label">Professional PPTX</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Demo Section -->
+        <section class="demo-section">
+            <h2 class="section-title">Experience the Magic</h2>
+            <p class="section-subtitle">See how SlideMan + PREZI transforms your workflow</p>
+            
+            <button class="demo-button" onclick="alert('Demo would launch here!')">
+                <span>🎬</span>
+                <span>Watch Interactive Demo</span>
+            </button>
+        </section>
+    </div>
+
+    <script>
+        // Simulate PREZI breathing
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate progress bar
+            const progressBar = document.querySelector('.progress-bar');
+            if (progressBar) {
+                setTimeout(() => {
+                    progressBar.style.width = '85%';
+                }, 500);
+            }
+
+            // Show emergency stop on execution
+            const executeBtn = document.querySelector('.execute-plan');
+            const emergencyStop = document.getElementById('emergencyStop');
+            const progressOverlay = document.getElementById('progressOverlay');
+            
+            if (executeBtn) {
+                executeBtn.addEventListener('click', function() {
+                    emergencyStop.classList.add('visible');
+                    progressOverlay.classList.add('active');
+                    
+                    // Hide after 3 seconds
+                    setTimeout(() => {
+                        emergencyStop.classList.remove('visible');
+                        progressOverlay.classList.remove('active');
+                    }, 3000);
+                });
+            }
+
+            // Search input animation
+            const searchInput = document.querySelector('.search-input');
+            const placeholders = [
+                "Search slides, create presentations, or ask PREZI anything...",
+                "Try: 'Find all Q4 revenue slides'",
+                "Try: 'Create investor pitch from latest results'",
+                "Try: 'Make this presentation more professional'"
+            ];
+            
+            let placeholderIndex = 0;
+            setInterval(() => {
+                if (searchInput && !searchInput.value) {
+                    placeholderIndex = (placeholderIndex + 1) % placeholders.length;
+                    searchInput.placeholder = placeholders[placeholderIndex];
+                }
+            }, 4000);
+
+            // Keyword interaction
+            document.querySelectorAll('.keyword-pill').forEach(pill => {
+                pill.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                });
+            });
+
+            // Slide card hover effect
+            document.querySelectorAll('.slide-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    const overlays = this.querySelector('.element-overlays');
+                    if (overlays) {
+                        overlays.style.opacity = '1';
+                    }
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    const overlays = this.querySelector('.element-overlays');
+                    if (overlays) {
+                        overlays.style.opacity = '0';
+                    }
+                });
+            });
+
+            // PREZI input auto-resize
+            const preziInput = document.querySelector('.prezi-input');
+            if (preziInput) {
+                preziInput.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = (this.scrollHeight) + 'px';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
