@@ -7,10 +7,10 @@ Here is the comprehensive Product Requirements Document for PrezI.
 
 # PrezI: Product Requirements Document (PRD)
 
-*   **Version:** 1.0
+*   **Version:** 1.1
 *   **Date:** June 7, 2025
 *   **Author:** PrezI Vision Synthesis AI
-*   **Status:** Finalized
+*   **Status:** Amended & Finalized
 
 ---
 
@@ -69,7 +69,20 @@ These principles will guide every design and development decision.
 
 ---
 
-## 4. Detailed Feature Requirements
+## 4. Feature Requirements & User Stories
+
+### 4.1. Core User Stories
+
+| Epic | User Story |
+| :--- | :--- |
+| The Slide Universe | As a user, I want to import all my presentations into a single, global library so I can stop hunting for slides across different files. |
+| Intelligent Organization | As a user, I want to tag individual slides and their elements with keywords so I can find exactly what I need with precision. |
+| AI-Powered Creation | As a user, I want to state my goal in plain language and have PrezI build a professional, first-draft presentation for me in minutes. |
+| Style Harmonization | As a user, I want PrezI to automatically fix formatting and apply a consistent, professional design to a presentation built from mismatched slides. |
+| Tangible Results | As a user, I want to export my finished assembly into a fully-editable .pptx file so I can present it or share it with my team. |
+| **[AMENDED]** | As a new user, I want a guided, interactive tour on my first launch so that I can understand PrezI's core value and be set up for success in under five minutes. |
+
+## 4.2. Detailed Feature Requirements
 
 ### Epic 1: The Unified Hybrid Application
 

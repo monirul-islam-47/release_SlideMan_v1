@@ -8,18 +8,20 @@ Here is the **PrezI UI/UX Design System & Style Guide**.
 
 # PrezI: UI/UX Design System & Style Guide
 
-*   **Version:** 1.0
+*   **Version:** 1.1
 *   **Date:** June 7, 2025
 *   **Author:** PrezI Vision Synthesis AI
-*   **Status:** Finalized
+*   **Status:** Amended & Finalized
 
 ## 1. Design Philosophy: The "Living Workspace"
 
-The PrezI interface is not a static tool; it is a **living workspace**. It should feel intelligent, responsive, and organic. Our design philosophy is built on three pillars:
+The PrezI interface is not a static tool; it is a **living workspace**. It should feel intelligent, responsive, and organic. Our design philosophy is built on these pillars:
 
 1.  **Clarity in Darkness:** We use a dark theme not to be trendy, but to make the user's colorful slides the hero. The UI recedes, allowing content to shine.
 2.  **Fluid & Responsive:** Every interaction, from a simple hover to a complex AI-driven animation, should be smooth, immediate, and satisfying. The interface breathes with the user's actions.
 3.  **Professionalism with Personality:** The aesthetic is clean, sharp, and worthy of a McKinsey boardroom, but imbued with the signature purple/blue gradients and subtle glows that give PrezI her unique, intelligent personality.
+4.  **Content-First Focus:** The primary workspace is always devoted to the user's content, with functional elements accessible but not intrusive.
+5.  **Immersive & Focused:** The UI is content-first. Tools and panels remain hidden until requested, providing a clean, focused environment for creative work.
 
 ---
 
@@ -152,5 +154,35 @@ This defines the "feel" of PrezI.
 | **List Item Appearance** | When new items are added to a list (e.g., search results), they should stagger in with a slight upward fade. `animation-delay` based on item index. |
 | **Drag & Drop** | The dragged element should become semi-transparent (`opacity: 0.7`). A "ghost" of the item follows the cursor. Drop zones should highlight with an inset blue glow on hover. |
 | **Progress Bars** | The fill should animate smoothly to its new value, not jump instantly. Use a CSS transition on the `width` property. |
+
+---
+
+## 8. Immersive Interface Principles
+
+The PrezI interface is toggleable to promote a focused user experience.
+
+### Default State
+- The application launches with both the left (Keywords) and right (Assembly) sidebars collapsed.
+
+### UI Elements
+- A persistent, vertical handle/icon will be visible on the far left and far right edges.
+- These handles will have a subtle hover effect and a soft pulse animation when their respective panels contain new or relevant information.
+
+### Interaction
+- Clicking a handle will trigger a smooth, animated slide-in of the corresponding sidebar, pushing the main content area to resize.
+- The animation will adhere to the standard duration (0.4s) and easing curve (cubic-bezier(0.16, 1, 0.3, 1)).
+
+---
+
+## 9. System States & Empty States
+
+### Loading States
+- All content areas (e.g., the Slide Library grid) that load data asynchronously will display a "skeleton loader" UI. 
+- This UI will mimic the shape and layout of the final content and feature a subtle, shimmering animation.
+- This provides a better perceived performance than a generic spinner.
+
+### Empty States
+- Any view that can be empty (e.g., no search results, an empty assembly) will display a helpful message, a relevant icon, and a clear call-to-action.
+- Example: An empty Assembly panel will display "Click slides in the library to start building your presentation."
 
 This Design System provides a comprehensive, rule-based foundation to ensure that the PrezI application is not only functional but also a beautiful, cohesive, and delightful experience, perfectly matching the high-quality vision from the mockups.

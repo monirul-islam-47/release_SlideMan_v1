@@ -6,10 +6,10 @@ Here is the entire, final version of the **PrezI Development & Testing Plan**, a
 
 # PrezI: Development & Testing Plan
 
-*   **Version:** 1.1
+*   **Version:** 1.2
 *   **Date:** June 7, 2025
 *   **Author:** PrezI Vision Synthesis AI
-*   **Status:** Finalized & Ready for Implementation
+*   **Status:** Amended & Finalized
 
 ## 1. Introduction & Guiding Philosophy
 
@@ -146,6 +146,17 @@ This is the tactical, sequential plan for development.
 | ☐ **5.2**| Implement the Assembly Panel UI, including drag-and-drop functionality from the library. | Wireframes, Design System | |
 | ☐ **5.3**| Implement the `POST /export` endpoint and the backend logic in `powerpoint_automator.py` to create a `.pptx` file from assembled slide IDs. | API Spec, SAD | |
 | ☐ **5.4**| Implement the "Export Options" and "Export Progress" UI. | Wireframes, Design System | |
+
+### **[AMENDED]** 6.2. Sprint 6: First-Time User Experience & Onboarding
+*Goal: Provide a guided, engaging first-run experience for new users.*
+| Task ID | Task Description | Key Documents | Status |
+| :--- | :--- | :--- | :--- |
+| ☐ **6.1**| Implement the onboarding state machine backend logic. | AIDD, O&E Handbook | |
+| ☐ **6.2**| Implement the onboarding API endpoints (`GET/PUT /onboarding/state`, `GET /onboarding/content`, etc.). | API Spec | |
+| ☐ **6.3**| Create the welcome screens and onboarding UI flows with animations. | UI/UX Design, O&E Handbook | |
+| ☐ **6.4**| Implement the API key setup & validation UI with secure storage. | O&E Handbook, API Spec | |
+| ☐ **6.5**| Implement the onboarding assistant with personalized guidance using the onboarding prompt template. | AIDD | |
+| ☐ **6.6**| Implement the onboarding action tracking and analytics in the database. | DB Schema, O&E Handbook | |
 
 *(Further Sprints for Phases 2 & 3 will be detailed in the same format)*
 

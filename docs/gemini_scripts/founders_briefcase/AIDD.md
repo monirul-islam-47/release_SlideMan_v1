@@ -8,10 +8,10 @@ Here is the **PrezI AI Design Document (AIDD)**.
 
 # PrezI: AI Design Document (AIDD)
 
-*   **Version:** 1.0
+*   **Version:** 1.1
 *   **Date:** June 7, 2025
 *   **Author:** PrezI Vision Synthesis AI
-*   **Status:** Finalized
+*   **Status:** Amended & Finalized
 
 ## 1. Core Cognitive Model: The OODA Loop
 
@@ -194,5 +194,47 @@ def select_best_slide(slides, context):
 *   **Error Handling:** All API calls must be wrapped in `try...except` blocks to handle network errors, API timeouts, and rate limits gracefully. PrezI's personality matrix defines how she communicates these errors to the user.
 *   **State Management:** The backend must maintain the state of the current AI operation (e.g., `idle`, `planning`, `executing`, `awaiting_feedback`) to correctly interpret user commands in context.
 *   **Security:** The OpenAI API key must be stored securely and never exposed to the frontend. It should be loaded from an environment variable or a secure configuration file on the backend.
+
+---
+
+## **[AMENDED]** 6. First-Time Experience & Onboarding
+
+### 6.1. Onboarding Flow Control Logic
+
+The onboarding experience is a guided, interactive tour specifically designed for first-time users. It uses a state machine pattern to progress through steps while allowing users to pause/resume the flow.
+
+```python
+class OnboardingState(Enum):
+    WELCOME = 1           # Initial greeting and overview
+    LIBRARY_TOUR = 2      # Explain the slide library concept
+    IMPORT_DEMO = 3       # Guide through importing a sample deck
+    KEYWORD_SYSTEM = 4    # Demonstrate the keyword organization system
+    ASSEMBLY_PANEL = 5    # Show how to assemble slides
+    AI_FEATURES = 6       # Highlight AI capabilities
+    EXPORT_WORKFLOW = 7   # Explain the export process
+    COMPLETED = 8         # Onboarding complete
+```
+
+### 6.2. Prompt: `ONBOARDING_ASSISTANT`
+*   **Goal:** To provide a personalized, conversational guide through the first-time user experience.
+*   **Trigger:** On first application launch or when explicitly requested by the user.
+*   **Model:** GPT-4o (for personable, contextual assistance).
+*   **System Prompt:**
+    ```
+    You are PrezI's helpful onboarding assistant. Your goal is to introduce the user to PrezI's core features in under five minutes, explaining each concept briefly and clearly. Be encouraging and cheerful, but respect the user's time. Guide them through the current onboarding step, focusing on making them successful quickly.
+    ```
+*   **User Prompt:**
+    ```json
+    Generate a brief, conversational guidance message for the current onboarding step. Keep it under 60 words. Be specific to the current feature being demonstrated.
+
+    Current Step: "${current_onboarding_step}"
+    Feature Context: "${feature_description}"
+    User Actions So Far: ${user_actions_json}
+
+    Response should include:
+    1. A warm, brief greeting (if this is the first step)
+    2. A clear, direct explanation of the current feature
+    3. A specific instruction on what to do next
+    ```
 
 This AI Design Document provides the complete instructions for building PrezI's "brain." It ensures that her intelligence is not a black box, but a well-defined, predictable, and powerful system designed to deliver on the promise of a true AI partner.

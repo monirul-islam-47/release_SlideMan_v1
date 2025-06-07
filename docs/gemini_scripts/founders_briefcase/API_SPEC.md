@@ -10,10 +10,10 @@ Let us proceed.
 
 # PrezI: Complete API Specification
 
-*   **Version:** 1.0
-*   **Date:** June 7, 2025
+*   **Version:** 1.2
+*   **Date:** June 15, 2025
 *   **Author:** PrezI Vision Synthesis AI
-*   **Status:** Finalized
+*   **Status:** Amended & Finalized
 
 ## 1. Introduction
 
@@ -152,5 +152,165 @@ The backend will push messages with the following structure:
 *   **Event: `LIBRARY_UPDATED`**
     *   **Description:** Sent whenever the slide library changes (e.g., after an import). The UI should listen for this and refresh its view.
     *   **Payload:** `{ "project_id": "integer" }`
+
+---
+
+## 5. Onboarding API
+
+The following endpoints specifically support the first-time user experience and interactive onboarding flow based on a defined state machine.
+
+### 5.1. Onboarding State Management
+
+*   `GET /onboarding/state`
+    *   **Description:** Retrieves the current onboarding state for the user.
+    *   **Success Response:** 
+        ```json
+        { 
+          "onboarding_completed": boolean, 
+          "current_state": "WELCOME|API_SETUP|FEATURE_TOUR|IMPORT_FIRST|COMMAND_BAR|ASSEMBLY_PANEL|GRADUATION",
+          "progression": integer, 
+          "max_progression": integer,
+          "branch_path": "FEATURE_FIRST|IMPORT_FIRST|null"
+        }
+        ```
+
+*   `PUT /onboarding/state`
+    *   **Description:** Transitions to a new onboarding state.
+    *   **Request Body:** 
+        ```json
+        { 
+          "new_state": "WELCOME|API_SETUP|FEATURE_TOUR|IMPORT_FIRST|COMMAND_BAR|ASSEMBLY_PANEL|GRADUATION",
+          "branch_path": "FEATURE_FIRST|IMPORT_FIRST" (optional)
+        }
+        ```
+    *   **Success Response:** 
+        ```json
+        {
+          "message": "Onboarding state transitioned successfully.",
+          "current_state": "string",
+          "progression": integer
+        }
+        ```
+
+*   `POST /onboarding/complete`
+    *   **Description:** Marks the onboarding process as completed and transitions to GRADUATION state.
+    *   **Success Response:** `{ "message": "Onboarding completed.", "analytics_summary": { "time_to_completion": "string", "path_taken": "string" } }`
+
+### 5.2. Onboarding Content
+
+*   `GET /onboarding/content`
+    *   **Description:** Retrieves the content for a specific onboarding state.
+    *   **Query Parameters:** `?state=string&branch_path=string`
+    *   **Success Response:**
+        ```json
+        {
+          "state": "string",
+          "title": "string",
+          "content": "string",
+          "ui_highlights": ["ids of UI elements to highlight"],
+          "primary_action": {
+            "label": "string",
+            "action_type": "next_state|complete|demo_action",
+            "target_state": "string" (required if action_type is next_state),
+            "api_call": "/endpoint/to/call" (optional)
+          },
+          "secondary_actions": [
+            {
+              "label": "string",
+              "action_type": "branch_select|skip|dismiss",
+              "target_state": "string" (optional),
+              "branch_path": "string" (required if action_type is branch_select)
+            }
+          ]
+        }
+        ```
+
+*   `GET /onboarding/branches`
+    *   **Description:** Retrieves available onboarding branch paths from the current state.
+    *   **Query Parameters:** `?current_state=string`
+    *   **Success Response:** 
+        ```json
+        {
+          "available_branches": [
+            {
+              "branch_id": "FEATURE_FIRST|IMPORT_FIRST",
+              "title": "string",
+              "description": "string",
+              "target_state": "string"
+            }
+          ]
+        }
+        ```
+
+### 5.3. API Key Management
+
+*   `POST /auth/validate-api-key`
+    *   **Description:** Validates an OpenAI API key before secure storage.
+    *   **Request Body:** `{ "api_key": "string" }`
+    *   **Success Response:** `{ "valid": boolean, "model_access": ["gpt-4o", "gpt-4o-mini", etc], "message": "string" }`
+
+*   `POST /auth/store-api-key`
+    *   **Description:** Securely stores a validated API key in the OS credential store.
+    *   **Request Body:** `{ "api_key": "string" }`
+    *   **Success Response:** `{ "success": boolean, "message": "API key securely stored." }`
+    *   **Error Responses:** 
+        - `{ "error": { "code": "INVALID_API_KEY", "message": "The provided API key is invalid." } }`
+        - `{ "error": { "code": "STORAGE_ERROR", "message": "Could not access OS credential store." } }`
+
+*   `GET /auth/api-key-status`
+    *   **Description:** Checks if a valid API key is stored and accessible.
+    *   **Success Response:** `{ "key_configured": boolean, "model_access": ["string"], "token_usage": { "used": integer, "available": integer } }`
+
+### 5.4. Onboarding Assistant
+
+*   `POST /onboarding/assistant`
+    *   **Description:** Triggers the onboarding assistant to generate contextual help.
+    *   **Request Body:**
+        ```json
+        {
+          "current_state": "string",
+          "feature_context": "string",
+          "user_actions": [{"action": "string", "timestamp": "ISO8601-timestamp"}],
+          "user_difficulty_signals": ["string"] (optional)
+        }
+        ```
+    *   **Success Response:** 
+        ```json
+        { 
+          "assistant_message": "string", 
+          "next_action_hint": "string",
+          "ui_element_focus": "string" (optional)
+        }
+        ```
+
+### 5.5. Onboarding Analytics
+
+*   `POST /onboarding/analytics`
+    *   **Description:** Records analytics about user progression through onboarding.
+    *   **Request Body:**
+        ```json
+        {
+          "event_type": "state_enter|state_exit|action_taken|difficulty_signal",
+          "state": "string",
+          "action": "string" (required if event_type is action_taken),
+          "time_spent_ms": integer (required if event_type is state_exit),
+          "difficulty_type": "string" (required if event_type is difficulty_signal)
+        }
+        ```
+    *   **Success Response:** `{ "recorded": true }`
+
+*   `GET /onboarding/analytics/summary`
+    *   **Description:** Retrieves a summary of onboarding analytics for the current user.
+    *   **Success Response:**
+        ```json
+        {
+          "onboarding_started": "ISO8601-timestamp",
+          "onboarding_completed": "ISO8601-timestamp" | null,
+          "total_time_spent_ms": integer,
+          "path_taken": "FEATURE_FIRST|IMPORT_FIRST",
+          "states_visited": ["string"],
+          "difficulty_signals": integer
+        }
+        ```
 
 This API Specification provides the exact technical contract needed to build PrezI. It ensures that the frontend and backend can be developed independently while guaranteeing seamless integration, ultimately delivering the fluid and intelligent experience defined in our vision.

@@ -8,10 +8,10 @@ Here is the **PrezI Detailed Database Schema**.
 
 # PrezI: Detailed Database Schema
 
-*   **Version:** 1.0
-*   **Date:** June 7, 2025
+*   **Version:** 1.2
+*   **Date:** June 15, 2025
 *   **Author:** PrezI Vision Synthesis AI
-*   **Status:** Finalized
+*   **Status:** Amended & Finalized
 
 ## 1. Database System Rationale
 
@@ -225,4 +225,96 @@ CREATE INDEX IF NOT EXISTS idx_element_keywords_keyword_id ON element_keywords(k
 CREATE INDEX IF NOT EXISTS idx_assembly_slides_assembly_id ON assembly_slides(assembly_id);
 ```
 
-This database schema provides a robust, efficient, and scalable foundation for all of PrezI's data storage and retrieval needs. It is designed for performance and integrity, ensuring the application remains fast and reliable as users build their slide universes.
+## **[AMENDED]** 6. User Experience & Onboarding Tables
+
+These tables support the first-time user experience and the state machine-based onboarding flow.
+
+```sql
+-- Stores user application settings
+CREATE TABLE IF NOT EXISTS user_settings (
+    setting_id      INTEGER PRIMARY KEY,
+    setting_key     TEXT NOT NULL UNIQUE,
+    setting_value   TEXT NOT NULL,
+    updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Stores API authentication configuration
+CREATE TABLE IF NOT EXISTS api_credentials (
+    credential_id       INTEGER PRIMARY KEY,
+    service_name        TEXT NOT NULL UNIQUE,  -- e.g., 'openai', 'azure'
+    credential_status   TEXT NOT NULL,         -- e.g., 'configured', 'invalid', 'expired'
+    last_validated      DATETIME,
+    models_available    TEXT,                  -- JSON array of available model names
+    updated_at          DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Stores onboarding state machine status
+CREATE TABLE IF NOT EXISTS onboarding_state (
+    onboarding_id       INTEGER PRIMARY KEY,
+    completed           BOOLEAN DEFAULT 0,
+    current_state       TEXT NOT NULL DEFAULT 'WELCOME', -- Enum: WELCOME, API_SETUP, FEATURE_TOUR, IMPORT_FIRST, etc.
+    branch_path         TEXT,                           -- NULL or Enum: FEATURE_FIRST, IMPORT_FIRST
+    progression         INTEGER DEFAULT 0,              -- Overall progression percentage (0-100)
+    started_at          DATETIME DEFAULT CURRENT_TIMESTAMP,
+    completed_at        DATETIME,
+    last_updated        DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Stores onboarding state machine transitions
+CREATE TABLE IF NOT EXISTS onboarding_transitions (
+    transition_id       INTEGER PRIMARY KEY,
+    onboarding_id       INTEGER NOT NULL,
+    from_state          TEXT NOT NULL,                  -- Previous state
+    to_state            TEXT NOT NULL,                  -- New state
+    transition_type     TEXT NOT NULL,                  -- e.g., 'next', 'branch_select', 'skip', 'back'
+    time_spent_ms       INTEGER,                        -- Time spent in from_state before transition
+    transition_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(onboarding_id) REFERENCES onboarding_state(onboarding_id) ON DELETE CASCADE
+);
+
+-- Stores content for each onboarding state
+CREATE TABLE IF NOT EXISTS onboarding_content (
+    content_id          INTEGER PRIMARY KEY,
+    state_name          TEXT NOT NULL,                  -- State this content belongs to
+    branch_path         TEXT,                           -- NULL or branch path if branch-specific
+    title               TEXT NOT NULL,
+    content_html        TEXT NOT NULL,
+    ui_highlights       TEXT,                           -- JSON array of UI element IDs to highlight
+    primary_action      TEXT NOT NULL,                  -- JSON object with action details
+    secondary_actions   TEXT,                           -- JSON array of action objects
+    version             INTEGER DEFAULT 1,
+    UNIQUE(state_name, branch_path)
+);
+
+-- Stores user actions during onboarding for personalized assistance
+CREATE TABLE IF NOT EXISTS onboarding_actions (
+    action_id           INTEGER PRIMARY KEY,
+    onboarding_id       INTEGER NOT NULL,
+    current_state       TEXT NOT NULL,
+    action_type         TEXT NOT NULL,                  -- e.g., 'feature_used', 'help_requested', 'difficulty'
+    feature_context     TEXT,                           -- e.g., 'import', 'keyword', 'assembly'
+    action_data         TEXT,                           -- Additional JSON data about the action
+    action_timestamp    DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(onboarding_id) REFERENCES onboarding_state(onboarding_id) ON DELETE CASCADE
+);
+
+-- Stores assistant interactions during onboarding
+CREATE TABLE IF NOT EXISTS onboarding_assistant (
+    interaction_id      INTEGER PRIMARY KEY,
+    onboarding_id       INTEGER NOT NULL,
+    state_name          TEXT NOT NULL,
+    user_query          TEXT,
+    assistant_response  TEXT NOT NULL,
+    feature_context     TEXT,
+    interaction_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(onboarding_id) REFERENCES onboarding_state(onboarding_id) ON DELETE CASCADE
+);
+
+-- Indexes for onboarding tables
+CREATE INDEX IF NOT EXISTS idx_onboarding_actions_onboarding_id ON onboarding_actions(onboarding_id);
+CREATE INDEX IF NOT EXISTS idx_onboarding_actions_state ON onboarding_actions(current_state);
+CREATE INDEX IF NOT EXISTS idx_onboarding_transitions_onboarding_id ON onboarding_transitions(onboarding_id);
+CREATE INDEX IF NOT EXISTS idx_onboarding_assistant_onboarding_id ON onboarding_assistant(onboarding_id);
+```
+
+This database schema provides a robust, efficient, and scalable foundation for all of PrezI's data storage and retrieval needs. It is designed for performance and integrity, ensuring the application remains fast and reliable as users build their slide universes and engage with the guided onboarding experience.

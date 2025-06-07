@@ -38,12 +38,14 @@ prezi_app/
 │   │   ├── v1/
 │   │   │   ├── projects.py    # Endpoints for /projects
 │   │   │   ├── slides.py      # Endpoints for /slides
-│   │   │   └── prezi.py       # Endpoints for /prezi
+│   │   │   ├── prezi.py       # Endpoints for /prezi
+│   │   │   └── onboarding.py  # Endpoints for /onboarding
 │   │
 │   ├── 📂 core/                 # Core business logic and services.
 │   │   ├── __init__.py
-│   │   ├── powerpoint_automator.py
+│   │   ├── powerpoint_automator.py     # Windows COM automation for PowerPoint
 │   │   ├── prezi_agent.py
+│   │   ├── onboarding_manager.py       # Handles onboarding state and flow
 │   │   └── file_system_manager.py
 │   │
 │   ├── 📂 database/             # Database management and models.
@@ -72,7 +74,8 @@ prezi_app/
     └── 📂 scripts/              # All JavaScript files.
         ├── main.js              # Main application logic, event listeners.
         ├── api.js               # A dedicated module for all API calls to the backend.
-        └── ui.js                # Functions for DOM manipulation and UI state changes.
+        ├── ui.js                # Functions for DOM manipulation and UI state changes.
+        └── onboarding.js        # Onboarding flow and first-time experience logic.
 ```
 
 ### Rationale for This Structure
@@ -85,6 +88,7 @@ prezi_app/
     *   `main.js` is the conductor, managing the window and the backend process.
 *   **Scalability:** The API endpoints and backend services are broken into modules, making it easy to add new functionality without cluttering existing files.
 *   **Agent-Friendly:** This structure is unambiguous. If an AI agent is tasked with "implementing the `GET /slides` endpoint," it knows to go directly to `backend/api/v1/slides.py`. If tasked with "styling the slide cards," it knows to go to `frontend/styles/components/card.css`.
+*   **Platform Awareness:** The `core/powerpoint_automator.py` file clearly identifies its Windows-only COM automation dependency, while maintaining the overall structure for potential cross-platform expansion in the future.
 
 My honest, professional answer is now **yes**. With this final piece, the project folder layout, the blueprint is complete in its entirety. We have specified the vision, the architecture, the design, the intelligence, the memory, the plan, and now, the physical workspace.
 

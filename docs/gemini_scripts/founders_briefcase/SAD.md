@@ -8,10 +8,10 @@ Here is the document.
 
 # PrezI: System Architecture Document (SAD)
 
-*   **Version:** 1.0
+*   **Version:** 1.1
 *   **Date:** June 7, 2025
 *   **Author:** PrezI Vision Synthesis AI
-*   **Status:** Finalized
+*   **Status:** Amended & Finalized
 
 ## 1. Overview & Architectural Vision
 
@@ -47,7 +47,7 @@ The PrezI application is composed of three primary layers communicating over a l
 | |  | - HTML, CSS, JS       |  | (Direct Control) |   |                     |     |
 | |  +-----------------------+  |                 |   |                     |     |
 | |            ^                |                 |   |                     |     |
-| |            | (Localhost HTTP) |                 |   +---------------------+     |
+| |            | (Localhost HTTP) |                 |   |                     |     |
 | |            v                |                 v                         |     |
 | |  +-----------------------+  |  +-------------------------------------+  |     |
 | |  | Communication Bridge  |  |  |        Python Backend               |  |     |
@@ -103,11 +103,11 @@ The PrezI application is composed of three primary layers communicating over a l
 *   **Technology:** Python 3.10+
 *   **Purpose:** To be the application's brain and workhorse, handling all core logic and heavy lifting.
 *   **Modular Architecture:**
-    *   `api_server.py`: The FastAPI entry point. Defines all API endpoints and routes requests to the appropriate service.
-    *   `database_manager.py`: Handles all interactions with the SQLite database. Contains all SQL queries and data models.
-    *   `powerpoint_automator.py`: Isolates all COM automation logic for interacting with Microsoft PowerPoint. Responsible for slide conversion and export.
-    *   `prezi_agent.py`: The core AI module. Responsible for communicating with the OpenAI API, prompt engineering, and implementing PrezI's decision-making logic.
-    *   `file_system_manager.py`: Manages all project files and directories.
+    *   `api_server.py`: Implements the FastAPI routes and WebSocket handling.
+    *   `database_manager.py`: Contains all database access logic and SQL queries.
+    *   `powerpoint_automator.py`: Isolates all Windows-specific COM automation logic for interacting with Microsoft PowerPoint via pywin32. This is the primary module for slide conversion and export.
+    *   `prezi_agent.py`: Manages all AI interactions with OpenAI and implements the core intelligence.
+    *   `file_system_manager.py`: Handles all reading, writing, and file operations.
 
 ### 3.5. Database
 *   **Technology:** [SQLite](https://www.sqlite.org/index.html)
@@ -172,5 +172,13 @@ The PrezI application is composed of three primary layers communicating over a l
 *   **Hybrid vs. Native (Qt):** While a pure Qt app could be performant, achieving the fluid, modern, web-like aesthetic you desire is exponentially more difficult and time-consuming. The hybrid approach guarantees the UX.
 *   **Hybrid vs. Pure Web App:** A pure web app is not viable due to the non-negotiable requirement for deep local file system access and direct COM automation with PowerPoint. Browser sandboxing makes this impossible.
 *   **FastAPI vs. Flask:** FastAPI is chosen over Flask for its native `asyncio` support, which is critical for managing long-running background tasks (like presentation generation) without freezing the application.
+
+### 6.1. Platform & Cross-Platform Strategy
+
+This architecture uses pywin32 for deep integration with Microsoft PowerPoint. This technology is exclusive to the Windows operating system.
+
+**Version 1.0 Strategy (Windows-First):** To ensure the fastest path to a powerful and stable product, the initial release of PrezI will be Windows-only. This allows us to perfect the user experience and core AI functionality on a single, controlled platform.
+
+**Future Cross-Platform Releases:** Support for macOS and other platforms is a key part of the long-term vision. This will be achieved in a future release by architecting a platform-specific automation service that replaces the COM-based module, while the rest of the application (UI, core logic) remains cross-platform.
 
 This architecture is the optimal solution to satisfy all of PrezI's unique product requirements.

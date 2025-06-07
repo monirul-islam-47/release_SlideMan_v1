@@ -26,10 +26,10 @@ This is the final piece of the puzzle. Let's put it in place.
 
 # PrezI: Operations & Experience (O&E) Handbook
 
-*   **Version:** 1.0
+*   **Version:** 1.1
 *   **Date:** June 7, 2025
 *   **Author:** PrezI Vision Synthesis AI
-*   **Status:** Finalized
+*   **Status:** Amended & Finalized
 
 ## 1. Configuration Management
 
@@ -76,23 +76,103 @@ A robust logging strategy is critical for future maintenance and debugging.
 
 ## 3. User Onboarding & First Run Experience
 
-This is the user's first impression of PrezI. It must be magical, educational, and quick.
+A user's first impression is everything. This enhanced onboarding flow ensures a smooth, delightful first-time experience that maximizes engagement and user success.
 
-### 3.1. The Flow
+### 3.1. The Onboarding State Machine
+
+The onboarding process follows a state machine pattern to ensure a coherent and adaptable user journey:
+
+```
+                  ┌───────────────┐
+                  │    WELCOME    │
+                  └───────┬───────┘
+                          ▼
+                  ┌───────────────┐
+                  │   API_SETUP   │
+                  └───────┬───────┘
+                          ▼
+          ┌───────────────┴───────────────┐
+          ▼                               ▼
+┌──────────────────┐            ┌──────────────────┐
+│  FEATURE_TOUR    │────────────│  IMPORT_FIRST    │
+└────────┬─────────┘            └────────┬─────────┘
+         │                               │
+         ▼                               ▼
+┌──────────────────┐            ┌──────────────────┐
+│  COMMAND_BAR     │◄───────────│  SLIDE_LIBRARY   │
+└────────┬─────────┘            └─────────────────┘
+         │
+         ▼
+┌──────────────────┐
+│  ASSEMBLY_PANEL  │
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│   GRADUATION     │
+└──────────────────┘
+```
+
+This state machine allows for both linear progression and contextual branching based on user actions. For example, if the user independently discovers the slide library before that step, the system can adapt and skip ahead.
+
+### 3.2. The Interactive Flow
+
 1.  **Welcome Screen:** On the very first launch, instead of the standard empty state, the user sees a special welcome modal.
     *   **Image:** A beautiful, animated graphic of the PrezI avatar.
     *   **Headline (H2):** "Welcome to PrezI."
-    *   **Body Text:** "Your new AI partner for creating brilliant presentations. Let's get you set up in just two steps."
+    *   **Body Text:** "Your new AI partner for creating brilliant presentations. Let's get you set up in just five minutes."
     *   **CTA Button:** "Let's Get Started"
+
 2.  **API Key Setup:** The welcome modal transitions to the API key input field.
-    *   **Guidance Text:** "First, let's connect PrezI to her brain. Please enter your OpenAI API key below." A hyperlink to "How to get an API key" is provided.
-    *   The "Test Connection" button provides immediate feedback.
-3.  **The Guided Tour:** After the key is validated, a short, interactive guided tour begins. PrezI's voice will guide the user via small, contextual pop-ups.
-    *   **Step 1 (Import):** "This is your workspace. It's a bit empty! Let's import your first presentation. Drag a `.pptx` file here to begin." The UI highlights the main content area.
-    *   **Step 2 (The Library):** Once imported, "Perfect! I've analyzed your slides. This is your new Slide Library. You can search everything here." The UI highlights the Command Bar.
-    *   **Step 3 (The Command Bar):** "This is the Command Bar, my direct line to you. Try typing 'Show me all slides with charts' and see what happens."
-    *   **Step 4 (Assembly):** "Excellent! Now, drag a few slides to the Assembly Panel on the right to start building your story." The UI highlights the Assembly Panel.
-    *   **Step 5 (Graduation):** "You're all set! You now have the power to turn hours of work into minutes. What would you like to build today?" The tour ends, and the standard UI is fully interactive.
+    *   **Guidance Text:** "First, let's connect PrezI to the OpenAI models that power intelligent features. Please enter your API key below." A hyperlink to "How to get an API key" is provided.
+    *   The "Test Connection" button provides immediate feedback with visual indication of success.
+    *   If the user already has a key stored, this step is auto-completed with a success message.
+
+3.  **Contextual Tour Path Selection:**
+    *   **Option A - Import First:** "Would you like to import an existing presentation to get started?" (Import path)
+    *   **Option B - Feature Tour:** "Or would you prefer a quick tour of PrezI's key features?" (Tour path)
+    *   Both paths converge later in the flow to ensure complete onboarding.
+
+4.  **The Guided Tour:** The interactive guided tour adapts to the user's chosen path with contextual AI-powered assistance.
+    *   **Import Path:** 
+        * "This is your workspace. Let's import your first presentation. Drag a `.pptx` file here or click to browse."
+        * The UI highlights the import area with an animated glow effect.
+        * After import: "Perfect! I've analyzed your slides and built your Slide Library."
+
+    *   **Feature Tour Path:**
+        * "This is your workspace. Here you'll see your slide universe once you import presentations."
+        * Visual tour of key UI areas with interactive hotspots users can click to learn more.
+        * "Let's try importing a sample presentation to see PrezI in action." (Provides a sample file option)
+
+5.  **Core Feature Exploration:**
+    *   **Step 1 (Slide Library):** "Your Slide Library contains all slides across all presentations. Try filtering by keyword or searching with natural language."
+    *   **Step 2 (Command Bar):** "The Command Bar is your direct line to PrezI. Try typing 'Show me all slides with charts' and see what happens."
+    *   **Step 3 (Assembly):** "Now, drag a few slides to the Assembly Panel to start building your presentation. You can reorder them anytime."
+    *   **Step 4 (AI Assistant):** "Need inspiration? Ask PrezI to suggest a structure or generate content based on your needs."
+
+6.  **Personalized Completion:**
+    *   **Graduation:** "You're all set! Based on what I've seen, I think you might enjoy these features next..." (Shows 2-3 personalized suggestions based on user's interactions)
+    *   **Next Steps Card:** Persistent but dismissible card showing recommended next actions
+    *   **Help Access:** Clear indication of how to access help and the AI assistant at any time
+
+### 3.3. Onboarding Analytics & Adaptation
+
+The onboarding system tracks key user interactions to optimize the experience:
+
+* **Completion Rate:** Percentage of users who complete all onboarding steps
+* **Time-to-Value:** How quickly users reach their first successful export
+* **Drop-off Points:** Identification of steps where users commonly abandon onboarding
+
+This data is stored locally and used to improve the onboarding flow through regular updates. No personal data is transmitted externally.
+
+### 3.4. Ongoing Guidance
+
+After initial onboarding, contextual guidance continues:
+
+* **Feature Discovery:** Subtle hints about unused features appear when relevant
+* **Keyboard Shortcuts:** Intelligent suggestions of shortcuts based on repetitive actions
+* **Progress Celebration:** Recognition of user milestones ("That's your 10th presentation!")
+* **AI Assistant:** The onboarding assistant remains accessible through the help menu for continued guidance
 
 ## 4. Error Handling & System Messaging Dictionary
 
