@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PREZI's Visual Thinking Process</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --bg-dark: #0a0a0a;
+            --bg-panel: #1a1a1a;
+            --bg-card: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e7eb;
+            --text-muted: #9ca3af;
+            --border: #3a3a3a;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .cosmic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, #1a0f1f 0%, #0a0a0a 100%);
+            overflow: hidden;
+            z-index: -1;
+        }
+        
+        .neural-network {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+        }
+        
+        .neural-node {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-purple);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-purple);
+            animation: pulse-node 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-node {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+        
+        .neural-connection {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-purple), transparent);
+            transform-origin: left center;
+            animation: flow 3s linear infinite;
+        }
+        
+        @keyframes flow {
+            0% { opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { opacity: 0; }
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        
+        .title {
+            font-size: 48px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            text-align: center;
+            font-size: 20px;
+            color: var(--text-secondary);
+            margin-bottom: 60px;
+        }
+        
+        /* PREZI Avatar States */
+        .avatar-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-bottom: 80px;
+        }
+        
+        .avatar-state {
+            background: var(--bg-panel);
+            border-radius: 24px;
+            padding: 32px;
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .avatar-state:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .avatar-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 24px;
+            position: relative;
+        }
+        
+        /* Different Avatar States */
+        .avatar-idle {
+            background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-blue) 100%);
+            border-radius: 24px;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .avatar-idle::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 60%;
+            height: 60%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: gentle-morph 4s ease-in-out infinite;
+        }
+        
+        @keyframes gentle-morph {
+            0%, 100% { border-radius: 50%; transform: translate(-50%, -50%) scale(1); }
+            25% { border-radius: 40% 60% 60% 40%; transform: translate(-50%, -50%) scale(1.05); }
+            50% { border-radius: 60% 40% 40% 60%; transform: translate(-50%, -50%) scale(0.95); }
+            75% { border-radius: 30% 70% 70% 30%; transform: translate(-50%, -50%) scale(1.02); }
+        }
+        
+        .avatar-thinking {
+            background: linear-gradient(135deg, var(--accent-blue) 0%, #06b6d4 100%);
+            border-radius: 24px;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .thinking-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .thinking-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            animation: orbit 3s linear infinite;
+        }
+        
+        .thinking-particle:nth-child(1) { animation-delay: 0s; }
+        .thinking-particle:nth-child(2) { animation-delay: 1s; }
+        .thinking-particle:nth-child(3) { animation-delay: 2s; }
+        
+        @keyframes orbit {
+            0% {
+                transform: rotate(0deg) translateX(40px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(360deg) translateX(40px) rotate(-360deg);
+                opacity: 0;
+            }
+        }
+        
+        .avatar-success {
+            background: linear-gradient(135deg, var(--accent-green) 0%, #059669 100%);
+            border-radius: 24px;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            animation: success-pulse 1s ease-out;
+        }
+        
+        @keyframes success-pulse {
+            0% { transform: scale(0.9); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .avatar-success::before {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 48px;
+            color: white;
+            transform: translate(-50%, -50%);
+            animation: check-in 0.5s ease-out;
+        }
+        
+        @keyframes check-in {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(-180deg); }
+            100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+        }
+        
+        .avatar-creating {
+            background: linear-gradient(135deg, var(--accent-purple) 0%, #e11d48 100%);
+            border-radius: 24px;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .creation-waves {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .wave {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            animation: expand-wave 2s ease-out infinite;
+        }
+        
+        .wave:nth-child(2) { animation-delay: 0.5s; }
+        .wave:nth-child(3) { animation-delay: 1s; }
+        
+        @keyframes expand-wave {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+        
+        .state-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .state-description {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        /* Thinking Process Visualization */
+        .thinking-process {
+            background: var(--bg-panel);
+            border-radius: 24px;
+            padding: 48px;
+            margin-bottom: 60px;
+            border: 1px solid var(--border);
+        }
+        
+        .process-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .thought-stream {
+            position: relative;
+            min-height: 400px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 32px;
+            overflow: hidden;
+        }
+        
+        .thought-bubble {
+            position: absolute;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 16px;
+            padding: 16px 24px;
+            font-size: 14px;
+            animation: float-in 1s ease-out forwards;
+            backdrop-filter: blur(10px);
+        }
+        
+        @keyframes float-in {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .thought-bubble.primary {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.5);
+            font-weight: 600;
+        }
+        
+        .thought-bubble.secondary {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        .thought-bubble.insight {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        
+        /* Connecting lines between thoughts */
+        .thought-connection {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.5), transparent);
+            transform-origin: left center;
+        }
+        
+        /* Real-time Analysis Display */
+        .analysis-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-top: 60px;
+        }
+        
+        .analysis-panel {
+            background: var(--bg-panel);
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid var(--border);
+        }
+        
+        .panel-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .panel-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Pattern Recognition Visualization */
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .pattern-cell {
+            aspect-ratio: 1;
+            background: var(--bg-card);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .pattern-cell.active {
+            background: rgba(168, 85, 247, 0.2);
+            border: 1px solid var(--accent-purple);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        
+        .pattern-cell::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-purple);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .pattern-cell.active::before {
+            opacity: 1;
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* Intent Understanding */
+        .intent-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .intent-tag {
+            padding: 8px 16px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            font-size: 14px;
+            animation: tag-appear 0.5s ease-out;
+        }
+        
+        @keyframes tag-appear {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .intent-tag.primary {
+            background: rgba(168, 85, 247, 0.2);
+            border-color: var(--accent-purple);
+            font-weight: 600;
+        }
+        
+        /* Knowledge Graph */
+        .knowledge-graph {
+            position: relative;
+            height: 300px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 24px;
+        }
+        
+        .knowledge-node {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
+            border: 2px solid var(--accent-purple);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .knowledge-node:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
+            z-index: 10;
+        }
+        
+        .node-connection {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.3), transparent);
+            height: 2px;
+            transform-origin: center;
+        }
+        
+        /* Progress Indicators */
+        .progress-indicator {
+            margin-top: 24px;
+        }
+        
+        .progress-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-card);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s linear infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            margin-top: 32px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* Interactive Demo */
+        .demo-section {
+            background: var(--bg-panel);
+            border-radius: 24px;
+            padding: 48px;
+            text-align: center;
+            margin-top: 60px;
+            border: 1px solid var(--border);
+        }
+        
+        .demo-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        
+        .demo-input {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .demo-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="cosmic-bg">
+        <div class="neural-network" id="neuralNetwork"></div>
+    </div>
+    
+    <div class="container">
+        <h1 class="title">PrezI's Visual Thinking Process</h1>
+        <p class="subtitle">Watch how PrezI's mind works in real-time as it understands, analyzes, and creates</p>
+        
+        <!-- Avatar States Showcase -->
+        <div class="avatar-showcase">
+            <div class="avatar-state">
+                <div class="avatar-container">
+                    <div class="avatar-idle"></div>
+                </div>
+                <h3 class="state-title">Idle / Ready</h3>
+                <p class="state-description">PrezI is ready for your request, gently morphing to show presence</p>
+            </div>
+            
+            <div class="avatar-state">
+                <div class="avatar-container">
+                    <div class="avatar-thinking">
+                        <div class="thinking-particles">
+                            <div class="thinking-particle" style="top: 50%; left: 50%;"></div>
+                            <div class="thinking-particle" style="top: 50%; left: 50%;"></div>
+                            <div class="thinking-particle" style="top: 50%; left: 50%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <h3 class="state-title">Thinking / Analyzing</h3>
+                <p class="state-description">Processing your request, particles orbit as neurons fire</p>
+            </div>
+            
+            <div class="avatar-state">
+                <div class="avatar-container">
+                    <div class="avatar-creating">
+                        <div class="creation-waves">
+                            <div class="wave"></div>
+                            <div class="wave"></div>
+                            <div class="wave"></div>
+                        </div>
+                    </div>
+                </div>
+                <h3 class="state-title">Creating / Building</h3>
+                <p class="state-description">Actively assembling your presentation, waves pulse outward</p>
+            </div>
+            
+            <div class="avatar-state">
+                <div class="avatar-container">
+                    <div class="avatar-success"></div>
+                </div>
+                <h3 class="state-title">Success / Complete</h3>
+                <p class="state-description">Task completed successfully, celebratory animation</p>
+            </div>
+        </div>
+        
+        <!-- Thinking Process Visualization -->
+        <div class="thinking-process">
+            <h2 class="process-title">Real-Time Thought Stream</h2>
+            <div class="thought-stream" id="thoughtStream">
+                <!-- Thoughts will be dynamically added here -->
+            </div>
+        </div>
+        
+        <!-- Analysis Display -->
+        <div class="analysis-display">
+            <div class="analysis-panel">
+                <div class="panel-title">
+                    <div class="panel-icon">🎯</div>
+                    Intent Understanding
+                </div>
+                <div class="intent-tags" id="intentTags">
+                    <!-- Tags will be dynamically added -->
+                </div>
+                <div class="progress-indicator">
+                    <div class="progress-label">Understanding Confidence</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%" id="confidenceBar"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-panel">
+                <div class="panel-title">
+                    <div class="panel-icon">🔍</div>
+                    Pattern Recognition
+                </div>
+                <div class="pattern-grid" id="patternGrid">
+                    <!-- Pattern cells will be dynamically created -->
+                </div>
+                <div class="progress-indicator">
+                    <div class="progress-label">Pattern Matching</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%" id="patternBar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Knowledge Graph -->
+        <div class="analysis-panel" style="margin-top: 32px;">
+            <div class="panel-title">
+                <div class="panel-icon">🧠</div>
+                Knowledge Graph Activation
+            </div>
+            <div class="knowledge-graph" id="knowledgeGraph">
+                <!-- Knowledge nodes will be dynamically positioned -->
+            </div>
+        </div>
+        
+        <!-- Interactive Demo -->
+        <div class="demo-section">
+            <h2 class="demo-title">Try It Yourself</h2>
+            <input type="text" class="demo-input" id="demoInput" placeholder="Type a request like 'Create a sales pitch for healthcare clients'">
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="simulateThinking()">Watch PrezI Think</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Create neural network background
+        function createNeuralNetwork() {
+            const network = document.getElementById('neuralNetwork');
+            const nodes = [];
+            
+            // Create nodes
+            for (let i = 0; i < 20; i++) {
+                const node = document.createElement('div');
+                node.className = 'neural-node';
+                node.style.left = Math.random() * 100 + '%';
+                node.style.top = Math.random() * 100 + '%';
+                node.style.animationDelay = Math.random() * 4 + 's';
+                network.appendChild(node);
+                nodes.push(node);
+            }
+            
+            // Create connections
+            for (let i = 0; i < 10; i++) {
+                const connection = document.createElement('div');
+                connection.className = 'neural-connection';
+                const node1 = nodes[Math.floor(Math.random() * nodes.length)];
+                const node2 = nodes[Math.floor(Math.random() * nodes.length)];
+                
+                const x1 = parseFloat(node1.style.left);
+                const y1 = parseFloat(node1.style.top);
+                const x2 = parseFloat(node2.style.left);
+                const y2 = parseFloat(node2.style.top);
+                
+                const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                
+                connection.style.width = distance + '%';
+                connection.style.left = x1 + '%';
+                connection.style.top = y1 + '%';
+                connection.style.transform = `rotate(${angle}deg)`;
+                connection.style.animationDelay = Math.random() * 3 + 's';
+                
+                network.appendChild(connection);
+            }
+        }
+        
+        // Create pattern grid
+        function createPatternGrid() {
+            const grid = document.getElementById('patternGrid');
+            for (let i = 0; i < 16; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'pattern-cell';
+                grid.appendChild(cell);
+            }
+        }
+        
+        // Create knowledge graph
+        function createKnowledgeGraph() {
+            const graph = document.getElementById('knowledgeGraph');
+            const nodes = [
+                { label: 'Sales', x: 20, y: 30 },
+                { label: 'Healthcare', x: 70, y: 20 },
+                { label: 'Pitch', x: 40, y: 60 },
+                { label: 'ROI', x: 80, y: 70 },
+                { label: 'Benefits', x: 30, y: 80 },
+                { label: 'Client', x: 60, y: 40 }
+            ];
+            
+            // Create connections first (so they appear behind nodes)
+            nodes.forEach((node1, i) => {
+                nodes.slice(i + 1).forEach(node2 => {
+                    if (Math.random() > 0.6) {
+                        const connection = document.createElement('div');
+                        connection.className = 'node-connection';
+                        
+                        const dx = node2.x - node1.x;
+                        const dy = node2.y - node1.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                        
+                        connection.style.width = distance + '%';
+                        connection.style.left = node1.x + '%';
+                        connection.style.top = node1.y + '%';
+                        connection.style.transform = `rotate(${angle}deg)`;
+                        
+                        graph.appendChild(connection);
+                    }
+                });
+            });
+            
+            // Create nodes
+            nodes.forEach(node => {
+                const nodeEl = document.createElement('div');
+                nodeEl.className = 'knowledge-node';
+                nodeEl.textContent = node.label;
+                nodeEl.style.left = node.x + '%';
+                nodeEl.style.top = node.y + '%';
+                nodeEl.style.transform = 'translate(-50%, -50%)';
+                graph.appendChild(nodeEl);
+            });
+        }
+        
+        // Simulate thinking process
+        function simulateThinking() {
+            const input = document.getElementById('demoInput').value || 'Create a sales pitch for healthcare clients';
+            
+            // Clear previous thoughts
+            const thoughtStream = document.getElementById('thoughtStream');
+            thoughtStream.innerHTML = '';
+            
+            const intentTags = document.getElementById('intentTags');
+            intentTags.innerHTML = '';
+            
+            // Simulate thought generation
+            const thoughts = [
+                { text: "Understanding request: '" + input + "'", type: 'primary', delay: 0 },
+                { text: "Identifying key concepts: sales, healthcare, pitch", type: 'secondary', delay: 500 },
+                { text: "Searching 1,247 slides for healthcare content...", type: 'secondary', delay: 1000 },
+                { text: "Found 42 relevant slides with healthcare case studies", type: 'insight', delay: 1500 },
+                { text: "Analyzing successful pitch patterns...", type: 'secondary', delay: 2000 },
+                { text: "Detected winning formula: Problem → Solution → ROI", type: 'insight', delay: 2500 },
+                { text: "Building narrative structure...", type: 'primary', delay: 3000 },
+                { text: "Applying professional design patterns", type: 'secondary', delay: 3500 },
+                { text: "Optimizing for 10-minute presentation", type: 'secondary', delay: 4000 },
+                { text: "Ready to create McKinsey-level presentation!", type: 'insight', delay: 4500 }
+            ];
+            
+            // Add thoughts with animation
+            thoughts.forEach((thought, index) => {
+                setTimeout(() => {
+                    const bubble = document.createElement('div');
+                    bubble.className = `thought-bubble ${thought.type}`;
+                    bubble.textContent = thought.text;
+                    
+                    // Random positioning
+                    bubble.style.left = (10 + Math.random() * 70) + '%';
+                    bubble.style.top = (10 + Math.random() * 70) + '%';
+                    
+                    thoughtStream.appendChild(bubble);
+                    
+                    // Add connections between related thoughts
+                    if (index > 0 && Math.random() > 0.5) {
+                        const prevBubble = thoughtStream.children[index - 1];
+                        const connection = document.createElement('div');
+                        connection.className = 'thought-connection';
+                        
+                        const rect1 = prevBubble.getBoundingClientRect();
+                        const rect2 = bubble.getBoundingClientRect();
+                        const containerRect = thoughtStream.getBoundingClientRect();
+                        
+                        const x1 = rect1.left - containerRect.left + rect1.width / 2;
+                        const y1 = rect1.top - containerRect.top + rect1.height / 2;
+                        const x2 = rect2.left - containerRect.left + rect2.width / 2;
+                        const y2 = rect2.top - containerRect.top + rect2.height / 2;
+                        
+                        const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                        const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                        
+                        connection.style.width = distance + 'px';
+                        connection.style.left = x1 + 'px';
+                        connection.style.top = y1 + 'px';
+                        connection.style.transform = `rotate(${angle}deg)`;
+                        
+                        thoughtStream.appendChild(connection);
+                    }
+                }, thought.delay);
+            });
+            
+            // Simulate intent tags
+            const intents = [
+                { text: 'Create Presentation', primary: true, delay: 500 },
+                { text: 'Sales Focus', primary: false, delay: 1000 },
+                { text: 'Healthcare Industry', primary: false, delay: 1500 },
+                { text: 'Client Pitch', primary: false, delay: 2000 }
+            ];
+            
+            intents.forEach(intent => {
+                setTimeout(() => {
+                    const tag = document.createElement('div');
+                    tag.className = `intent-tag ${intent.primary ? 'primary' : ''}`;
+                    tag.textContent = intent.text;
+                    intentTags.appendChild(tag);
+                }, intent.delay);
+            });
+            
+            // Animate progress bars
+            animateProgressBar('confidenceBar', 95, 5000);
+            animateProgressBar('patternBar', 87, 4000);
+            
+            // Animate pattern grid
+            animatePatternGrid();
+            
+            // Animate knowledge nodes
+            animateKnowledgeNodes();
+        }
+        
+        function animateProgressBar(id, targetWidth, duration) {
+            const bar = document.getElementById(id);
+            const steps = 50;
+            const stepDuration = duration / steps;
+            let currentStep = 0;
+            
+            const interval = setInterval(() => {
+                currentStep++;
+                const progress = (currentStep / steps) * targetWidth;
+                bar.style.width = progress + '%';
+                
+                if (currentStep >= steps) {
+                    clearInterval(interval);
+                }
+            }, stepDuration);
+        }
+        
+        function animatePatternGrid() {
+            const cells = document.querySelectorAll('.pattern-cell');
+            cells.forEach((cell, index) => {
+                setTimeout(() => {
+                    if (Math.random() > 0.5) {
+                        cell.classList.add('active');
+                        setTimeout(() => cell.classList.remove('active'), 2000);
+                    }
+                }, index * 100 + Math.random() * 500);
+            });
+        }
+        
+        function animateKnowledgeNodes() {
+            const nodes = document.querySelectorAll('.knowledge-node');
+            nodes.forEach((node, index) => {
+                setTimeout(() => {
+                    node.style.transform = 'translate(-50%, -50%) scale(1.2)';
+                    node.style.boxShadow = '0 0 30px rgba(168, 85, 247, 0.5)';
+                    setTimeout(() => {
+                        node.style.transform = 'translate(-50%, -50%) scale(1)';
+                        node.style.boxShadow = 'none';
+                    }, 500);
+                }, index * 300 + Math.random() * 500);
+            });
+        }
+        
+        // Initialize on load
+        createNeuralNetwork();
+        createPatternGrid();
+        createKnowledgeGraph();
+        
+        // Auto-simulate on load after a delay
+        setTimeout(() => simulateThinking(), 1000);
+    </script>
+    
+    <!-- PrezI Navigation Component -->
+    <!-- Add this to any mockup page for easy navigation -->
+    
+    <style>
+        .prezi-nav-menu {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+        }
+        
+        .prezi-nav-toggle {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .prezi-nav-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+        }
+        
+        .prezi-nav-icon {
+            width: 24px;
+            height: 24px;
+            background: white;
+            mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>') center/contain no-repeat;
+        }
+        
+        .prezi-nav-items {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: #1a1a1a;
+            border: 1px solid #3a3a3a;
+            border-radius: 12px;
+            padding: 12px;
+            display: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            min-width: 200px;
+        }
+        
+        .prezi-nav-menu.active .prezi-nav-items {
+            display: block;
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .prezi-nav-item {
+            display: block;
+            padding: 10px 16px;
+            color: #e5e7eb;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .prezi-nav-item:hover {
+            background: #2a2a2a;
+            color: #667eea;
+            transform: translateX(4px);
+        }
+        
+        .prezi-nav-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .prezi-nav-divider {
+            height: 1px;
+            background: #3a3a3a;
+            margin: 8px 0;
+        }
+        
+        .prezi-nav-label {
+            font-size: 11px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 16px;
+            margin-bottom: 4px;
+        }
+    </style>
+    
+    <div class="prezi-nav-menu" id="preziNav">
+        <div class="prezi-nav-items">
+            <div class="prezi-nav-label">Main</div>
+            <a href="index.html" class="prezi-nav-item">🏠 Home</a>
+            <a href="executive_summary.html" class="prezi-nav-item">📊 Executive Summary</a>
+            
+            <div class="prezi-nav-divider"></div>
+            <div class="prezi-nav-label">Demos</div>
+            <a href="01_urgent_pitch_workflow.html" class="prezi-nav-item">⚡ Urgent Pitch</a>
+            <a href="02_prezi_thinking_visualization.html" class="prezi-nav-item">🧠 Thinking Process</a>
+            <a href="03_keyword_prezi_integration.html" class="prezi-nav-item">🏷️ Smart Keywords</a>
+            <a href="04_element_level_intelligence.html" class="prezi-nav-item">🎯 Element Intelligence</a>
+            <a href="05_unified_interface_complete.html" class="prezi-nav-item">💎 Full Interface</a>
+            
+            <div class="prezi-nav-divider"></div>
+            <div class="prezi-nav-label">Docs</div>
+            <a href="PREZI_VISION_DOCUMENT.md" class="prezi-nav-item">📖 Vision Doc</a>
+            <a href="PREZI_KNOWLEDGE_SOURCE_OF_TRUTH.md" class="prezi-nav-item">📚 Source of Truth</a>
+        </div>
+        <div class="prezi-nav-toggle" onclick="togglePreziNav()">
+            <div class="prezi-nav-icon"></div>
+        </div>
+    </div>
+    
+    <script>
+        function togglePreziNav() {
+            const nav = document.getElementById('preziNav');
+            nav.classList.toggle('active');
+        }
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const nav = document.getElementById('preziNav');
+            if (!nav.contains(event.target) && nav.classList.contains('active')) {
+                nav.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

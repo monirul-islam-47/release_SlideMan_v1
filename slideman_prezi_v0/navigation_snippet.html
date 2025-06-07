@@ -1,0 +1,149 @@
+<!-- PrezI Navigation Component -->
+<!-- Add this to any mockup page for easy navigation -->
+
+<style>
+    .prezi-nav-menu {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 1000;
+    }
+    
+    .prezi-nav-toggle {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+    }
+    
+    .prezi-nav-toggle:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+    }
+    
+    .prezi-nav-icon {
+        width: 24px;
+        height: 24px;
+        background: white;
+        mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>') center/contain no-repeat;
+    }
+    
+    .prezi-nav-items {
+        position: absolute;
+        bottom: 70px;
+        right: 0;
+        background: #1a1a1a;
+        border: 1px solid #3a3a3a;
+        border-radius: 12px;
+        padding: 12px;
+        display: none;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        min-width: 200px;
+    }
+    
+    .prezi-nav-menu.active .prezi-nav-items {
+        display: block;
+        animation: slideUp 0.3s ease-out;
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .prezi-nav-item {
+        display: block;
+        padding: 10px 16px;
+        color: #e5e7eb;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+    
+    .prezi-nav-item:hover {
+        background: #2a2a2a;
+        color: #667eea;
+        transform: translateX(4px);
+    }
+    
+    .prezi-nav-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .prezi-nav-divider {
+        height: 1px;
+        background: #3a3a3a;
+        margin: 8px 0;
+    }
+    
+    .prezi-nav-label {
+        font-size: 11px;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 4px 16px;
+        margin-bottom: 4px;
+    }
+</style>
+
+<div class="prezi-nav-menu" id="preziNav">
+    <div class="prezi-nav-items">
+        <div class="prezi-nav-label">Main</div>
+        <a href="index.html" class="prezi-nav-item">🏠 Home</a>
+        <a href="executive_summary.html" class="prezi-nav-item">📊 Executive Summary</a>
+        
+        <div class="prezi-nav-divider"></div>
+        <div class="prezi-nav-label">Demos</div>
+        <a href="01_urgent_pitch_workflow.html" class="prezi-nav-item">⚡ Urgent Pitch</a>
+        <a href="02_prezi_thinking_visualization.html" class="prezi-nav-item">🧠 Thinking Process</a>
+        <a href="03_keyword_prezi_integration.html" class="prezi-nav-item">🏷️ Smart Keywords</a>
+        <a href="04_element_level_intelligence.html" class="prezi-nav-item">🎯 Element Intelligence</a>
+        <a href="05_unified_interface_complete.html" class="prezi-nav-item">💎 Full Interface</a>
+        
+        <div class="prezi-nav-divider"></div>
+        <div class="prezi-nav-label">Docs</div>
+        <a href="PREZI_VISION_DOCUMENT.md" class="prezi-nav-item">📖 Vision Doc</a>
+        <a href="PREZI_KNOWLEDGE_SOURCE_OF_TRUTH.md" class="prezi-nav-item">📚 Source of Truth</a>
+    </div>
+    <div class="prezi-nav-toggle" onclick="togglePreziNav()">
+        <div class="prezi-nav-icon"></div>
+    </div>
+</div>
+
+<script>
+    function togglePreziNav() {
+        const nav = document.getElementById('preziNav');
+        nav.classList.toggle('active');
+    }
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+        const nav = document.getElementById('preziNav');
+        if (!nav.contains(event.target) && nav.classList.contains('active')) {
+            nav.classList.remove('active');
+        }
+    });
+</script>
+
+<!-- 
+USAGE INSTRUCTIONS:
+1. Copy this entire snippet
+2. Paste it just before the closing </body> tag in any mockup
+3. The navigation menu will appear in the bottom right
+4. Click the purple button to open the menu
+5. All pages are linked for easy navigation
+-->

@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keywords + PrezI Intelligence Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-red: #ef4444;
+            --bg-dark: #0a0a0a;
+            --bg-panel: #1a1a1a;
+            --bg-card: #2a2a2a;
+            --bg-hover: #3a3a3a;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e7eb;
+            --text-muted: #9ca3af;
+            --border: #3a3a3a;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            padding: 24px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .title {
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Main Layout */
+        .main-container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 320px 1fr 380px;
+            gap: 32px;
+            min-height: calc(100vh - 100px);
+        }
+        
+        /* Keyword Panel */
+        .keyword-panel {
+            background: var(--bg-panel);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            height: fit-content;
+            position: sticky;
+            top: 120px;
+        }
+        
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        
+        .panel-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .prezi-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 12px;
+            font-size: 12px;
+            color: var(--accent-purple);
+        }
+        
+        .prezi-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-purple);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        /* Keyword Creation */
+        .keyword-creator {
+            margin-bottom: 24px;
+        }
+        
+        .keyword-input-wrapper {
+            position: relative;
+            margin-bottom: 12px;
+        }
+        
+        .keyword-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .keyword-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .ai-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-top: 4px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+        
+        .ai-suggestions.active {
+            display: block;
+        }
+        
+        .suggestion-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .suggestion-item:hover {
+            background: var(--bg-hover);
+        }
+        
+        .suggestion-confidence {
+            font-size: 12px;
+            color: var(--accent-green);
+        }
+        
+        /* Keyword Categories */
+        .keyword-categories {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .category-tab {
+            padding: 6px 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .category-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        /* Keyword List */
+        .keyword-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .keyword-group {
+            margin-bottom: 20px;
+        }
+        
+        .keyword-group-title {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .keyword-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .keyword-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .keyword-item.active {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid var(--primary);
+        }
+        
+        .keyword-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .keyword-text {
+            flex: 1;
+            font-size: 14px;
+        }
+        
+        .keyword-count {
+            font-size: 12px;
+            color: var(--text-muted);
+            background: var(--bg-panel);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .keyword-priority {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--accent-amber);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .keyword-item.high-priority .keyword-priority {
+            opacity: 1;
+        }
+        
+        /* Main Content Area */
+        .content-area {
+            background: var(--bg-panel);
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid var(--border);
+        }
+        
+        .content-header {
+            margin-bottom: 32px;
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .search-bar:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .search-filters {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .filter-chip {
+            padding: 6px 12px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .filter-chip:hover {
+            background: rgba(102, 126, 234, 0.2);
+        }
+        
+        /* Slide Grid */
+        .slide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+        
+        .slide-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        
+        .slide-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .slide-card.keyword-match {
+            border-color: var(--primary);
+        }
+        
+        .slide-card.ai-recommended {
+            border-color: var(--accent-green);
+        }
+        
+        .slide-thumbnail {
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, var(--bg-panel) 0%, var(--bg-hover) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .keyword-indicators {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            right: 8px;
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        
+        .keyword-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .slide-info {
+            padding: 12px;
+        }
+        
+        .slide-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .slide-keywords {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        
+        .slide-keyword-tag {
+            padding: 2px 8px;
+            background: var(--bg-panel);
+            border-radius: 10px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        
+        /* PREZI Panel */
+        .prezi-panel {
+            background: var(--bg-panel);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            height: fit-content;
+            position: sticky;
+            top: 120px;
+        }
+        
+        .prezi-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .prezi-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-blue) 100%);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .prezi-avatar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: morph 3s ease-in-out infinite;
+        }
+        
+        @keyframes morph {
+            0%, 100% { border-radius: 50%; }
+            50% { border-radius: 30% 70% 70% 30%; }
+        }
+        
+        .prezi-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .prezi-insights {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .insight-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--accent-purple);
+        }
+        
+        .insight-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .insight-icon {
+            width: 20px;
+            height: 20px;
+            background: rgba(168, 85, 247, 0.2);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        /* Keyword Relationships */
+        .keyword-relationships {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .relationship-graph {
+            height: 200px;
+            position: relative;
+            margin: 16px 0;
+        }
+        
+        .relationship-node {
+            position: absolute;
+            padding: 6px 12px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .relationship-node:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .relationship-node.central {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        .relationship-line {
+            position: absolute;
+            height: 1px;
+            background: rgba(102, 126, 234, 0.3);
+            transform-origin: left center;
+        }
+        
+        /* Smart Actions */
+        .smart-actions {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .smart-action {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .smart-action:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-purple);
+        }
+        
+        .action-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-blue) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .action-content {
+            flex: 1;
+        }
+        
+        .action-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        
+        .action-description {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .tooltip.active {
+            opacity: 1;
+        }
+        
+        /* Loading Animation */
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1 class="title">Keywords + PrezI Intelligence</h1>
+            <div class="prezi-badge">
+                <div class="prezi-dot"></div>
+                PrezI Enhanced
+            </div>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <!-- Left: Keyword Panel -->
+        <aside class="keyword-panel">
+            <div class="panel-header">
+                <h2 class="panel-title">Smart Keywords</h2>
+                <button class="prezi-badge" style="cursor: pointer;">
+                    <div class="prezi-dot"></div>
+                    AI Assist
+                </button>
+            </div>
+            
+            <!-- Keyword Creation with AI -->
+            <div class="keyword-creator">
+                <div class="keyword-input-wrapper">
+                    <input type="text" class="keyword-input" placeholder="Type keyword or let PrezI suggest..." id="keywordInput">
+                    <div class="ai-suggestions" id="aiSuggestions">
+                        <div class="suggestion-item">
+                            <span>quarterly results</span>
+                            <span class="suggestion-confidence">95%</span>
+                        </div>
+                        <div class="suggestion-item">
+                            <span>financial performance</span>
+                            <span class="suggestion-confidence">89%</span>
+                        </div>
+                        <div class="suggestion-item">
+                            <span>revenue growth</span>
+                            <span class="suggestion-confidence">87%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Category Tabs -->
+                <div class="keyword-categories">
+                    <div class="category-tab active">All</div>
+                    <div class="category-tab">Slide</div>
+                    <div class="category-tab">Element</div>
+                    <div class="category-tab">AI Tags</div>
+                </div>
+            </div>
+            
+            <!-- Keyword List -->
+            <div class="keyword-list">
+                <!-- PrezI Suggested Keywords -->
+                <div class="keyword-group">
+                    <div class="keyword-group-title">
+                        ✨ PrezI Suggested
+                    </div>
+                    <div class="keyword-item high-priority">
+                        <div class="keyword-color" style="background: #10b981;"></div>
+                        <span class="keyword-text">Q4 Performance</span>
+                        <span class="keyword-count">42</span>
+                        <div class="keyword-priority"></div>
+                    </div>
+                    <div class="keyword-item">
+                        <div class="keyword-color" style="background: #3b82f6;"></div>
+                        <span class="keyword-text">Growth Strategy</span>
+                        <span class="keyword-count">38</span>
+                    </div>
+                    <div class="keyword-item">
+                        <div class="keyword-color" style="background: #a855f7;"></div>
+                        <span class="keyword-text">Market Analysis</span>
+                        <span class="keyword-count">31</span>
+                    </div>
+                </div>
+                
+                <!-- User Keywords -->
+                <div class="keyword-group">
+                    <div class="keyword-group-title">
+                        👤 Your Keywords
+                    </div>
+                    <div class="keyword-item active">
+                        <div class="keyword-color" style="background: #f59e0b;"></div>
+                        <span class="keyword-text">Revenue</span>
+                        <span class="keyword-count">56</span>
+                    </div>
+                    <div class="keyword-item">
+                        <div class="keyword-color" style="background: #ef4444;"></div>
+                        <span class="keyword-text">Competition</span>
+                        <span class="keyword-count">23</span>
+                    </div>
+                    <div class="keyword-item">
+                        <div class="keyword-color" style="background: #8b5cf6;"></div>
+                        <span class="keyword-text">Innovation</span>
+                        <span class="keyword-count">19</span>
+                    </div>
+                </div>
+                
+                <!-- Auto-detected Keywords -->
+                <div class="keyword-group">
+                    <div class="keyword-group-title">
+                        🤖 Auto-detected
+                    </div>
+                    <div class="keyword-item">
+                        <div class="keyword-color" style="background: #6366f1;"></div>
+                        <span class="keyword-text">2025 Forecast</span>
+                        <span class="keyword-count">15</span>
+                    </div>
+                    <div class="keyword-item">
+                        <div class="keyword-color" style="background: #ec4899;"></div>
+                        <span class="keyword-text">ROI Metrics</span>
+                        <span class="keyword-count">12</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Center: Main Content -->
+        <main class="content-area">
+            <div class="content-header">
+                <div class="search-bar">
+                    <span style="font-size: 20px;">🔍</span>
+                    <input type="text" class="search-input" placeholder="Natural language search: 'Find slides about Q4 revenue with charts'" value="Q4 revenue">
+                    <div class="search-filters">
+                        <div class="filter-chip">Has Charts</div>
+                        <div class="filter-chip">Recent</div>
+                        <div class="filter-chip">High Priority</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide Grid -->
+            <div class="slide-grid">
+                <!-- AI Recommended Slide -->
+                <div class="slide-card ai-recommended fade-in">
+                    <div class="slide-thumbnail">
+                        <div class="keyword-indicators">
+                            <div class="keyword-indicator" style="background: #10b981;"></div>
+                            <div class="keyword-indicator" style="background: #f59e0b;"></div>
+                            <div class="keyword-indicator" style="background: #3b82f6;"></div>
+                        </div>
+                    </div>
+                    <div class="slide-info">
+                        <div class="slide-title">Q4 Revenue Dashboard</div>
+                        <div class="slide-keywords">
+                            <span class="slide-keyword-tag">Q4 Performance</span>
+                            <span class="slide-keyword-tag">Revenue</span>
+                            <span class="slide-keyword-tag" style="color: var(--accent-green);">✨ PrezI Pick</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Keyword Match Slide -->
+                <div class="slide-card keyword-match fade-in" style="animation-delay: 0.1s;">
+                    <div class="slide-thumbnail">
+                        <div class="keyword-indicators">
+                            <div class="keyword-indicator" style="background: #f59e0b;"></div>
+                            <div class="keyword-indicator" style="background: #ef4444;"></div>
+                        </div>
+                    </div>
+                    <div class="slide-info">
+                        <div class="slide-title">Revenue Growth Analysis</div>
+                        <div class="slide-keywords">
+                            <span class="slide-keyword-tag">Revenue</span>
+                            <span class="slide-keyword-tag">Growth Strategy</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Regular Slides -->
+                <div class="slide-card fade-in" style="animation-delay: 0.2s;">
+                    <div class="slide-thumbnail">
+                        <div class="keyword-indicators">
+                            <div class="keyword-indicator" style="background: #a855f7;"></div>
+                        </div>
+                    </div>
+                    <div class="slide-info">
+                        <div class="slide-title">Market Share Comparison</div>
+                        <div class="slide-keywords">
+                            <span class="slide-keyword-tag">Market Analysis</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-card keyword-match fade-in" style="animation-delay: 0.3s;">
+                    <div class="slide-thumbnail">
+                        <div class="keyword-indicators">
+                            <div class="keyword-indicator" style="background: #f59e0b;"></div>
+                            <div class="keyword-indicator" style="background: #6366f1;"></div>
+                        </div>
+                    </div>
+                    <div class="slide-info">
+                        <div class="slide-title">2025 Revenue Projections</div>
+                        <div class="slide-keywords">
+                            <span class="slide-keyword-tag">Revenue</span>
+                            <span class="slide-keyword-tag">2025 Forecast</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-card fade-in" style="animation-delay: 0.4s;">
+                    <div class="slide-thumbnail">
+                        <div class="keyword-indicators">
+                            <div class="keyword-indicator" style="background: #8b5cf6;"></div>
+                            <div class="keyword-indicator" style="background: #ec4899;"></div>
+                        </div>
+                    </div>
+                    <div class="slide-info">
+                        <div class="slide-title">Innovation ROI Metrics</div>
+                        <div class="slide-keywords">
+                            <span class="slide-keyword-tag">Innovation</span>
+                            <span class="slide-keyword-tag">ROI Metrics</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slide-card ai-recommended fade-in" style="animation-delay: 0.5s;">
+                    <div class="slide-thumbnail">
+                        <div class="keyword-indicators">
+                            <div class="keyword-indicator" style="background: #10b981;"></div>
+                            <div class="keyword-indicator" style="background: #f59e0b;"></div>
+                            <div class="keyword-indicator" style="background: #ef4444;"></div>
+                        </div>
+                    </div>
+                    <div class="slide-info">
+                        <div class="slide-title">Q4 Competitive Analysis</div>
+                        <div class="slide-keywords">
+                            <span class="slide-keyword-tag">Q4 Performance</span>
+                            <span class="slide-keyword-tag">Competition</span>
+                            <span class="slide-keyword-tag" style="color: var(--accent-green);">✨ PrezI Pick</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Right: PrezI Intelligence Panel -->
+        <aside class="prezi-panel">
+            <div class="prezi-header">
+                <div class="prezi-avatar"></div>
+                <div>
+                    <h2 class="prezi-title">PrezI Intelligence</h2>
+                    <p style="font-size: 12px; color: var(--text-muted);">Understanding your content</p>
+                </div>
+            </div>
+            
+            <!-- Current Context Insights -->
+            <div class="prezi-insights">
+                <h3 class="insight-title">📊 Current Analysis</h3>
+                <div class="insight-item">
+                    <div class="insight-icon">🎯</div>
+                    <span>42 slides match "Q4 revenue"</span>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-icon">💡</div>
+                    <span>Most used with "growth" (31 times)</span>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-icon">🔗</div>
+                    <span>Related: "quarterly results", "YoY growth"</span>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-icon">⚡</div>
+                    <span>6 high-impact slides identified</span>
+                </div>
+            </div>
+            
+            <!-- Keyword Relationships -->
+            <div class="keyword-relationships">
+                <h3 class="insight-title">🕸️ Keyword Connections</h3>
+                <div class="relationship-graph" id="relationshipGraph">
+                    <!-- Central keyword -->
+                    <div class="relationship-node central" style="left: 50%; top: 50%; transform: translate(-50%, -50%);">
+                        Revenue
+                    </div>
+                    <!-- Related keywords -->
+                    <div class="relationship-node" style="left: 20%; top: 30%;">
+                        Q4 Performance
+                    </div>
+                    <div class="relationship-node" style="left: 70%; top: 20%;">
+                        Growth
+                    </div>
+                    <div class="relationship-node" style="left: 80%; top: 60%;">
+                        Forecast
+                    </div>
+                    <div class="relationship-node" style="left: 30%; top: 70%;">
+                        Metrics
+                    </div>
+                    <!-- Connection lines drawn by JavaScript -->
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: 12px;">
+                    Click keywords to explore relationships
+                </p>
+            </div>
+            
+            <!-- Smart Actions -->
+            <div class="smart-actions">
+                <h3 class="insight-title" style="margin-bottom: 12px;">🚀 Smart Actions</h3>
+                
+                <div class="smart-action">
+                    <div class="action-icon">🏷️</div>
+                    <div class="action-content">
+                        <div class="action-title">Auto-tag Similar Slides</div>
+                        <div class="action-description">Find and tag 23 similar slides</div>
+                    </div>
+                </div>
+                
+                <div class="smart-action">
+                    <div class="action-icon">🔄</div>
+                    <div class="action-content">
+                        <div class="action-title">Merge Keywords</div>
+                        <div class="action-description">"Revenue" + "Sales" → "Revenue"</div>
+                    </div>
+                </div>
+                
+                <div class="smart-action">
+                    <div class="action-icon">🎨</div>
+                    <div class="action-content">
+                        <div class="action-title">Color Code by Theme</div>
+                        <div class="action-description">Apply semantic colors to keywords</div>
+                    </div>
+                </div>
+                
+                <div class="smart-action">
+                    <div class="action-icon">📈</div>
+                    <div class="action-content">
+                        <div class="action-title">Prioritize Keywords</div>
+                        <div class="action-description">Set priority based on usage patterns</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+    
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip"></div>
+    
+    <script>
+        // Keyword input with AI suggestions
+        const keywordInput = document.getElementById('keywordInput');
+        const aiSuggestions = document.getElementById('aiSuggestions');
+        
+        keywordInput.addEventListener('focus', () => {
+            setTimeout(() => {
+                aiSuggestions.classList.add('active');
+            }, 300);
+        });
+        
+        keywordInput.addEventListener('blur', () => {
+            setTimeout(() => {
+                aiSuggestions.classList.remove('active');
+            }, 200);
+        });
+        
+        keywordInput.addEventListener('input', (e) => {
+            const value = e.target.value.toLowerCase();
+            if (value.length > 2) {
+                // Simulate AI suggestions based on input
+                updateAISuggestions(value);
+            }
+        });
+        
+        function updateAISuggestions(query) {
+            const suggestions = [
+                { text: query + ' analysis', confidence: 92 },
+                { text: query + ' trends', confidence: 87 },
+                { text: query + ' forecast', confidence: 85 },
+                { text: query + ' comparison', confidence: 82 }
+            ];
+            
+            const suggestionsHtml = suggestions.map(s => `
+                <div class="suggestion-item">
+                    <span>${s.text}</span>
+                    <span class="suggestion-confidence">${s.confidence}%</span>
+                </div>
+            `).join('');
+            
+            aiSuggestions.innerHTML = suggestionsHtml;
+        }
+        
+        // Category tabs
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                // Filter keywords based on category
+                filterKeywords(tab.textContent);
+            });
+        });
+        
+        // Keyword selection
+        document.querySelectorAll('.keyword-item').forEach(item => {
+            item.addEventListener('click', () => {
+                item.classList.toggle('active');
+                // Update slide filtering
+                updateSlideFiltering();
+            });
+        });
+        
+        // Draw relationship lines
+        function drawRelationshipLines() {
+            const graph = document.getElementById('relationshipGraph');
+            const central = graph.querySelector('.central');
+            const nodes = graph.querySelectorAll('.relationship-node:not(.central)');
+            
+            const centralRect = central.getBoundingClientRect();
+            const graphRect = graph.getBoundingClientRect();
+            
+            nodes.forEach(node => {
+                const nodeRect = node.getBoundingClientRect();
+                
+                const x1 = centralRect.left - graphRect.left + centralRect.width / 2;
+                const y1 = centralRect.top - graphRect.top + centralRect.height / 2;
+                const x2 = nodeRect.left - graphRect.left + nodeRect.width / 2;
+                const y2 = nodeRect.top - graphRect.top + nodeRect.height / 2;
+                
+                const distance = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                
+                const line = document.createElement('div');
+                line.className = 'relationship-line';
+                line.style.width = distance + 'px';
+                line.style.left = x1 + 'px';
+                line.style.top = y1 + 'px';
+                line.style.transform = `rotate(${angle}deg)`;
+                
+                graph.insertBefore(line, graph.firstChild);
+            });
+        }
+        
+        // Initialize relationship graph
+        setTimeout(drawRelationshipLines, 100);
+        
+        // Smart action interactions
+        document.querySelectorAll('.smart-action').forEach(action => {
+            action.addEventListener('click', () => {
+                const title = action.querySelector('.action-title').textContent;
+                showTooltip(action, `Executing: ${title}`);
+                
+                // Simulate action execution
+                setTimeout(() => {
+                    hideTooltip();
+                    // Show success animation
+                    action.style.background = 'rgba(16, 185, 129, 0.1)';
+                    action.style.borderColor = 'var(--accent-green)';
+                    setTimeout(() => {
+                        action.style.background = '';
+                        action.style.borderColor = '';
+                    }, 1000);
+                }, 1500);
+            });
+        });
+        
+        // Tooltip functions
+        function showTooltip(element, text) {
+            const tooltip = document.getElementById('tooltip');
+            const rect = element.getBoundingClientRect();
+            
+            tooltip.textContent = text;
+            tooltip.style.left = rect.left + 'px';
+            tooltip.style.top = (rect.bottom + 10) + 'px';
+            tooltip.classList.add('active');
+        }
+        
+        function hideTooltip() {
+            document.getElementById('tooltip').classList.remove('active');
+        }
+        
+        // Slide card hover effects
+        document.querySelectorAll('.slide-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                // Show keyword connections
+                const keywords = card.querySelectorAll('.slide-keyword-tag');
+                keywords.forEach(k => k.style.transform = 'scale(1.1)');
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                const keywords = card.querySelectorAll('.slide-keyword-tag');
+                keywords.forEach(k => k.style.transform = 'scale(1)');
+            });
+        });
+        
+        // Search functionality
+        const searchInput = document.querySelector('.search-input');
+        searchInput.addEventListener('input', (e) => {
+            // Simulate PrezI understanding the query
+            if (e.target.value.includes('chart') || e.target.value.includes('graph')) {
+                document.querySelectorAll('.filter-chip')[0].style.background = 'rgba(16, 185, 129, 0.2)';
+                document.querySelectorAll('.filter-chip')[0].style.borderColor = 'var(--accent-green)';
+            }
+        });
+        
+        // Animate elements on load
+        window.addEventListener('load', () => {
+            // Animate keyword counts
+            document.querySelectorAll('.keyword-count').forEach(count => {
+                const value = parseInt(count.textContent);
+                let current = 0;
+                const increment = value / 20;
+                const interval = setInterval(() => {
+                    current += increment;
+                    if (current >= value) {
+                        current = value;
+                        clearInterval(interval);
+                    }
+                    count.textContent = Math.floor(current);
+                }, 50);
+            });
+        });
+        
+        // Mock functions for demo
+        function filterKeywords(category) {
+            console.log('Filtering keywords by category:', category);
+        }
+        
+        function updateSlideFiltering() {
+            console.log('Updating slide filtering based on selected keywords');
+        }
+    </script>
+    
+    <!-- PrezI Navigation Component -->
+    <!-- Add this to any mockup page for easy navigation -->
+    
+    <style>
+        .prezi-nav-menu {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+        }
+        
+        .prezi-nav-toggle {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .prezi-nav-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+        }
+        
+        .prezi-nav-icon {
+            width: 24px;
+            height: 24px;
+            background: white;
+            mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>') center/contain no-repeat;
+        }
+        
+        .prezi-nav-items {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: #1a1a1a;
+            border: 1px solid #3a3a3a;
+            border-radius: 12px;
+            padding: 12px;
+            display: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            min-width: 200px;
+        }
+        
+        .prezi-nav-menu.active .prezi-nav-items {
+            display: block;
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .prezi-nav-item {
+            display: block;
+            padding: 10px 16px;
+            color: #e5e7eb;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .prezi-nav-item:hover {
+            background: #2a2a2a;
+            color: #667eea;
+            transform: translateX(4px);
+        }
+        
+        .prezi-nav-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .prezi-nav-divider {
+            height: 1px;
+            background: #3a3a3a;
+            margin: 8px 0;
+        }
+        
+        .prezi-nav-label {
+            font-size: 11px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 16px;
+            margin-bottom: 4px;
+        }
+    </style>
+    
+    <div class="prezi-nav-menu" id="preziNav">
+        <div class="prezi-nav-items">
+            <div class="prezi-nav-label">Main</div>
+            <a href="index.html" class="prezi-nav-item">🏠 Home</a>
+            <a href="executive_summary.html" class="prezi-nav-item">📊 Executive Summary</a>
+            
+            <div class="prezi-nav-divider"></div>
+            <div class="prezi-nav-label">Demos</div>
+            <a href="01_urgent_pitch_workflow.html" class="prezi-nav-item">⚡ Urgent Pitch</a>
+            <a href="02_prezi_thinking_visualization.html" class="prezi-nav-item">🧠 Thinking Process</a>
+            <a href="03_keyword_prezi_integration.html" class="prezi-nav-item">🏷️ Smart Keywords</a>
+            <a href="04_element_level_intelligence.html" class="prezi-nav-item">🎯 Element Intelligence</a>
+            <a href="05_unified_interface_complete.html" class="prezi-nav-item">💎 Full Interface</a>
+            
+            <div class="prezi-nav-divider"></div>
+            <div class="prezi-nav-label">Docs</div>
+            <a href="PREZI_VISION_DOCUMENT.md" class="prezi-nav-item">📖 Vision Doc</a>
+            <a href="PREZI_KNOWLEDGE_SOURCE_OF_TRUTH.md" class="prezi-nav-item">📚 Source of Truth</a>
+        </div>
+        <div class="prezi-nav-toggle" onclick="togglePreziNav()">
+            <div class="prezi-nav-icon"></div>
+        </div>
+    </div>
+    
+    <script>
+        function togglePreziNav() {
+            const nav = document.getElementById('preziNav');
+            nav.classList.toggle('active');
+        }
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const nav = document.getElementById('preziNav');
+            if (!nav.contains(event.target) && nav.classList.contains('active')) {
+                nav.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrezI - The Urgent Pitch Workflow</title>
+    <style>
+        /* ---------------------------------- */
+        /* 1. DESIGN SYSTEM & STYLE GUIDE     */
+        /* ---------------------------------- */
+        :root {
+            /* Color Palette */
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+
+            --bg-dark: #0a0a0a;
+            --bg-panel: #1a1a1a;
+            --bg-card: #2a2a2a;
+            --bg-hover: #3a3a3a;
+
+            --text-primary: #ffffff;
+            --text-secondary: #e5e7eb;
+            --text-muted: #9ca3af;
+            --border: #3a3a3a;
+
+            /* Spacing (8px Grid) */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-xxl: 48px;
+
+            /* Animation */
+            --transition-curve: cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-duration: 0.3s;
+        }
+
+        /* Base Styles & Typography */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* ---------------------------------- */
+        /* 2. MAIN APPLICATION LAYOUT         */
+        /* ---------------------------------- */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .header-bar {
+            height: 72px;
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 var(--space-lg);
+            gap: var(--space-xl);
+            flex-shrink: 0;
+        }
+        .app-logo {
+            font-size: 24px;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .main-layout {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        .left-sidebar {
+            width: 280px;
+            background: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            padding: var(--space-lg);
+            flex-shrink: 0;
+        }
+        .content-area {
+            flex: 1;
+            padding: var(--space-lg);
+            overflow-y: auto;
+        }
+        .right-sidebar {
+            width: 320px;
+            background: var(--bg-panel);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        /* ---------------------------------- */
+        /* 3. CORE COMPONENTS                 */
+        /* ---------------------------------- */
+        .command-bar {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            height: 48px;
+            padding: 0 var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            transition: all var(--transition-duration) var(--transition-curve);
+        }
+        .command-bar.focused {
+             border-color: var(--accent-purple);
+             box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+        }
+        .command-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 16px;
+            outline: none;
+        }
+        .slide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: var(--space-lg);
+        }
+        .slide-card {
+            aspect-ratio: 16 / 9;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 2px solid var(--border);
+        }
+        .assembly-panel {
+            flex: 1;
+            padding: var(--space-lg);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            overflow-y: auto;
+        }
+        .assembly-slide-placeholder {
+            height: 56px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeIn 0.5s var(--transition-curve) forwards;
+        }
+        .btn {
+            padding: var(--space-md) var(--space-xl);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-duration) ease;
+            border: none;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+        }
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        /* ---------------------------------- */
+        /* 4. MODALS & OVERLAYS               */
+        /* ---------------------------------- */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+        .overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: var(--space-xxl);
+            width: 90%;
+            max-width: 600px;
+            transform: scale(0.95);
+            transition: all 0.4s ease;
+        }
+        .overlay.visible .modal {
+            transform: scale(1);
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+        .prezi-avatar {
+            width: 56px;
+            height: 56px;
+            background: var(--primary-gradient);
+            border-radius: 16px;
+            flex-shrink: 0;
+        }
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .modal-body p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-xl);
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-md);
+            margin-top: var(--space-xl);
+        }
+        .plan-steps {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+        .plan-step {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            border: 1px solid var(--border);
+        }
+        .plan-step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-hover);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .plan-step-content .title {
+            font-weight: 600;
+        }
+        .plan-step-content .details {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        /* Progress Overlay */
+        .progress-step {
+            transition: opacity 0.5s ease;
+        }
+        .progress-step.completed .plan-step-number {
+            background: var(--success);
+            color: white;
+        }
+        .progress-step.completed .title {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-card);
+            border-radius: 4px;
+            margin-top: var(--space-lg);
+            overflow: hidden;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--primary-gradient);
+            transition: width 0.5s var(--transition-curve);
+        }
+        .emergency-stop {
+            position: fixed;
+            bottom: var(--space-xxl);
+            right: var(--space-xxl);
+            z-index: 1001;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s ease;
+        }
+        .emergency-stop.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+        .btn-danger:hover {
+             box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+        }
+
+        /* ---------------------------------- */
+        /* 5. ANIMATIONS                      */
+        /* ---------------------------------- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background-color: var(--accent-purple);
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Main Application Structure -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header-bar">
+            <div class="app-logo">PrezI</div>
+            <div class="command-bar" id="commandBar">
+                <span style="font-size: 20px; color: var(--text-muted);">💬</span>
+                <input type="text" class="command-input" id="commandInput" placeholder="Just tell me what you need...">
+                <div class="typing-cursor" id="typingCursor" style="display: none;"></div>
+            </div>
+        </header>
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Left Sidebar -->
+            <aside class="left-sidebar">
+                <!-- Simplified for mockup -->
+                <h4 style="font-weight: 600; margin-bottom: var(--space-md);">Project: BigCorp Pitch</h4>
+                <p style="font-size: 14px; color: var(--text-muted);">1247 slides across 18 files.</p>
+            </aside>
+            <!-- Content Area -->
+            <main class="content-area">
+                <div class="slide-grid">
+                    <!-- Placeholder slides -->
+                    <div class="slide-card"></div><div class="slide-card"></div><div class="slide-card"></div>
+                    <div class="slide-card"></div><div class="slide-card"></div><div class="slide-card"></div>
+                    <div class="slide-card"></div><div class="slide-card"></div><div class="slide-card"></div>
+                </div>
+            </main>
+            <!-- Right Sidebar -->
+            <aside class="right-sidebar">
+                 <div style="padding: var(--space-lg); border-bottom: 1px solid var(--border);">
+                     <h3 style="font-weight: 700; font-size: 20px;">Assembly</h3>
+                 </div>
+                <div class="assembly-panel" id="assemblyPanel">
+                    <!-- Assembled slides will be added here by JS -->
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- PrezI's Visual Plan Modal -->
+    <div class="overlay" id="planModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="prezi-avatar"></div>
+                <div>
+                    <h2 class="modal-title">I Can Do That!</h2>
+                    <p style="color: var(--text-muted); margin:0;">Here is my plan to build your presentation.</p>
+                </div>
+            </div>
+            <div class="modal-body">
+                <p>Based on your request, I'll create a professional 15-slide deck focusing on your Q4 growth story to impress the BigCorp investors.</p>
+                <div class="plan-steps">
+                    <!-- Plan steps will be populated by JS -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" style="background: var(--bg-hover);" onclick="closeModal('planModal')">Cancel</button>
+                <button class="btn btn-primary" id="executeBtn">✅ Execute Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PrezI's Execution Progress Modal -->
+    <div class="overlay" id="progressModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="prezi-avatar"></div>
+                <div>
+                    <h2 class="modal-title">Building Your Presentation...</h2>
+                    <p style="color: var(--text-muted); margin:0;" id="progressStatusText">Just a few moments while I work my magic!</p>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="plan-steps" id="progressSteps">
+                    <!-- Progress steps will be populated here -->
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Emergency Stop Button -->
+    <button class="btn btn-danger emergency-stop" id="emergencyStopBtn">🛑 Emergency Stop</button>
+
+
+    <script>
+        // ---------------------------------- */
+        // 1. MOCKUP DATA                     */
+        // ---------------------------------- */
+        const userCommand = "Create an investor pitch for BigCorp focusing on our Q4 results and 2025 growth strategy.";
+        const planData = [
+            { title: "Find Opening Hook", details: "Searching 42 title slides for a high-impact opener." },
+            { title: "Analyze Q4 Performance", details: "Locating and selecting the 3 most powerful Q4 revenue & KPI charts." },
+            { title: "Showcase Growth Strategy", details: "Extracting the 5 key growth initiative slides from the 2025 plan." },
+            { title: "Add Team & Vision", details: "Finding the approved team and company vision slides for context." },
+            { title: "Create Closing & CTA", details: "Selecting a strong call-to-action and summary slide to end the presentation." },
+            { title: "Harmonize & Polish", details: "Applying consistent branding, formatting, and professional animations to all 15 slides." }
+        ];
+
+        // ---------------------------------- */
+        // 2. DOM ELEMENT REFERENCES          */
+        // ---------------------------------- */
+        const commandInput = document.getElementById('commandInput');
+        const commandBar = document.getElementById('commandBar');
+        const typingCursor = document.getElementById('typingCursor');
+        const planModal = document.getElementById('planModal');
+        const progressModal = document.getElementById('progressModal');
+        const executeBtn = document.getElementById('executeBtn');
+        const emergencyStopBtn = document.getElementById('emergencyStopBtn');
+        const assemblyPanel = document.getElementById('assemblyPanel');
+
+        // ---------------------------------- */
+        // 3. CORE FUNCTIONS                  */
+        // ---------------------------------- */
+        
+        // Simulates typing effect in the command bar
+        function typeCommand(command, onComplete) {
+            let i = 0;
+            commandBar.classList.add('focused');
+            typingCursor.style.display = 'inline-block';
+            commandInput.placeholder = '';
+            
+            const interval = setInterval(() => {
+                commandInput.value = command.substring(0, i);
+                i++;
+                if (i > command.length) {
+                    clearInterval(interval);
+                    typingCursor.style.display = 'none';
+                    if (onComplete) onComplete();
+                }
+            }, 50);
+        }
+
+        // Opens a modal
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.add('visible');
+        }
+        
+        // Closes a modal
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.remove('visible');
+        }
+
+        // Populates the plan steps in the modal
+        function populatePlan() {
+            const planContainer = planModal.querySelector('.plan-steps');
+            planContainer.innerHTML = planData.map((step, index) => `
+                <div class="plan-step">
+                    <div class="plan-step-number">${index + 1}</div>
+                    <div class="plan-step-content">
+                        <div class="title">${step.title}</div>
+                        <div class="details">${step.details}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Simulates the AI execution process
+        function executePlan() {
+            closeModal('planModal');
+            
+            // Setup and show progress modal
+            const progressStepsContainer = document.getElementById('progressSteps');
+            progressStepsContainer.innerHTML = planData.map((step, index) => `
+                <div class="plan-step progress-step" id="step-${index}">
+                    <div class="plan-step-number"><span>${index + 1}</span></div>
+                    <div class="plan-step-content">
+                        <div class="title">${step.title}</div>
+                        <div class="details">${step.details}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            openModal('progressModal');
+            emergencyStopBtn.classList.add('visible');
+
+            let currentStep = 0;
+            const progressBar = document.getElementById('progressBar');
+            const progressStatusText = document.getElementById('progressStatusText');
+            assemblyPanel.innerHTML = ''; // Clear assembly panel
+
+            const interval = setInterval(() => {
+                if (currentStep >= planData.length) {
+                    clearInterval(interval);
+                    completeExecution();
+                    return;
+                }
+
+                // Update UI for the current step
+                const stepElement = document.getElementById(`step-${currentStep}`);
+                stepElement.classList.add('completed');
+                stepElement.querySelector('.plan-step-number span').innerHTML = '✅';
+                
+                progressStatusText.textContent = `Executing: ${planData[currentStep].title}...`;
+                progressBar.style.width = `${((currentStep + 1) / planData.length) * 100}%`;
+
+                // Add placeholder slides to assembly
+                const slideCount = currentStep === 0 ? 1 : (currentStep === 1 ? 3 : (currentStep === 2 ? 5 : (currentStep === 3 ? 2 : (currentStep === 4 ? 2 : 2))));
+                for(let i=0; i<slideCount; i++) {
+                    const slidePlaceholder = document.createElement('div');
+                    slidePlaceholder.className = 'assembly-slide-placeholder';
+                    slidePlaceholder.style.animationDelay = `${i * 0.1}s`;
+                    assemblyPanel.appendChild(slidePlaceholder);
+                }
+
+                currentStep++;
+            }, 1200); // Simulate time for each step
+        }
+        
+        function completeExecution() {
+             const progressStatusText = document.getElementById('progressStatusText');
+             progressStatusText.textContent = "All done! Your presentation is ready.";
+             progressStatusText.style.color = 'var(--success)';
+             emergencyStopBtn.classList.remove('visible');
+
+             setTimeout(() => {
+                closeModal('progressModal');
+             }, 2000);
+        }
+
+        // ---------------------------------- */
+        // 4. EVENT LISTENERS & INITIALIZATION*/
+        // ---------------------------------- */
+
+        window.onload = () => {
+            // Start the simulation after a brief delay
+            setTimeout(() => {
+                typeCommand(userCommand, () => {
+                    setTimeout(() => {
+                        populatePlan();
+                        openModal('planModal');
+                    }, 500);
+                });
+            }, 1000);
+        };
+
+        executeBtn.addEventListener('click', executePlan);
+        emergencyStopBtn.addEventListener('click', () => {
+            // In a real app, this would kill the backend process
+            // For the mockup, we just close the modal
+            location.reload(); // Simple way to reset the demo
+        });
+
+    </script>
+</body>
+</html>

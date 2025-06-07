@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrezI - The Definitive Interactive Simulation v5</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-purple: #a855f7; --accent-blue: #3b82f6; --accent-green: #10b981;
+            --accent-amber: #f59e0b; --accent-red: #ef4444; --bg-dark: #0a0a0a;
+            --bg-panel: #1a1a1a; --bg-card: #2a2a2a; --bg-hover: #3a3a3a;
+            --text-primary: #ffffff; --text-secondary: #e5e7eb; --text-muted: #9ca3af;
+            --border: #3a3a3a; --space-md: 16px; --space-lg: 24px;
+            --transition-curve: cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-duration: 0.4s;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; overflow: hidden; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: var(--bg-dark); color: var(--text-primary); line-height: 1.6; }
+        .app-container { display: flex; flex-direction: column; height: 100vh; }
+        .header-bar { height: 72px; background: var(--bg-panel); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 var(--space-lg); gap: var(--space-lg); flex-shrink: 0; }
+        .app-logo { font-size: 24px; font-weight: 900; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .main-layout { flex: 1; display: flex; overflow: hidden; }
+        .left-sidebar { width: 280px; background: var(--bg-panel); border-right: 1px solid var(--border); flex-shrink: 0; display: flex; flex-direction: column; }
+        .content-area { flex: 1; display: flex; flex-direction: column; padding: var(--space-lg); overflow-y: auto; }
+        .right-sidebar { width: 320px; background: var(--bg-panel); border-left: 1px solid var(--border); flex-shrink: 0; display: flex; flex-direction: column; }
+        .command-bar { flex: 1; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; height: 48px; padding: 0 var(--space-md); display: flex; align-items: center; gap: var(--space-md); }
+        .command-input { flex: 1; background: transparent; border: none; color: var(--text-primary); font-size: 16px; outline: none; }
+        .sidebar-panel { padding: var(--space-lg); border-bottom: 1px solid var(--border); }
+        .sidebar-title { font-size: 14px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--space-md); }
+        .keyword-list { display: flex; flex-direction: column; gap: 8px; }
+        .keyword-pill { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--bg-card); border-radius: 20px; cursor: pointer; border: 1px solid var(--bg-card); transition: all 0.2s ease; }
+        .keyword-pill:hover { background: var(--bg-hover); transform: translateX(4px); }
+        .keyword-pill.active { background: rgba(102, 126, 234, 0.2); border-color: var(--accent-blue); }
+        .keyword-color { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .keyword-text { flex: 1; font-size: 14px; }
+        .keyword-count { font-size: 12px; color: var(--text-muted); }
+        .library-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg); }
+        .library-status { font-size: 14px; color: var(--text-secondary); }
+        .slide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-lg); }
+        .slide-card { background: var(--bg-card); border-radius: 12px; border: 2px solid transparent; overflow: hidden; cursor: pointer; transition: all var(--transition-duration) var(--transition-curve); }
+        .slide-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .slide-card.filtered-out { display: none; }
+        .slide-thumbnail { aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; font-size: 48px; color: var(--text-muted); background: linear-gradient(135deg, #ddd, #f0f0f0); }
+        .slide-info { padding: var(--space-md); }
+        .slide-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+        .slide-meta { font-size: 12px; color: var(--text-muted); }
+        .overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.4s ease; }
+        .overlay.visible { opacity: 1; visibility: visible; }
+        .inspector-modal { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 24px; padding: var(--space-xl); width: 90%; max-width: 1000px; transform: scale(0.95); transition: all 0.4s ease; display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-lg); }
+        .overlay.visible .inspector-modal { transform: scale(1); }
+        .inspector-preview-area { background: var(--bg-dark); border-radius: 16px; padding: var(--space-md); }
+        .inspector-preview { position: relative; aspect-ratio: 16/9; background: white; border-radius: 8px; }
+        .element-overlay { position: absolute; border: 2px dashed rgba(59, 130, 246, 0.5); background: rgba(59, 130, 246, 0.1); cursor: pointer; transition: all 0.2s ease; }
+        .element-overlay:hover, .element-overlay.selected { background: rgba(168, 85, 247, 0.2); border-color: var(--accent-purple); border-style: solid; }
+        .inspector-details-area { display: flex; flex-direction: column; gap: var(--space-lg); }
+        .details-section { background: var(--bg-card); border-radius: 12px; padding: var(--space-md); }
+        .details-title { font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: var(--space-md); }
+        .tags-container { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag-pill { background: var(--bg-hover); padding: 4px 12px; border-radius: 12px; font-size: 14px; }
+        .tag-input { width: 100%; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; padding: 12px; color: white; margin-top: 12px; }
+        .btn { padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; border: none; font-size: 16px; }
+        .btn-primary { background: var(--primary-gradient); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3); }
+        .close-btn { position: absolute; top: var(--space-lg); right: var(--space-lg); background: var(--bg-hover); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header-bar">
+            <div class="app-logo">PrezI</div>
+            <div class="command-bar">
+                <span style="font-size: 20px; color: var(--text-muted);">🔍</span>
+                <input type="text" class="command-input" id="commandInput" placeholder="Search keywords, titles, or slide content...">
+            </div>
+            <img src="https://i.pravatar.cc/40?u=sarah" alt="User Avatar" style="width: 40px; height: 40px; border-radius: 50%;">
+        </header>
+        <div class="main-layout">
+            <aside class="left-sidebar">
+                 <div class="sidebar-panel" style="flex: 1; overflow-y: auto;">
+                     <h3 class="sidebar-title">All Keywords</h3>
+                     <div class="keyword-list" id="keywordList"></div>
+                 </div>
+            </aside>
+            <main class="content-area">
+                <div class="library-header">
+                    <div id="libraryStatus" class="library-status">Showing all 12 slides</div>
+                </div>
+                <div class="slide-grid" id="slideGrid"></div>
+            </main>
+        </div>
+    </div>
+
+    <div class="overlay" id="inspectorOverlay">
+        <div class="inspector-modal">
+            <button class="close-btn" id="inspectorCloseBtn">×</button>
+            <div class="inspector-preview-area">
+                <div class="inspector-preview" id="inspectorPreview"></div>
+            </div>
+            <div class="inspector-details-area">
+                <div class="details-section">
+                    <h3 class="details-title" id="inspectorSlideTitle">Slide Title</h3>
+                    <p id="inspectorSlideMeta" style="font-size: 12px; color: var(--text-muted);"></p>
+                </div>
+                <div class="details-section">
+                    <h3 class="details-title">Slide Keywords</h3>
+                    <div class="tags-container" id="inspectorSlideTags"></div>
+                    <input type="text" class="tag-input" id="slideTagInput" placeholder="Add slide-level tag...">
+                </div>
+                <div class="details-section">
+                    <h3 class="details-title" id="elementTitle">Element Keywords</h3>
+                    <div class="tags-container" id="inspectorElementTags"></div>
+                     <input type="text" class="tag-input" id="elementTagInput" placeholder="Add element tag...">
+                </div>
+                <button class="btn btn-primary" id="updateTagsBtn">Update Tags</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- MOCKUP DATA ---
+        let keywordsData = [ { id: 'q4', text: 'Q4 Performance', color: 'var(--accent-green)', count: 5 }, { id: 'growth', text: 'Growth Strategy', color: 'var(--accent-blue)', count: 4 }, { id: 'revenue', text: 'Revenue', color: 'var(--accent-amber)', count: 3 }, { id: 'competition', text: 'Competition', color: 'var(--accent-red)', count: 2 }, { id: 'roadmap', text: 'Roadmap', color: '#8b5cf6', count: 3 } ];
+        let slidesData = [
+            { id: 1, title: "Q4 Revenue Dashboard", meta: "From Q4_Results.pptx", icon: '📊', tags: ['q4', 'revenue'], elements: [{id: 101, type: 'Chart', rect: {top:'20%',left:'10%',width:'80%',height:'70%'}, tags:['revenue']}] },
+            { id: 2, title: "Market Growth Analysis", meta: "From 2025_Strategy.pptx", icon: '📈', tags: ['growth'], elements: [{id: 102, type: 'Chart', rect: {top:'25%',left:'50%',width:'45%',height:'50%'}, tags:['growth']}] },
+            { id: 3, title: "Competitive Landscape", meta: "From Market_Research.pptx", icon: '🎯', tags: ['competition'], elements: [] },
+            { id: 4, title: "Product Roadmap 2025", meta: "From 2025_Strategy.pptx", icon: '🚀', tags: ['growth', 'roadmap'], elements: [{id: 103, type: 'Timeline', rect: {top:'15%',left:'10%',width:'80%',height:'75%'}, tags:['roadmap']}] },
+            { id: 5, title: "Key Metrics YoY", meta: "From Marketing_All_Hands.pptx", icon: '📋', tags: ['q4'], elements: [] },
+            { id: 6, title: "YoY Revenue Growth", meta: "From Q4_Results.pptx", icon: '💰', tags: ['q4', 'revenue', 'growth'], elements: [] },
+            { id: 7, title: "Competitor Market Share", meta: "From Market_Research.pptx", icon: '📉', tags: ['competition'], elements: [] },
+            { id: 8, title: "New Feature Rollout", meta: "From Product_Update.pptx", icon: '✨', tags: ['roadmap'], elements: [] },
+            { id: 9, title: "Quarterly Financials", meta: "From Q4_Board_Deck.pptx", icon: '💼', tags: ['q4', 'revenue'], elements: [] },
+            { id: 10, title: "2025 Strategic Pillars", meta: "From 2025_Strategy.pptx", icon: '🏛️', tags: ['growth'], elements: [] },
+            { id: 11, title: "Quarterly OKR Review", meta: "From Q4_Board_Deck.pptx", icon: '✅', tags: ['q4'], elements: [] },
+            { id: 12, title: "Initiatives Timeline", meta: "From Product_Update.pptx", icon: '🗓️', tags: ['roadmap'], elements: [] }
+        ];
+
+        // --- APPLICATION STATE ---
+        let state = { currentSearch: '', activeInspectorSlideId: null, activeElementId: null };
+
+        // --- DOM REFERENCES ---
+        const dom = {
+            keywordList: document.getElementById('keywordList'),
+            slideGrid: document.getElementById('slideGrid'),
+            libraryStatus: document.getElementById('libraryStatus'),
+            commandInput: document.getElementById('commandInput'),
+            inspectorOverlay: document.getElementById('inspectorOverlay'),
+            inspectorPreview: document.getElementById('inspectorPreview'),
+            inspectorSlideTitle: document.getElementById('inspectorSlideTitle'),
+            inspectorSlideMeta: document.getElementById('inspectorSlideMeta'),
+            inspectorSlideTags: document.getElementById('inspectorSlideTags'),
+            inspectorElementTags: document.getElementById('inspectorElementTags'),
+            inspectorCloseBtn: document.getElementById('inspectorCloseBtn'),
+            slideTagInput: document.getElementById('slideTagInput'),
+            elementTagInput: document.getElementById('elementTagInput'),
+            updateTagsBtn: document.getElementById('updateTagsBtn'),
+            elementTitle: document.getElementById('elementTitle'),
+        };
+
+        // --- RENDER FUNCTIONS ---
+        function renderKeywords() {
+            dom.keywordList.innerHTML = keywordsData.map(kw => `
+                <div class="keyword-pill" data-keyword-id="${kw.id}">
+                    <div class="keyword-color" style="background: ${kw.color};"></div>
+                    <span class="keyword-text">${kw.text}</span>
+                    <span class="keyword-count">${slidesData.filter(s => s.tags.includes(kw.id)).length}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderSlides() {
+            const query = state.currentSearch.toLowerCase();
+            let visibleCount = 0;
+            const slideElements = document.querySelectorAll('.slide-card');
+            
+            slideElements.forEach(card => {
+                const slideId = parseInt(card.dataset.slideId);
+                const slide = slidesData.find(s => s.id === slideId);
+                const tagString = slide.tags.join(' ');
+                const isVisible = query === '' || slide.title.toLowerCase().includes(query) || tagString.toLowerCase().includes(query);
+                
+                card.classList.toggle('filtered-out', !isVisible);
+                if (isVisible) visibleCount++;
+            });
+            dom.libraryStatus.textContent = query ? `Found ${visibleCount} slides for '${query}'` : `Showing all ${slidesData.length} slides`;
+        }
+        
+        function openInspector(slideId) {
+            state.activeInspectorSlideId = slideId;
+            const slide = slidesData.find(s => s.id === slideId);
+            if (!slide) return;
+            
+            dom.inspectorSlideTitle.textContent = slide.title;
+            dom.inspectorSlideMeta.textContent = slide.meta;
+            
+            dom.inspectorPreview.innerHTML = slide.elements.map(el => 
+                `<div class="element-overlay" data-element-id="${el.id}" style="top:${el.rect.top}; left:${el.rect.left}; width:${el.rect.width}; height:${el.rect.height};"></div>`
+            ).join('');
+            
+            renderInspectorTags();
+            dom.inspectorOverlay.classList.add('visible');
+            addInspectorListeners();
+        }
+
+        function renderInspectorTags() {
+            const slide = slidesData.find(s => s.id === state.activeInspectorSlideId);
+            if (!slide) return;
+
+            dom.inspectorSlideTags.innerHTML = slide.tags.map(tagId => {
+                const kw = keywordsData.find(k => k.id === tagId);
+                return `<span class="tag-pill" style="background:${kw.color}; color:white;">${kw.text}</span>`;
+            }).join('');
+            
+            dom.inspectorElementTags.innerHTML = '';
+            dom.elementTitle.textContent = 'Element Keywords';
+            
+            if (state.activeElementId) {
+                const element = slide.elements.find(e => e.id === state.activeElementId);
+                if (element) {
+                     dom.elementTitle.textContent = `${element.type} Keywords`;
+                     dom.inspectorElementTags.innerHTML = element.tags.map(tagId => {
+                        const kw = keywordsData.find(k => k.id === tagId);
+                        return `<span class="tag-pill">${kw.text}</span>`;
+                     }).join('');
+                }
+            }
+        }
+
+        // --- EVENT LISTENERS & HANDLERS ---
+        dom.commandInput.addEventListener('input', (e) => {
+            state.currentSearch = e.target.value;
+            renderSlides();
+        });
+
+        function handleSlideCardClick(e) {
+            const card = e.target.closest('.slide-card');
+            if (card) openInspector(parseInt(card.dataset.slideId));
+        }
+
+        function addInspectorListeners() {
+            dom.inspectorPreview.querySelectorAll('.element-overlay').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    dom.inspectorPreview.querySelectorAll('.element-overlay').forEach(other => other.classList.remove('selected'));
+                    el.classList.add('selected');
+                    state.activeElementId = parseInt(el.dataset.elementId);
+                    renderInspectorTags();
+                });
+            });
+        }
+        
+        dom.inspectorCloseBtn.addEventListener('click', () => {
+             dom.inspectorOverlay.classList.remove('visible');
+             state.activeInspectorSlideId = null;
+             state.activeElementId = null;
+        });
+        
+        dom.updateTagsBtn.addEventListener('click', () => {
+            const slide = slidesData.find(s => s.id === state.activeInspectorSlideId);
+            if(!slide) return;
+            
+            const newSlideTag = dom.slideTagInput.value.trim();
+            if(newSlideTag) {
+                let kw = keywordsData.find(k => k.text.toLowerCase() === newSlideTag.toLowerCase());
+                if (!kw) {
+                    kw = { id: newSlideTag.toLowerCase(), text: newSlideTag, color: '#ccc', count: 0 };
+                    keywordsData.push(kw);
+                }
+                if (!slide.tags.includes(kw.id)) slide.tags.push(kw.id);
+                dom.slideTagInput.value = '';
+            }
+            
+            const newElementTag = dom.elementTagInput.value.trim();
+            if(newElementTag && state.activeElementId) {
+                const element = slide.elements.find(e => e.id === state.activeElementId);
+                 let kw = keywordsData.find(k => k.text.toLowerCase() === newElementTag.toLowerCase());
+                if (!kw) {
+                    kw = { id: newElementTag.toLowerCase(), text: newElementTag, color: '#ccc', count: 0 };
+                    keywordsData.push(kw);
+                }
+                if (!element.tags.includes(kw.id)) element.tags.push(kw.id);
+                dom.elementTagInput.value = '';
+            }
+
+            renderInspectorTags();
+            renderKeywords();
+        });
+
+
+        // --- INITIALIZATION ---
+        function init() {
+            dom.slideGrid.innerHTML = slidesData.map(slide => `<div class="slide-card" data-slide-id="${slide.id}" data-tags="${slide.tags.join(' ')}"><div class="slide-thumbnail">${slide.icon}</div><div class="slide-info"><div class="slide-title">${slide.title}</div><div class="slide-meta">${slide.meta}</div></div></div>`).join('');
+            renderKeywords();
+            dom.slideGrid.addEventListener('click', handleSlideCardClick);
+        }
+
+        init();
+    </script>
+</body>
+</html>

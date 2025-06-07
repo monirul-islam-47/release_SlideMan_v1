@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrezI - Executive Summary for mama marketing GmbH</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --bg-dark: #0a0a0a;
+            --bg-panel: #1a1a1a;
+            --bg-card: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e7eb;
+            --text-muted: #9ca3af;
+            --border: #3a3a3a;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            padding: 24px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .company-badge {
+            padding: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* Executive Summary Hero */
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-panel) 100%);
+        }
+        
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+        
+        .document-title {
+            font-size: 16px;
+            color: var(--accent-purple);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 24px;
+        }
+        
+        .main-title {
+            font-size: clamp(48px, 6vw, 72px);
+            font-weight: 900;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 24px;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto 48px;
+        }
+        
+        .date-stamp {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        /* Quick Stats */
+        .quick-stats {
+            background: var(--bg-panel);
+            padding: 60px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+        
+        .stat-card {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+        
+        /* Content Sections */
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 40px;
+        }
+        
+        .section {
+            margin-bottom: 80px;
+        }
+        
+        .section-title {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 32px;
+            color: var(--text-primary);
+        }
+        
+        .subsection {
+            background: var(--bg-panel);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+        
+        .subsection-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--accent-purple);
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+        
+        .feature-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+        
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .feature-description {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+        
+        /* Implementation Roadmap */
+        .roadmap {
+            position: relative;
+            padding-left: 40px;
+        }
+        
+        .roadmap::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+        
+        .roadmap-item {
+            position: relative;
+            padding-bottom: 40px;
+        }
+        
+        .roadmap-item::before {
+            content: '';
+            position: absolute;
+            left: -45px;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px var(--bg-panel);
+        }
+        
+        .roadmap-phase {
+            font-size: 14px;
+            color: var(--accent-purple);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .roadmap-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .roadmap-description {
+            color: var(--text-secondary);
+        }
+        
+        .roadmap-timeline {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+        
+        /* Market Analysis */
+        .competitor-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+        }
+        
+        .competitor-table th,
+        .competitor-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .competitor-table th {
+            background: var(--bg-card);
+            font-weight: 600;
+            color: var(--accent-purple);
+        }
+        
+        .competitor-table tr:hover {
+            background: var(--bg-card);
+        }
+        
+        .check {
+            color: var(--accent-green);
+        }
+        
+        .cross {
+            color: var(--text-muted);
+        }
+        
+        /* Investment Section */
+        .investment-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin-top: 40px;
+        }
+        
+        .investment-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .investment-description {
+            font-size: 20px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+        
+        .pricing-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 32px;
+        }
+        
+        .pricing-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 32px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+        
+        .pricing-card:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+        
+        .pricing-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .pricing-price {
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 24px;
+        }
+        
+        .pricing-features li {
+            padding: 8px 0;
+            color: var(--text-secondary);
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: var(--bg-panel);
+            padding: 60px 0;
+            text-align: center;
+            margin-top: 80px;
+            border-radius: 24px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 32px;
+        }
+        
+        .btn {
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-card);
+            border-color: var(--primary);
+        }
+        
+        /* Navigation */
+        .nav-buttons {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+        
+        .nav-btn {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+        
+        .nav-btn:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            
+            .nav-buttons,
+            .header {
+                display: none;
+            }
+            
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">PrezI</div>
+            <div class="company-badge">For: mama marketing GmbH</div>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="document-title">Executive Summary</div>
+            <h1 class="main-title">PrezI: The AI Presentation Revolution</h1>
+            <p class="subtitle">
+                Transforming how businesses create, manage, and deliver professional presentations
+            </p>
+            <p class="date-stamp">Prepared: January 2025</p>
+        </div>
+    </section>
+    
+    <!-- Quick Stats -->
+    <section class="quick-stats">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">$50B</div>
+                <div class="stat-label">Market Opportunity</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">90%</div>
+                <div class="stat-label">Time Savings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">500K+</div>
+                <div class="stat-label">Target Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">6-12</div>
+                <div class="stat-label">Months to Market</div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Executive Overview -->
+        <section class="section">
+            <h2 class="section-title">Executive Overview</h2>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">The Problem We Solve</h3>
+                <p>
+                    Every day, millions of business professionals waste 4-5 hours searching through old presentations,
+                    manually rebuilding slides, and struggling to maintain brand consistency. This represents a
+                    $50 billion productivity loss annually in the enterprise presentation market alone.
+                </p>
+                <p style="margin-top: 16px;">
+                    Current solutions like PowerPoint Designer and Canva focus on creating new presentations from scratch.
+                    They ignore the reality that 80% of business presentations reuse existing content.
+                </p>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">The PrezI Solution</h3>
+                <p>
+                    PrezI is an AI-powered presentation partner that understands slides at an element level.
+                    Using natural language commands, users can instantly find, organize, and assemble professional
+                    presentations from their existing slide universe.
+                </p>
+                <p style="margin-top: 16px; font-weight: 600; color: var(--accent-green);">
+                    "Create investor pitch for BigCorp focusing on Q4 results" → Professional presentation in 2 minutes
+                </p>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">Unique Value Proposition</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🧠</div>
+                        <div class="feature-title">Element-Level Intelligence</div>
+                        <div class="feature-description">
+                            PrezI understands individual charts, text boxes, and images within slides
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💬</div>
+                        <div class="feature-title">Natural Language Interface</div>
+                        <div class="feature-description">
+                            Describe what you need in plain English - PrezI handles the rest
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">✨</div>
+                        <div class="feature-title">Professional Guarantee</div>
+                        <div class="feature-description">
+                            Every output is McKinsey-level quality with perfect brand consistency
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Technical Architecture -->
+        <section class="section">
+            <h2 class="section-title">Technical Architecture</h2>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">Core Technology Stack</h3>
+                <ul style="color: var(--text-secondary); line-height: 2;">
+                    <li><strong>AI Engine:</strong> GPT-4o for real-time intelligence, o3 for complex analysis</li>
+                    <li><strong>Frontend:</strong> Python/Qt for desktop, React for web version</li>
+                    <li><strong>Backend:</strong> FastAPI with vector database for semantic search</li>
+                    <li><strong>Element Recognition:</strong> Custom computer vision models for slide analysis</li>
+                    <li><strong>Integration:</strong> Native PowerPoint COM automation</li>
+                </ul>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">Key Innovations</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <div class="feature-title">Semantic Search</div>
+                        <div class="feature-description">
+                            Vector embeddings enable finding slides by meaning, not just keywords
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🏷️</div>
+                        <div class="feature-title">Auto-Tagging</div>
+                        <div class="feature-description">
+                            AI automatically categorizes and tags content with 95% accuracy
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎨</div>
+                        <div class="feature-title">Style Harmonization</div>
+                        <div class="feature-description">
+                            Ensures consistent formatting across slides from different sources
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Market Analysis -->
+        <section class="section">
+            <h2 class="section-title">Market Analysis</h2>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">Target Market</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🏢</div>
+                        <div class="feature-title">Primary: Enterprises</div>
+                        <div class="feature-description">
+                            Fortune 500 companies with 1000+ employees creating 50+ presentations weekly
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-title">Secondary: Agencies</div>
+                        <div class="feature-description">
+                            Marketing and consulting firms managing multiple client presentations
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <div class="feature-title">Tertiary: Startups</div>
+                        <div class="feature-description">
+                            Fast-moving teams needing professional presentations quickly
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection">
+                <h3 class="subsection-title">Competitive Landscape</h3>
+                <table class="competitor-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>PrezI</th>
+                            <th>PowerPoint Designer</th>
+                            <th>Tome.app</th>
+                            <th>Beautiful.ai</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Manages existing slides</td>
+                            <td class="check">✓</td>
+                            <td class="cross">✗</td>
+                            <td class="cross">✗</td>
+                            <td class="cross">✗</td>
+                        </tr>
+                        <tr>
+                            <td>Element-level understanding</td>
+                            <td class="check">✓</td>
+                            <td class="cross">✗</td>
+                            <td class="cross">✗</td>
+                            <td class="cross">✗</td>
+                        </tr>
+                        <tr>
+                            <td>Natural language commands</td>
+                            <td class="check">✓</td>
+                            <td class="cross">✗</td>
+                            <td class="check">✓</td>
+                            <td class="cross">✗</td>
+                        </tr>
+                        <tr>
+                            <td>Professional output guarantee</td>
+                            <td class="check">✓</td>
+                            <td class="cross">✗</td>
+                            <td class="cross">✗</td>
+                            <td class="check">✓</td>
+                        </tr>
+                        <tr>
+                            <td>Works with existing files</td>
+                            <td class="check">✓</td>
+                            <td class="check">✓</td>
+                            <td class="cross">✗</td>
+                            <td class="cross">✗</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Implementation Roadmap -->
+        <section class="section">
+            <h2 class="section-title">Implementation Roadmap</h2>
+            
+            <div class="subsection">
+                <div class="roadmap">
+                    <div class="roadmap-item">
+                        <div class="roadmap-phase">Phase 1</div>
+                        <div class="roadmap-title">MVP Development</div>
+                        <div class="roadmap-description">
+                            Core functionality: slide import, AI tagging, natural language search, basic assembly
+                        </div>
+                        <div class="roadmap-timeline">Timeline: 3 months</div>
+                    </div>
+                    
+                    <div class="roadmap-item">
+                        <div class="roadmap-phase">Phase 2</div>
+                        <div class="roadmap-title">Intelligence Enhancement</div>
+                        <div class="roadmap-description">
+                            Element recognition, style harmonization, advanced AI features, presentation building
+                        </div>
+                        <div class="roadmap-timeline">Timeline: 3 months</div>
+                    </div>
+                    
+                    <div class="roadmap-item">
+                        <div class="roadmap-phase">Phase 3</div>
+                        <div class="roadmap-title">Enterprise Features</div>
+                        <div class="roadmap-description">
+                            Team collaboration, brand management, API integration, advanced security
+                        </div>
+                        <div class="roadmap-timeline">Timeline: 3 months</div>
+                    </div>
+                    
+                    <div class="roadmap-item">
+                        <div class="roadmap-phase">Phase 4</div>
+                        <div class="roadmap-title">Scale & Optimize</div>
+                        <div class="roadmap-description">
+                            Performance optimization, multi-language support, mobile apps, marketplace
+                        </div>
+                        <div class="roadmap-timeline">Timeline: 3 months</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Investment & Returns -->
+        <section class="section">
+            <h2 class="section-title">Investment & Returns</h2>
+            
+            <div class="investment-card">
+                <h3 class="investment-title">Investment Required</h3>
+                <p class="investment-description">
+                    To bring PrezI to market and establish market leadership
+                </p>
+                
+                <div class="pricing-options">
+                    <div class="pricing-card">
+                        <div class="pricing-name">Development</div>
+                        <div class="pricing-price">€500K</div>
+                        <ul class="pricing-features">
+                            <li>Core AI development</li>
+                            <li>UI/UX implementation</li>
+                            <li>Testing & optimization</li>
+                            <li>Initial infrastructure</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <div class="pricing-name">Marketing</div>
+                        <div class="pricing-price">€300K</div>
+                        <ul class="pricing-features">
+                            <li>Brand development</li>
+                            <li>Launch campaign</li>
+                            <li>Content marketing</li>
+                            <li>Sales enablement</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="pricing-card">
+                        <div class="pricing-name">Operations</div>
+                        <div class="pricing-price">€200K</div>
+                        <ul class="pricing-features">
+                            <li>Team building</li>
+                            <li>Infrastructure</li>
+                            <li>Legal & compliance</li>
+                            <li>Working capital</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="subsection" style="margin-top: 40px;">
+                <h3 class="subsection-title">Revenue Projections</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📅</div>
+                        <div class="feature-title">Year 1</div>
+                        <div class="feature-description">
+                            €2M ARR<br>
+                            500 enterprise customers<br>
+                            €4,000 average contract value
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📈</div>
+                        <div class="feature-title">Year 2</div>
+                        <div class="feature-description">
+                            €8M ARR<br>
+                            2,000 customers<br>
+                            Market expansion to US
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <div class="feature-title">Year 3</div>
+                        <div class="feature-description">
+                            €20M ARR<br>
+                            5,000+ customers<br>
+                            Category leader position
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Call to Action -->
+        <section class="cta-section">
+            <h2 style="font-size: 40px; margin-bottom: 16px;">Ready to Lead the Presentation Revolution?</h2>
+            <p style="font-size: 20px; color: var(--text-secondary);">
+                PrezI represents a unique opportunity to capture a massive, underserved market<br>
+                with a product that delivers immediate, measurable value to enterprises worldwide.
+            </p>
+            
+            <div class="cta-buttons">
+                <a href="index.html" class="btn btn-primary">
+                    <span>🏠</span>
+                    <span>View Full Demo</span>
+                </a>
+                <a href="mailto:contact@mama-marketing.de" class="btn btn-secondary">
+                    <span>📧</span>
+                    <span>Schedule Discussion</span>
+                </a>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Navigation Buttons -->
+    <div class="nav-buttons">
+        <a href="index.html" class="nav-btn" title="Back to Home">🏠</a>
+        <button class="nav-btn" onclick="window.print()" title="Print Summary">🖨️</button>
+    </div>
+    
+    <script>
+        // Smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Animate stats on scroll
+        const animateValue = (element, start, end, duration) => {
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= end) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                
+                if (element.textContent.includes('€')) {
+                    element.textContent = '€' + Math.floor(current) + element.textContent.slice(element.textContent.indexOf(' '));
+                } else if (element.textContent.includes('$')) {
+                    element.textContent = '$' + Math.floor(current) + element.textContent.slice(element.textContent.indexOf(' '));
+                } else if (element.textContent.includes('%')) {
+                    element.textContent = Math.floor(current) + '%';
+                } else {
+                    element.textContent = Math.floor(current) + '+';
+                }
+            }, 16);
+        };
+        
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    
+                    // Animate numbers
+                    if (entry.target.classList.contains('stat-number')) {
+                        const text = entry.target.textContent;
+                        if (text.includes('$')) {
+                            animateValue(entry.target, 0, 50, 1500);
+                        } else if (text.includes('%')) {
+                            animateValue(entry.target, 0, 90, 1500);
+                        } else if (text.includes('K')) {
+                            entry.target.textContent = '500K+';
+                        }
+                    }
+                    
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        // Observe elements
+        document.querySelectorAll('.subsection, .feature-card, .roadmap-item, .stat-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
