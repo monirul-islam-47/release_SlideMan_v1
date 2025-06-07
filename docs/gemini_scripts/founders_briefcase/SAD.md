@@ -9,7 +9,7 @@ Here is the document.
 # PrezI: System Architecture Document (SAD)
 
 *   **Version:** 1.1
-*   **Date:** June 7, 2025
+*   **Date:** June 15, 2025
 *   **Author:** PrezI Vision Synthesis AI
 *   **Status:** Amended & Finalized
 

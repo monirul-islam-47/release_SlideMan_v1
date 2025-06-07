@@ -7,7 +7,7 @@ Here is the entire, final version of the **PrezI Development & Testing Plan**, a
 # PrezI: Development & Testing Plan
 
 *   **Version:** 1.2
-*   **Date:** June 7, 2025
+*   **Date:** June 15, 2025
 *   **Author:** PrezI Vision Synthesis AI
 *   **Status:** Amended & Finalized
 
@@ -157,6 +157,33 @@ This is the tactical, sequential plan for development.
 | ☐ **6.4**| Implement the API key setup & validation UI with secure storage. | O&E Handbook, API Spec | |
 | ☐ **6.5**| Implement the onboarding assistant with personalized guidance using the onboarding prompt template. | AIDD | |
 | ☐ **6.6**| Implement the onboarding action tracking and analytics in the database. | DB Schema, O&E Handbook | |
+
+### 4.6. Sprint 6 — User Onboarding Implementation
+
+*   **Timeline:** Begins immediately after Sprint 5 is completed
+*   **Duration:** 2 weeks
+*   **Focus:** Implementing the complete onboarding experience for first-time users
+*   **Tasks:**
+    1.  **Onboarding State Machine Backend (3 days)**
+        *   Implement core `onboarding_manager.py` service
+        *   Create state transition logic and validations
+        *   Build transition events and triggers
+    2.  **Onboarding API Endpoints (2 days)**
+        *   Implement all endpoints in `api/v1/onboarding.py`
+        *   Create secure API key validation and storage endpoints
+        *   Test all endpoints against specification
+    3.  **Onboarding UI Implementation (4 days)**
+        *   Develop welcome screens and interactive tour components
+        *   Implement branching path UI flows
+        *   Create API key setup dialogs with secure input handling
+    4.  **Onboarding Assistant Integration (3 days)**
+        *   Integrate AI assistant prompts and responses
+        *   Implement contextual help based on onboarding state
+        *   Create graduation experience with personalized recommendations
+    5.  **Analytics & Testing (2 days)**
+        *   Add analytics tracking for onboarding progression
+        *   Create comprehensive tests for onboarding workflows
+        *   Fix any identified issues
 
 *(Further Sprints for Phases 2 & 3 will be detailed in the same format)*
 

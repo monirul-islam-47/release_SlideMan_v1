@@ -6,7 +6,12 @@ For an AI agent like Claude Code working on Debian, this clear structure is para
 
 Let's define the official PrezI project folder layout. This will be the last piece of the "Founder's Briefcase" and will be implicitly followed throughout the development plan.
 
-### **The Official PrezI Project Folder Layout**
+# **The Official PrezI Project Folder Layout**
+
+*   **Version:** 1.1
+*   **Date:** June 15, 2025
+*   **Author:** PrezI Vision Synthesis AI
+*   **Status:** Amended & Finalized
 
 This structure is designed for clarity, scalability, and a clean separation between the Python backend, the web frontend, and the Electron shell.
 
