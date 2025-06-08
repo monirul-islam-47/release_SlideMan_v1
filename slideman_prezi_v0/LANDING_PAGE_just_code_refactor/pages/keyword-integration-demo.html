@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrezI - Smart Keywords Demo</title>
+    
+    <!-- External CSS Files -->
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/windsurf-theme.css">
+</head>
+
+<body style="background: var(--bg-primary); color: var(--text-primary); font-family: system-ui, -apple-system, sans-serif;">
+    
+    <!-- Navigation -->
+    <nav class="nav-modern">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-logo">PrezI</a>
+            <ul class="nav-links">
+                <li><a href="../index.html#features" class="nav-link">Features</a></li>
+                <li><a href="../index.html#demos" class="nav-link">Demos</a></li>
+                <li><a href="../executive-summary.html" class="nav-link">Enterprise</a></li>
+            </ul>
+            <a href="../index.html#cta" class="btn-modern btn-primary">Get Early Access</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-modern" style="min-height: 40vh; padding-top: 120px; padding-bottom: var(--space-xl);">
+        <div class="hero-background"></div>
+        <div class="hero-grid"></div>
+        
+        <div class="container-modern">
+            <div class="hero-content fade-up">
+                <div class="hero-badge">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                        <circle cx="6" cy="6" r="6"/>
+                    </svg>
+                    AI-Powered Keyword Intelligence • Live Demo
+                </div>
+                
+                <h1 class="text-display hero-title">
+                    Smart <span class="text-gradient">Keywords</span><br>
+                    + AI Intelligence
+                </h1>
+                
+                <p class="text-body-lg hero-subtitle">
+                    Watch PrezI automatically organize, suggest, and connect keywords<br>
+                    with semantic understanding and intelligent relationships.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Content Area -->
+    <section class="section-modern" style="padding-top: 0;">
+        <div style="max-width: 1600px; margin: 0 auto; padding: 0 var(--space-xl); display: grid; grid-template-columns: 300px 1fr 350px; gap: var(--space-xl); min-height: 70vh;">
+            
+            <!-- Left: Keyword Panel -->
+            <aside style="background: var(--bg-card); border: 1px solid var(--border-primary); border-radius: var(--radius-xl); padding: var(--space-xl); height: fit-content;">
+                <div style="display: flex; align-items: center; justify-content: between; margin-bottom: var(--space-xl);">
+                    <h2 class="text-title" style="margin: 0;">Smart Keywords</h2>
+                    <div style="display: flex; align-items: center; gap: var(--space-xs); background: var(--bg-tertiary); border: 1px solid var(--border-accent); border-radius: var(--radius-md); padding: var(--space-xs) var(--space-sm); font-size: 0.75rem; color: var(--text-accent);">
+                        <div style="width: 6px; height: 6px; background: var(--primary); border-radius: 50%; animation: pulse 2s infinite;"></div>
+                        AI Assist
+                    </div>
+                </div>
+                
+                <!-- Keyword Creation with AI -->
+                <div style="margin-bottom: var(--space-xl);">
+                    <div style="position: relative; margin-bottom: var(--space-lg);">
+                        <input 
+                            type="text" 
+                            id="keywordInput" 
+                            placeholder="Type keyword or let PrezI suggest..."
+                            style="width: 100%; padding: var(--space-md); background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); color: var(--text-primary); font-size: 0.875rem; outline: none; transition: border-color 0.2s ease;"
+                            onfocus="this.style.borderColor = 'var(--border-accent)'; document.getElementById('aiSuggestions').style.display = 'block'"
+                            onblur="setTimeout(() => { document.getElementById('aiSuggestions').style.display = 'none' }, 200)"
+                        >
+                        <div id="aiSuggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-surface); border: 1px solid var(--border-accent); border-radius: var(--radius-lg); margin-top: var(--space-xs); z-index: 10;">
+                            <div style="padding: var(--space-sm) var(--space-md); display: flex; justify-content: between; align-items: center; border-bottom: 1px solid var(--border-primary); cursor: pointer; transition: background-color 0.2s ease;" onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'" onmouseout="this.style.backgroundColor = 'transparent'">
+                                <span style="font-size: 0.875rem;">quarterly results</span>
+                                <span style="font-size: 0.75rem; color: var(--text-accent); font-weight: 600;">95%</span>
+                            </div>
+                            <div style="padding: var(--space-sm) var(--space-md); display: flex; justify-content: between; align-items: center; border-bottom: 1px solid var(--border-primary); cursor: pointer; transition: background-color 0.2s ease;" onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'" onmouseout="this.style.backgroundColor = 'transparent'">
+                                <span style="font-size: 0.875rem;">financial performance</span>
+                                <span style="font-size: 0.75rem; color: var(--text-accent); font-weight: 600;">89%</span>
+                            </div>
+                            <div style="padding: var(--space-sm) var(--space-md); display: flex; justify-content: between; align-items: center; cursor: pointer; transition: background-color 0.2s ease;" onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'" onmouseout="this.style.backgroundColor = 'transparent'">
+                                <span style="font-size: 0.875rem;">revenue growth</span>
+                                <span style="font-size: 0.75rem; color: var(--text-accent); font-weight: 600;">87%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Category Tabs -->
+                    <div style="display: flex; gap: var(--space-xs); margin-bottom: var(--space-lg);">
+                        <div class="category-tab active" style="padding: var(--space-xs) var(--space-sm); background: var(--gradient-primary); color: white; border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 600; cursor: pointer;">All</div>
+                        <div class="category-tab" style="padding: var(--space-xs) var(--space-sm); background: var(--bg-tertiary); color: var(--text-secondary); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor = 'var(--bg-surface)'; this.style.color = 'var(--text-primary)'" onmouseout="this.style.backgroundColor = 'var(--bg-tertiary)'; this.style.color = 'var(--text-secondary)'">Slide</div>
+                        <div class="category-tab" style="padding: var(--space-xs) var(--space-sm); background: var(--bg-tertiary); color: var(--text-secondary); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor = 'var(--bg-surface)'; this.style.color = 'var(--text-primary)'" onmouseout="this.style.backgroundColor = 'var(--bg-tertiary)'; this.style.color = 'var(--text-secondary)'">Element</div>
+                        <div class="category-tab" style="padding: var(--space-xs) var(--space-sm); background: var(--bg-tertiary); color: var(--text-secondary); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor = 'var(--bg-surface)'; this.style.color = 'var(--text-primary)'" onmouseout="this.style.backgroundColor = 'var(--bg-tertiary)'; this.style.color = 'var(--text-secondary)'">AI Tags</div>
+                    </div>
+                </div>
+            
+                <!-- Keyword List -->
+                <div style="max-height: 600px; overflow-y: auto;">
+                    <!-- PrezI Suggested Keywords -->
+                    <div style="margin-bottom: var(--space-xl);">
+                        <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md); font-size: 0.875rem; font-weight: 600; color: var(--text-accent);">
+                            <span style="font-size: 1rem;">✨</span>
+                            PrezI Suggested
+                        </div>
+                        
+                        <div class="keyword-item" style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border: 1px solid var(--border-accent); border-radius: var(--radius-lg); margin-bottom: var(--space-sm); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.transform = 'translateY(-1px)'; this.style.borderColor = 'var(--primary)'" onmouseout="this.style.transform = 'translateY(0)'; this.style.borderColor = 'var(--border-accent)'">
+                            <div style="width: 12px; height: 12px; background: #10b981; border-radius: 50%;"></div>
+                            <span style="flex: 1; font-size: 0.875rem; font-weight: 500;">Q4 Performance</span>
+                            <span style="background: var(--bg-surface); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 600; color: var(--text-accent);">42</span>
+                            <div style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></div>
+                        </div>
+                        
+                        <div class="keyword-item" style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); margin-bottom: var(--space-sm); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.transform = 'translateY(-1px)'; this.style.borderColor = 'var(--border-accent)'" onmouseout="this.style.transform = 'translateY(0)'; this.style.borderColor = 'var(--border-primary)'">
+                            <div style="width: 12px; height: 12px; background: #3b82f6; border-radius: 50%;"></div>
+                            <span style="flex: 1; font-size: 0.875rem; font-weight: 500;">Growth Strategy</span>
+                            <span style="background: var(--bg-surface); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">38</span>
+                        </div>
+                        
+                        <div class="keyword-item" style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); margin-bottom: var(--space-sm); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.transform = 'translateY(-1px)'; this.style.borderColor = 'var(--border-accent)'" onmouseout="this.style.transform = 'translateY(0)'; this.style.borderColor = 'var(--border-primary)'">
+                            <div style="width: 12px; height: 12px; background: #a855f7; border-radius: 50%;"></div>
+                            <span style="flex: 1; font-size: 0.875rem; font-weight: 500;">Market Analysis</span>
+                            <span style="background: var(--bg-surface); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">31</span>
+                        </div>
+                    </div>
+                    
+                    <!-- User Keywords -->
+                    <div style="margin-bottom: var(--space-xl);">
+                        <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md); font-size: 0.875rem; font-weight: 600; color: var(--text-secondary);">
+                            <span style="font-size: 1rem;">👤</span>
+                            Your Keywords
+                        </div>
+                        
+                        <div class="keyword-item active" style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-surface); border: 1px solid var(--primary); border-radius: var(--radius-lg); margin-bottom: var(--space-sm); cursor: pointer; box-shadow: var(--shadow-md);">
+                            <div style="width: 12px; height: 12px; background: #f59e0b; border-radius: 50%;"></div>
+                            <span style="flex: 1; font-size: 0.875rem; font-weight: 600; color: var(--text-primary);">Revenue</span>
+                            <span style="background: var(--gradient-primary); color: white; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 600;">56</span>
+                        </div>
+                        
+                        <div class="keyword-item" style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); margin-bottom: var(--space-sm); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.transform = 'translateY(-1px)'; this.style.borderColor = 'var(--border-accent)'" onmouseout="this.style.transform = 'translateY(0)'; this.style.borderColor = 'var(--border-primary)'">
+                            <div style="width: 12px; height: 12px; background: #ef4444; border-radius: 50%;"></div>
+                            <span style="flex: 1; font-size: 0.875rem; font-weight: 500;">Competition</span>
+                            <span style="background: var(--bg-surface); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">23</span>
+                        </div>
+                        
+                        <div class="keyword-item" style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); margin-bottom: var(--space-sm); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.transform = 'translateY(-1px)'; this.style.borderColor = 'var(--border-accent)'" onmouseout="this.style.transform = 'translateY(0)'; this.style.borderColor = 'var(--border-primary)'">
+                            <div style="width: 12px; height: 12px; background: #8b5cf6; border-radius: 50%;"></div>
+                            <span style="flex: 1; font-size: 0.875rem; font-weight: 500;">Innovation</span>
+                            <span style="background: var(--bg-surface); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">19</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Auto-detected Keywords -->
+                    <div>
+                        <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-md); font-size: 0.875rem; font-weight: 600; color: var(--text-secondary);">
+                            <span style="font-size: 1rem;">🤖</span>
+                            Auto-detected
+                        </div>
+                        
+                        <div class="keyword-item" style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); margin-bottom: var(--space-sm); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.transform = 'translateY(-1px)'; this.style.borderColor = 'var(--border-accent)'" onmouseout="this.style.transform = 'translateY(0)'; this.style.borderColor = 'var(--border-primary)'">
+                            <div style="width: 12px; height: 12px; background: #6366f1; border-radius: 50%;"></div>
+                            <span style="flex: 1; font-size: 0.875rem; font-weight: 500;">2025 Forecast</span>
+                            <span style="background: var(--bg-surface); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">15</span>
+                        </div>
+                        
+                        <div class="keyword-item" style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.transform = 'translateY(-1px)'; this.style.borderColor = 'var(--border-accent)'" onmouseout="this.style.transform = 'translateY(0)'; this.style.borderColor = 'var(--border-primary)'">
+                            <div style="width: 12px; height: 12px; background: #ec4899; border-radius: 50%;"></div>
+                            <span style="flex: 1; font-size: 0.875rem; font-weight: 500;">ROI Metrics</span>
+                            <span style="background: var(--bg-surface); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 600; color: var(--text-secondary);">12</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        
+            <!-- Center: Main Content -->
+            <main style="background: var(--bg-card); border: 1px solid var(--border-primary); border-radius: var(--radius-xl); padding: var(--space-xl);">
+                <div style="margin-bottom: var(--space-xl);">
+                    <div style="background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); padding: var(--space-lg); display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);">
+                        <div style="font-size: 1.25rem;">🔍</div>
+                        <input 
+                            type="text" 
+                            placeholder="Natural language search: 'Find slides about Q4 revenue with charts'"
+                            value="Q4 revenue"
+                            style="flex: 1; background: transparent; border: none; color: var(--text-primary); font-size: 1rem; outline: none;"
+                        >
+                    </div>
+                    
+                    <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+                        <div style="padding: var(--space-xs) var(--space-md); background: var(--bg-surface); border: 1px solid var(--border-accent); border-radius: var(--radius-lg); font-size: 0.75rem; font-weight: 600; color: var(--text-accent); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'" onmouseout="this.style.backgroundColor = 'var(--bg-surface)'">Has Charts</div>
+                        <div style="padding: var(--space-xs) var(--space-md); background: var(--bg-surface); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); font-size: 0.75rem; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'; this.style.color = 'var(--text-primary)'" onmouseout="this.style.backgroundColor = 'var(--bg-surface)'; this.style.color = 'var(--text-secondary)'">Recent</div>
+                        <div style="padding: var(--space-xs) var(--space-md); background: var(--bg-surface); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); font-size: 0.75rem; font-weight: 500; color: var(--text-secondary); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.backgroundColor = 'var(--bg-tertiary)'; this.style.color = 'var(--text-primary)'" onmouseout="this.style.backgroundColor = 'var(--bg-surface)'; this.style.color = 'var(--text-secondary)'">High Priority</div>
+                    </div>
+                </div>
+            
+                <!-- Slide Grid -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: var(--space-lg);">
+                    <!-- AI Recommended Slide -->
+                    <div class="slide-card fade-up" style="background: var(--bg-tertiary); border: 1px solid var(--border-accent); border-radius: var(--radius-lg); padding: var(--space-lg); cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;" onmouseover="this.style.transform = 'translateY(-4px)'; this.style.boxShadow = 'var(--shadow-xl)'" onmouseout="this.style.transform = 'translateY(0)'; this.style.boxShadow = 'none'">
+                        <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--gradient-primary);"></div>
+                        <div style="aspect-ratio: 16/9; background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-card) 100%); border-radius: var(--radius-md); margin-bottom: var(--space-md); position: relative; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 2rem;">📊
+                            <div style="position: absolute; top: var(--space-sm); right: var(--space-sm); display: flex; gap: var(--space-xs);">
+                                <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></div>
+                                <div style="width: 8px; height: 8px; background: #f59e0b; border-radius: 50%;"></div>
+                                <div style="width: 8px; height: 8px; background: #3b82f6; border-radius: 50%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: var(--space-md);">
+                            <h4 style="font-size: 0.875rem; font-weight: 600; margin-bottom: var(--space-sm); color: var(--text-primary);">Q4 Revenue Dashboard</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
+                                <span style="background: var(--bg-surface); color: var(--text-secondary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.6875rem; font-weight: 500;">Q4 Performance</span>
+                                <span style="background: var(--bg-surface); color: var(--text-secondary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.6875rem; font-weight: 500;">Revenue</span>
+                                <span style="background: var(--gradient-primary); color: white; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.6875rem; font-weight: 600;">✨ PrezI Pick</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Keyword Match Slide -->
+                    <div class="slide-card fade-up" style="background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); padding: var(--space-lg); cursor: pointer; transition: all 0.3s ease; animation-delay: 0.1s;" onmouseover="this.style.transform = 'translateY(-4px)'; this.style.borderColor = 'var(--border-accent)'" onmouseout="this.style.transform = 'translateY(0)'; this.style.borderColor = 'var(--border-primary)'">
+                        <div style="aspect-ratio: 16/9; background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-card) 100%); border-radius: var(--radius-md); margin-bottom: var(--space-md); position: relative; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 2rem;">📈
+                            <div style="position: absolute; top: var(--space-sm); right: var(--space-sm); display: flex; gap: var(--space-xs);">
+                                <div style="width: 8px; height: 8px; background: #f59e0b; border-radius: 50%;"></div>
+                                <div style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: var(--space-md);">
+                            <h4 style="font-size: 0.875rem; font-weight: 600; margin-bottom: var(--space-sm); color: var(--text-primary);">Revenue Growth Analysis</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
+                                <span style="background: var(--bg-surface); color: var(--text-secondary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.6875rem; font-weight: 500;">Revenue</span>
+                                <span style="background: var(--bg-surface); color: var(--text-secondary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.6875rem; font-weight: 500;">Growth Strategy</span>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Regular Slides -->
+                    <div class="slide-card fade-up" style="background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); padding: var(--space-lg); cursor: pointer; transition: all 0.3s ease; animation-delay: 0.2s;" onmouseover="this.style.transform = 'translateY(-4px)'; this.style.borderColor = 'var(--border-accent)'" onmouseout="this.style.transform = 'translateY(0)'; this.style.borderColor = 'var(--border-primary)'">
+                        <div style="aspect-ratio: 16/9; background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-card) 100%); border-radius: var(--radius-md); margin-bottom: var(--space-md); position: relative; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 2rem;">🎯
+                            <div style="position: absolute; top: var(--space-sm); right: var(--space-sm); display: flex; gap: var(--space-xs);">
+                                <div style="width: 8px; height: 8px; background: #a855f7; border-radius: 50%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: var(--space-md);">
+                            <h4 style="font-size: 0.875rem; font-weight: 600; margin-bottom: var(--space-sm); color: var(--text-primary);">Market Share Comparison</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
+                                <span style="background: var(--bg-surface); color: var(--text-secondary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.6875rem; font-weight: 500;">Market Analysis</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="slide-card fade-up" style="background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); padding: var(--space-lg); cursor: pointer; transition: all 0.3s ease; animation-delay: 0.3s;" onmouseover="this.style.transform = 'translateY(-4px)'; this.style.borderColor = 'var(--border-accent)'" onmouseout="this.style.transform = 'translateY(0)'; this.style.borderColor = 'var(--border-primary)'">
+                        <div style="aspect-ratio: 16/9; background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-card) 100%); border-radius: var(--radius-md); margin-bottom: var(--space-md); position: relative; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 2rem;">📊
+                            <div style="position: absolute; top: var(--space-sm); right: var(--space-sm); display: flex; gap: var(--space-xs);">
+                                <div style="width: 8px; height: 8px; background: #f59e0b; border-radius: 50%;"></div>
+                                <div style="width: 8px; height: 8px; background: #6366f1; border-radius: 50%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: var(--space-md);">
+                            <h4 style="font-size: 0.875rem; font-weight: 600; margin-bottom: var(--space-sm); color: var(--text-primary);">2025 Revenue Projections</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
+                                <span style="background: var(--bg-surface); color: var(--text-secondary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.6875rem; font-weight: 500;">Revenue</span>
+                                <span style="background: var(--bg-surface); color: var(--text-secondary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.6875rem; font-weight: 500;">2025 Forecast</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="slide-card fade-up" style="background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); padding: var(--space-lg); cursor: pointer; transition: all 0.3s ease; animation-delay: 0.4s;" onmouseover="this.style.transform = 'translateY(-4px)'; this.style.borderColor = 'var(--border-accent)'" onmouseout="this.style.transform = 'translateY(0)'; this.style.borderColor = 'var(--border-primary)'">
+                        <div style="aspect-ratio: 16/9; background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-card) 100%); border-radius: var(--radius-md); margin-bottom: var(--space-md); position: relative; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 2rem;">💡
+                            <div style="position: absolute; top: var(--space-sm); right: var(--space-sm); display: flex; gap: var(--space-xs);">
+                                <div style="width: 8px; height: 8px; background: #8b5cf6; border-radius: 50%;"></div>
+                                <div style="width: 8px; height: 8px; background: #ec4899; border-radius: 50%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: var(--space-md);">
+                            <h4 style="font-size: 0.875rem; font-weight: 600; margin-bottom: var(--space-sm); color: var(--text-primary);">Innovation ROI Metrics</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
+                                <span style="background: var(--bg-surface); color: var(--text-secondary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.6875rem; font-weight: 500;">Innovation</span>
+                                <span style="background: var(--bg-surface); color: var(--text-secondary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.6875rem; font-weight: 500;">ROI Metrics</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="slide-card fade-up" style="background: var(--bg-tertiary); border: 1px solid var(--border-accent); border-radius: var(--radius-lg); padding: var(--space-lg); cursor: pointer; transition: all 0.3s ease; animation-delay: 0.5s; position: relative; overflow: hidden;" onmouseover="this.style.transform = 'translateY(-4px)'; this.style.boxShadow = 'var(--shadow-xl)'" onmouseout="this.style.transform = 'translateY(0)'; this.style.boxShadow = 'none'">
+                        <div style="position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--gradient-primary);"></div>
+                        <div style="aspect-ratio: 16/9; background: linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-card) 100%); border-radius: var(--radius-md); margin-bottom: var(--space-md); position: relative; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 2rem;">🥊
+                            <div style="position: absolute; top: var(--space-sm); right: var(--space-sm); display: flex; gap: var(--space-xs);">
+                                <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></div>
+                                <div style="width: 8px; height: 8px; background: #f59e0b; border-radius: 50%;"></div>
+                                <div style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%;"></div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: var(--space-md);">
+                            <h4 style="font-size: 0.875rem; font-weight: 600; margin-bottom: var(--space-sm); color: var(--text-primary);">Q4 Competitive Analysis</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: var(--space-xs);">
+                                <span style="background: var(--bg-surface); color: var(--text-secondary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.6875rem; font-weight: 500;">Q4 Performance</span>
+                                <span style="background: var(--bg-surface); color: var(--text-secondary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.6875rem; font-weight: 500;">Competition</span>
+                                <span style="background: var(--gradient-primary); color: white; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.6875rem; font-weight: 600;">✨ PrezI Pick</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        
+            <!-- Right: PrezI Intelligence Panel -->
+            <aside style="background: var(--bg-card); border: 1px solid var(--border-primary); border-radius: var(--radius-xl); padding: var(--space-xl); height: fit-content;">
+                <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-xl);">
+                    <div style="width: 48px; height: 48px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: breathe 3s ease-in-out infinite;">
+                        <div style="width: 24px; height: 24px; background: rgba(255, 255, 255, 0.9); border-radius: 50%;"></div>
+                    </div>
+                    <div>
+                        <h2 class="text-title" style="margin: 0; margin-bottom: var(--space-xs);">PrezI Intelligence</h2>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Understanding your content</p>
+                    </div>
+                </div>
+                
+                <!-- Current Context Insights -->
+                <div style="margin-bottom: var(--space-xl);">
+                    <h3 style="font-size: 0.875rem; font-weight: 600; margin-bottom: var(--space-lg); color: var(--text-accent); display: flex; align-items: center; gap: var(--space-sm);">
+                        <span>📊</span>
+                        Current Analysis
+                    </h3>
+                    
+                    <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-lg); margin-bottom: var(--space-sm);">
+                        <div style="font-size: 1rem;">🎯</div>
+                        <span style="font-size: 0.875rem; color: var(--text-secondary);">42 slides match "Q4 revenue"</span>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-lg); margin-bottom: var(--space-sm);">
+                        <div style="font-size: 1rem;">💡</div>
+                        <span style="font-size: 0.875rem; color: var(--text-secondary);">Most used with "growth" (31 times)</span>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-lg); margin-bottom: var(--space-sm);">
+                        <div style="font-size: 1rem;">🔗</div>
+                        <span style="font-size: 0.875rem; color: var(--text-secondary);">Related: "quarterly results", "YoY growth"</span>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--bg-tertiary); border-radius: var(--radius-lg);">
+                        <div style="font-size: 1rem;">⚡</div>
+                        <span style="font-size: 0.875rem; color: var(--text-secondary);">6 high-impact slides identified</span>
+                    </div>
+                </div>
+            
+                <!-- Keyword Relationships -->
+                <div style="margin-bottom: var(--space-xl);">
+                    <h3 style="font-size: 0.875rem; font-weight: 600; margin-bottom: var(--space-lg); color: var(--text-accent); display: flex; align-items: center; gap: var(--space-sm);">
+                        <span>🕸️</span>
+                        Keyword Connections
+                    </h3>
+                    
+                    <div id="relationshipGraph" style="background: var(--bg-tertiary); border-radius: var(--radius-lg); padding: var(--space-lg); height: 180px; position: relative; overflow: hidden;">
+                        <!-- Central keyword -->
+                        <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--gradient-primary); color: white; padding: var(--space-sm) var(--space-md); border-radius: var(--radius-lg); font-size: 0.875rem; font-weight: 600; cursor: pointer; z-index: 10;">
+                            Revenue
+                        </div>
+                        
+                        <!-- Related keywords -->
+                        <div style="position: absolute; left: 20%; top: 30%; background: var(--bg-surface); border: 1px solid var(--border-primary); color: var(--text-secondary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.borderColor = 'var(--border-accent)'; this.style.color = 'var(--text-primary)'" onmouseout="this.style.borderColor = 'var(--border-primary)'; this.style.color = 'var(--text-secondary)'">
+                            Q4 Performance
+                        </div>
+                        
+                        <div style="position: absolute; left: 70%; top: 20%; background: var(--bg-surface); border: 1px solid var(--border-primary); color: var(--text-secondary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.borderColor = 'var(--border-accent)'; this.style.color = 'var(--text-primary)'" onmouseout="this.style.borderColor = 'var(--border-primary)'; this.style.color = 'var(--text-secondary)'">
+                            Growth
+                        </div>
+                        
+                        <div style="position: absolute; left: 80%; top: 60%; background: var(--bg-surface); border: 1px solid var(--border-primary); color: var(--text-secondary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.borderColor = 'var(--border-accent)'; this.style.color = 'var(--text-primary)'" onmouseout="this.style.borderColor = 'var(--border-primary)'; this.style.color = 'var(--text-secondary)'">
+                            Forecast
+                        </div>
+                        
+                        <div style="position: absolute; left: 30%; top: 70%; background: var(--bg-surface); border: 1px solid var(--border-primary); color: var(--text-secondary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.borderColor = 'var(--border-accent)'; this.style.color = 'var(--text-primary)'" onmouseout="this.style.borderColor = 'var(--border-primary)'; this.style.color = 'var(--text-secondary)'">
+                            Metrics
+                        </div>
+                        
+                        <!-- Connection lines (SVG overlay) -->
+                        <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                            <line x1="50%" y1="50%" x2="25%" y2="35%" stroke="var(--border-accent)" stroke-width="1" opacity="0.6" stroke-dasharray="2,2"/>
+                            <line x1="50%" y1="50%" x2="75%" y2="25%" stroke="var(--border-accent)" stroke-width="1" opacity="0.6" stroke-dasharray="2,2"/>
+                            <line x1="50%" y1="50%" x2="85%" y2="65%" stroke="var(--border-accent)" stroke-width="1" opacity="0.6" stroke-dasharray="2,2"/>
+                            <line x1="50%" y1="50%" x2="35%" y2="75%" stroke="var(--border-accent)" stroke-width="1" opacity="0.6" stroke-dasharray="2,2"/>
+                        </svg>
+                    </div>
+                    
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: var(--space-sm); text-align: center;">
+                        Click keywords to explore relationships
+                    </p>
+                </div>
+            
+                <!-- Smart Actions -->
+                <div>
+                    <h3 style="font-size: 0.875rem; font-weight: 600; margin-bottom: var(--space-lg); color: var(--text-accent); display: flex; align-items: center; gap: var(--space-sm);">
+                        <span>🚀</span>
+                        Smart Actions
+                    </h3>
+                    
+                    <div style="background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); padding: var(--space-md); margin-bottom: var(--space-sm); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.borderColor = 'var(--border-accent)'; this.style.backgroundColor = 'var(--bg-surface)'" onmouseout="this.style.borderColor = 'var(--border-primary)'; this.style.backgroundColor = 'var(--bg-tertiary)'">
+                        <div style="display: flex; align-items: flex-start; gap: var(--space-md);">
+                            <div style="font-size: 1rem; margin-top: var(--space-xs);">🏷️</div>
+                            <div>
+                                <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-xs);">Auto-tag Similar Slides</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Find and tag 23 similar slides</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); padding: var(--space-md); margin-bottom: var(--space-sm); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.borderColor = 'var(--border-accent)'; this.style.backgroundColor = 'var(--bg-surface)'" onmouseout="this.style.borderColor = 'var(--border-primary)'; this.style.backgroundColor = 'var(--bg-tertiary)'">
+                        <div style="display: flex; align-items: flex-start; gap: var(--space-md);">
+                            <div style="font-size: 1rem; margin-top: var(--space-xs);">🔄</div>
+                            <div>
+                                <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-xs);">Merge Keywords</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">"Revenue" + "Sales" → "Revenue"</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); padding: var(--space-md); margin-bottom: var(--space-sm); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.borderColor = 'var(--border-accent)'; this.style.backgroundColor = 'var(--bg-surface)'" onmouseout="this.style.borderColor = 'var(--border-primary)'; this.style.backgroundColor = 'var(--bg-tertiary)'">
+                        <div style="display: flex; align-items: flex-start; gap: var(--space-md);">
+                            <div style="font-size: 1rem; margin-top: var(--space-xs);">🎨</div>
+                            <div>
+                                <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-xs);">Color Code by Theme</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Apply semantic colors to keywords</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: var(--radius-lg); padding: var(--space-md); cursor: pointer; transition: all 0.2s ease;" onmouseover="this.style.borderColor = 'var(--border-accent)'; this.style.backgroundColor = 'var(--bg-surface)'" onmouseout="this.style.borderColor = 'var(--border-primary)'; this.style.backgroundColor = 'var(--bg-tertiary)'">
+                        <div style="display: flex; align-items: flex-start; gap: var(--space-md);">
+                            <div style="font-size: 1rem; margin-top: var(--space-xs);">📈</div>
+                            <div>
+                                <div style="font-size: 0.875rem; font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-xs);">Prioritize Keywords</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Set priority based on usage patterns</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: var(--space-xl); text-align: center;">
+                    <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                        <a href="../index.html#demos" class="btn-modern btn-secondary" style="width: 100%; justify-content: center; font-size: 0.875rem;">
+                            Try Other Demos
+                        </a>
+                        <a href="../index.html#cta" class="btn-modern btn-ghost" style="width: 100%; justify-content: center; font-size: 0.875rem;">
+                            Get Early Access
+                        </a>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </section>
+
+    <!-- JavaScript -->
+    <script src="../assets/js/common-utilities.js"></script>
+    <!-- Demo-specific JavaScript -->
+    <script>
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-up');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-up').forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Add interactive keyboard input handling
+            const keywordInput = document.getElementById('keywordInput');
+            keywordInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    // Simulate adding a new keyword
+                    console.log('Adding keyword:', this.value);
+                    // In a real implementation, this would add the keyword to the list
+                }
+            });
+        });
+    </script>
+
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            div[style*="grid-template-columns: 300px 1fr 350px"] {
+                grid-template-columns: 1fr !important;
+                gap: var(--space-lg) !important;
+            }
+        }
+    </style>
+</body>
+</html>

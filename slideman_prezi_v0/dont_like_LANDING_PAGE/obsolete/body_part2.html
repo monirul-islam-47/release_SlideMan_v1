@@ -1,0 +1,53 @@
+    
+    <!-- Sticky Chat/FAQ Bot -->
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-header" onclick="toggleChat()">
+            <div class="chat-avatar">
+                <div class="avatar-dot"></div>
+            </div>
+            <div class="chat-title">
+                <div class="chat-name">PrezI Assistant</div>
+                <div class="chat-status">Online • Ask anything</div>
+            </div>
+            <div class="chat-toggle">💬</div>
+        </div>
+        
+        <div class="chat-body" id="chatBody">
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message bot-message">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        <p>Hi! I'm PrezI's AI assistant. I can answer questions about:</p>
+                        <ul>
+                            <li>Security & data privacy</li>
+                            <li>AI models and accuracy</li>
+                            <li>Pricing and features</li>
+                            <li>Getting started</li>
+                        </ul>
+                        <p>Try asking: <em>"How secure is PrezI?"</em></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="quick-questions">
+                <div class="quick-question" onclick="askQuestion('security')">
+                    🔒 How secure is PrezI?
+                </div>
+                <div class="quick-question" onclick="askQuestion('models')">
+                    🧠 What AI models do you use?
+                </div>
+                <div class="quick-question" onclick="askQuestion('pricing')">
+                    💰 How much does it cost?
+                </div>
+                <div class="quick-question" onclick="askQuestion('accuracy')">
+                    🎯 How accurate is element detection?
+                </div>
+            </div>
+            
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Ask PrezI anything..." onkeypress="handleChatKeypress(event)">
+                <button class="chat-send" onclick="sendMessage()">→</button>
+            </div>
+        </div>
+    </div>
+    

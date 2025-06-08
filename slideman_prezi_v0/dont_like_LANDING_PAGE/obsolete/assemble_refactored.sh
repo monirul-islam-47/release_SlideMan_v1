@@ -1,0 +1,185 @@
+#!/bin/bash
+
+# Create a complete refactored version preserving all visual elements
+
+# Start with the head section
+cat > index_complete_refactored.html << 'EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrezI - Transform 5 Hours of Presentation Work into 5 Minutes with AI</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="PrezI is the AI-powered presentation assistant that transforms your PowerPoint chaos into professional presentations in minutes. Save 90% of your time with intelligent slide management, smart keyword tagging, and automated formatting.">
+    <meta name="keywords" content="AI presentation, PowerPoint automation, slide management, presentation AI, PrezI, presentation assistant, business presentations, AI productivity, slide organization">
+    <meta name="author" content="mama marketing GmbH">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    <link rel="canonical" href="https://prezi.ai/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://prezi.ai/">
+    <meta property="og:title" content="PrezI - Transform 5 Hours of Presentation Work into 5 Minutes with AI">
+    <meta property="og:description" content="The AI presentation assistant that saves 90% of your time. From PowerPoint chaos to professional presentations in minutes. Join the early access program now!">
+    <meta property="og:image" content="https://prezi.ai/images/prezi-social-preview.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="PrezI">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://prezi.ai/">
+    <meta property="twitter:title" content="PrezI - Transform 5 Hours of Presentation Work into 5 Minutes with AI">
+    <meta property="twitter:description" content="The AI presentation assistant that saves 90% of your time. From PowerPoint chaos to professional presentations in minutes. Join the early access program now!">
+    <meta property="twitter:image" content="https://prezi.ai/images/prezi-social-preview.png">
+    <meta property="twitter:creator" content="@prezi_ai">
+    <meta property="twitter:site" content="@prezi_ai">
+    
+    <!-- LinkedIn -->
+    <meta property="article:author" content="https://www.linkedin.com/company/prezi-ai">
+    <meta property="article:publisher" content="https://www.linkedin.com/company/prezi-ai">
+    
+    <!-- Additional Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PrezI">
+    <meta name="application-name" content="PrezI">
+    <meta name="msapplication-TileColor" content="#667eea">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    
+    <!-- Performance Optimizations -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <meta name="theme-color" content="#667eea">
+    <meta name="color-scheme" content="dark">
+    
+    <!-- Critical Resource Hints -->
+    <link rel="preload" href="#" as="font" type="font/woff2" crossorigin>
+    <link rel="prefetch" href="executive_summary.html">
+    <link rel="prefetch" href="01_urgent_pitch_workflow.html">
+    
+    <!-- Analytics & Tracking -->
+    <!-- Google Tag Manager -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'GA_MEASUREMENT_ID', {
+        page_title: 'PrezI Landing Page',
+        page_location: window.location.href,
+        content_group1: 'Marketing',
+        content_group2: 'Landing Page'
+      });
+      
+      // Enhanced ecommerce tracking for sign-ups
+      function trackSignup(plan) {
+        gtag('event', 'sign_up', {
+          method: 'early_access',
+          plan: plan,
+          value: plan === 'starter' ? 29 : plan === 'professional' ? 89 : 0
+        });
+      }
+      
+      // Track feature interactions
+      function trackFeatureInteraction(feature) {
+        gtag('event', 'feature_interaction', {
+          feature_name: feature,
+          interaction_type: 'click'
+        });
+      }
+    </script>
+    
+    <!-- Error Tracking (Sentry placeholder) -->
+    <script>
+      // Initialize error tracking
+      window.addEventListener('error', function(e) {
+        // Send error to tracking service
+        console.error('Page Error:', {
+          message: e.message,
+          filename: e.filename,
+          lineno: e.lineno,
+          colno: e.colno,
+          stack: e.error?.stack,
+          userAgent: navigator.userAgent,
+          url: window.location.href,
+          timestamp: new Date().toISOString()
+        });
+        
+        // In production, replace with actual error tracking service
+        // Sentry.captureException(e.error);
+      });
+      
+      window.addEventListener('unhandledrejection', function(e) {
+        console.error('Unhandled Promise Rejection:', e.reason);
+        // Sentry.captureException(e.reason);
+      });
+    </script>
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "PrezI",
+      "description": "AI-powered presentation assistant that transforms PowerPoint chaos into professional presentations in minutes",
+      "url": "https://prezi.ai",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "29",
+        "priceCurrency": "USD",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "price": "29",
+          "priceCurrency": "USD",
+          "billingDuration": "P1M"
+        }
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "mama marketing GmbH",
+        "url": "https://mama-marketing.de"
+      },
+      "featureList": [
+        "AI-powered slide analysis",
+        "Smart keyword tagging",
+        "Automated presentation assembly",
+        "Professional formatting",
+        "Multi-language support"
+      ]
+    }
+    </script>
+    
+    <!-- External CSS Files - Preserving ALL styles and animations -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/chat-widget.css">
+    <link rel="stylesheet" href="css/final-styles.css">
+</head>
+<body>
+EOF
+
+# Extract and append body content (lines 4581-6529)
+sed -n '4581,6529p' index.html >> index_complete_refactored.html
+
+# Add main.js script tag
+echo '    <script src="js/main.js"></script>' >> index_complete_refactored.html
+
+# Extract and append content between scripts (lines 7501-7553)
+sed -n '7501,7553p' index.html >> index_complete_refactored.html
+
+# Add chat-widget.js script tag (already included in HTML)
+
+# Extract and append remaining body content (lines 8953-10410)
+sed -n '8953,10410p' index.html >> index_complete_refactored.html
+
+# Close the HTML
+echo '</html>' >> index_complete_refactored.html
+
+echo "Refactoring complete! Check index_complete_refactored.html"

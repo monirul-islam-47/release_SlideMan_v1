@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrezI: Unified Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent-purple: #a855f7;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-red: #ef4444;
+            --bg-dark: #0a0a0a;
+            --bg-panel: #1a1a1a;
+            --bg-card: #2a2a2a;
+            --bg-hover: #3a3a3a;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e7eb;
+            --text-muted: #9ca3af;
+            --border: #3a3a3a;
+            --header-height: 72px;
+            --sidebar-width: 280px;
+            --assembly-width: 320px;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Application Container */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        /* Header Bar */
+        .header-bar {
+            height: var(--header-height);
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            gap: 32px;
+            flex-shrink: 0;
+        }
+        
+        .app-logo {
+            font-size: 24px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            flex-shrink: 0;
+        }
+        
+        /* Unified Command Bar */
+        .command-bar {
+            flex: 1;
+            max-width: 800px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .command-bar:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .command-icon {
+            font-size: 20px;
+            color: var(--text-muted);
+        }
+        
+        .command-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 16px;
+            outline: none;
+            height: 48px;
+        }
+        
+        .command-input::placeholder {
+            color: var(--text-muted);
+            transition: color 0.3s ease;
+        }
+        
+        /* PrezI Indicator */
+        .prezi-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--accent-purple);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .prezi-status:hover {
+            background: rgba(168, 85, 247, 0.2);
+        }
+        
+        .prezi-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-purple);
+            border-radius: 50%;
+            animation: breathe 2s ease-in-out infinite;
+        }
+        
+        @keyframes breathe {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        /* Export Button */
+        .export-button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .export-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* Main Layout */
+        .main-layout {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* Left Sidebar */
+        .left-sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        
+        /* Project Context */
+        .project-context {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .project-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 16px;
+        }
+        
+        .project-selector:hover {
+            background: var(--bg-hover);
+        }
+        
+        .project-name {
+            font-weight: 600;
+        }
+        
+        .project-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        /* Keywords Section */
+        .keywords-section {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .add-keyword-btn {
+            width: 28px;
+            height: 28px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .add-keyword-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .keyword-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .keyword-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .keyword-pill:hover {
+            background: var(--bg-hover);
+            transform: translateX(4px);
+        }
+        
+        .keyword-pill.active {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid var(--primary);
+        }
+        
+        .keyword-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .keyword-text {
+            flex: 1;
+            font-size: 14px;
+        }
+        
+        .keyword-count {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            padding: 24px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        
+        .action-btn:hover {
+            background: var(--bg-hover);
+            border-color: var(--primary);
+        }
+        
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* Slide Grid */
+        .slide-grid-container {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            background: var(--bg-dark);
+        }
+        
+        .slide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        
+        .slide-card {
+            background: var(--bg-panel);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        
+        .slide-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .slide-card.selected {
+            border-color: var(--primary);
+        }
+        
+        .slide-card.prezi-suggested {
+            border-color: var(--accent-green);
+        }
+        
+        .slide-thumbnail {
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .slide-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: none;
+        }
+        
+        .slide-card:hover .slide-elements {
+            display: block;
+        }
+        
+        .element-highlight {
+            position: absolute;
+            border: 1px dashed rgba(168, 85, 247, 0.5);
+            background: rgba(168, 85, 247, 0.1);
+        }
+        
+        .slide-info {
+            padding: 12px;
+        }
+        
+        .slide-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .slide-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        /* Assembly Panel */
+        .assembly-panel {
+            width: var(--assembly-width);
+            background: var(--bg-panel);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+        
+        .assembly-panel.collapsed {
+            transform: translateX(var(--assembly-width));
+        }
+        
+        .assembly-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .assembly-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .assembly-count {
+            padding: 4px 12px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            font-size: 14px;
+        }
+        
+        /* Assembly Drop Zone */
+        .assembly-dropzone {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+        
+        .dropzone-empty {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 24px;
+        }
+        
+        .dropzone-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .assembly-slides {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .assembly-slide {
+            background: var(--bg-card);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: move;
+            transition: all 0.2s ease;
+        }
+        
+        .assembly-slide:hover {
+            background: var(--bg-hover);
+            transform: translateX(-4px);
+        }
+        
+        .slide-handle {
+            color: var(--text-muted);
+            cursor: grab;
+        }
+        
+        .slide-mini-thumb {
+            width: 60px;
+            height: 40px;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        
+        .slide-number {
+            width: 24px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        /* Assembly Actions */
+        .assembly-actions {
+            padding: 24px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .duration-estimate {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: var(--bg-card);
+            border-radius: 8px;
+        }
+        
+        .duration-label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        .duration-value {
+            font-weight: 600;
+            color: var(--accent-green);
+        }
+        
+        .export-btn-large {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .export-btn-large:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* PrezI Assistant Overlay */
+        .prezi-assistant {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 400px;
+            max-height: 500px;
+            background: var(--bg-panel);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+        
+        .prezi-assistant.active {
+            display: flex;
+        }
+        
+        .prezi-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .prezi-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-purple) 0%, var(--accent-blue) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .prezi-avatar::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            animation: morph 3s ease-in-out infinite;
+        }
+        
+        @keyframes morph {
+            0%, 100% { border-radius: 50%; }
+            50% { border-radius: 30% 70% 70% 30%; }
+        }
+        
+        .prezi-chat {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .prezi-message {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .prezi-input-area {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .prezi-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            outline: none;
+            resize: none;
+        }
+        
+        /* Status Bar */
+        .status-bar {
+            height: 32px;
+            background: var(--bg-panel);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            font-size: 12px;
+            color: var(--text-muted);
+            gap: 24px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 50%;
+        }
+        
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Search Suggestions */
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-top: 8px;
+            overflow: hidden;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .search-suggestions.active {
+            display: block;
+        }
+        
+        .suggestion-category {
+            padding: 12px 16px 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .suggestion-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .suggestion-item:hover {
+            background: var(--bg-hover);
+        }
+        
+        .suggestion-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .suggestion-text {
+            flex: 1;
+        }
+        
+        .suggestion-main {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .suggestion-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Bar -->
+        <header class="header-bar">
+            <div class="app-logo">SlideMan</div>
+            
+            <!-- Unified Command Bar -->
+            <div class="command-bar">
+                <span class="command-icon">🔍</span>
+                <input type="text" class="command-input" id="commandInput" 
+                       placeholder="Search slides, create presentations, or ask PrezI anything...">
+                <div class="prezi-status" onclick="togglePrezi()">
+                    <div class="prezi-dot"></div>
+                    <span>PrezI</span>
+                </div>
+                
+                <!-- Search Suggestions -->
+                <div class="search-suggestions" id="searchSuggestions">
+                    <div class="suggestion-category">Recent Searches</div>
+                    <div class="suggestion-item">
+                        <div class="suggestion-icon">📊</div>
+                        <div class="suggestion-text">
+                            <div class="suggestion-main">Q4 revenue charts</div>
+                            <div class="suggestion-sub">42 results</div>
+                        </div>
+                    </div>
+                    <div class="suggestion-item">
+                        <div class="suggestion-icon">🎯</div>
+                        <div class="suggestion-text">
+                            <div class="suggestion-main">Growth strategy slides</div>
+                            <div class="suggestion-sub">28 results</div>
+                        </div>
+                    </div>
+                    
+                    <div class="suggestion-category">AI Commands</div>
+                    <div class="suggestion-item">
+                        <div class="suggestion-icon">✨</div>
+                        <div class="suggestion-text">
+                            <div class="suggestion-main">Create investor pitch</div>
+                            <div class="suggestion-sub">Let PrezI build a presentation</div>
+                        </div>
+                    </div>
+                    <div class="suggestion-item">
+                        <div class="suggestion-icon">🔄</div>
+                        <div class="suggestion-text">
+                            <div class="suggestion-main">Update brand colors</div>
+                            <div class="suggestion-sub">Apply new branding to all slides</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="export-button">
+                <span>📥</span>
+                <span>Export</span>
+            </button>
+        </header>
+        
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Left Sidebar -->
+            <aside class="left-sidebar">
+                <!-- Project Context -->
+                <div class="project-context">
+                    <div class="project-selector">
+                        <div>
+                            <div class="project-name">2025 Strategy Deck</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Last modified 2 hours ago</div>
+                        </div>
+                        <span style="color: var(--text-muted);">▼</span>
+                    </div>
+                    
+                    <div class="project-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">847</div>
+                            <div class="stat-label">Slides</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">42</div>
+                            <div class="stat-label">Files</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Keywords Section -->
+                <div class="keywords-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Smart Keywords</h3>
+                        <button class="add-keyword-btn">+</button>
+                    </div>
+                    
+                    <div class="keyword-list">
+                        <!-- PrezI Suggested -->
+                        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
+                            ✨ PrezI Suggested
+                        </div>
+                        <div class="keyword-pill active">
+                            <div class="keyword-color" style="background: #10b981;"></div>
+                            <span class="keyword-text">Q4 Performance</span>
+                            <span class="keyword-count">42</span>
+                        </div>
+                        <div class="keyword-pill">
+                            <div class="keyword-color" style="background: #3b82f6;"></div>
+                            <span class="keyword-text">Growth Strategy</span>
+                            <span class="keyword-count">38</span>
+                        </div>
+                        
+                        <!-- Your Keywords -->
+                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 16px; margin-bottom: 8px;">
+                            Your Keywords
+                        </div>
+                        <div class="keyword-pill">
+                            <div class="keyword-color" style="background: #f59e0b;"></div>
+                            <span class="keyword-text">Revenue</span>
+                            <span class="keyword-count">56</span>
+                        </div>
+                        <div class="keyword-pill">
+                            <div class="keyword-color" style="background: #ef4444;"></div>
+                            <span class="keyword-text">Competition</span>
+                            <span class="keyword-count">23</span>
+                        </div>
+                        <div class="keyword-pill">
+                            <div class="keyword-color" style="background: #8b5cf6;"></div>
+                            <span class="keyword-text">Innovation</span>
+                            <span class="keyword-count">19</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <div class="action-grid">
+                        <button class="action-btn">📁 Import</button>
+                        <button class="action-btn">🏷️ Tag All</button>
+                        <button class="action-btn">🔄 Sync</button>
+                        <button class="action-btn">📊 Analyze</button>
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- Content Area -->
+            <main class="content-area">
+                <div class="slide-grid-container">
+                    <div class="slide-grid">
+                        <!-- PrezI Suggested Slide -->
+                        <div class="slide-card prezi-suggested fade-in">
+                            <div class="slide-thumbnail">
+                                <div class="slide-elements">
+                                    <div class="element-highlight" style="top: 10%; left: 10%; width: 80%; height: 20%;"></div>
+                                    <div class="element-highlight" style="top: 40%; left: 10%; width: 35%; height: 40%;"></div>
+                                    <div class="element-highlight" style="top: 40%; right: 10%; width: 35%; height: 40%;"></div>
+                                </div>
+                            </div>
+                            <div class="slide-info">
+                                <div class="slide-title">Q4 Revenue Dashboard</div>
+                                <div class="slide-meta">✨ PrezI recommends</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Regular Slides -->
+                        <div class="slide-card fade-in" style="animation-delay: 0.05s;">
+                            <div class="slide-thumbnail">
+                                <div class="slide-elements">
+                                    <div class="element-highlight" style="top: 20%; left: 20%; width: 60%; height: 60%;"></div>
+                                </div>
+                            </div>
+                            <div class="slide-info">
+                                <div class="slide-title">Market Growth Analysis</div>
+                                <div class="slide-meta">From: Strategy_2025.pptx</div>
+                            </div>
+                        </div>
+                        
+                        <div class="slide-card selected fade-in" style="animation-delay: 0.1s;">
+                            <div class="slide-thumbnail">
+                                <div class="slide-elements">
+                                    <div class="element-highlight" style="top: 15%; left: 15%; width: 70%; height: 15%;"></div>
+                                    <div class="element-highlight" style="top: 40%; left: 15%; width: 70%; height: 45%;"></div>
+                                </div>
+                            </div>
+                            <div class="slide-info">
+                                <div class="slide-title">Competitive Landscape</div>
+                                <div class="slide-meta">From: Market_Research.pptx</div>
+                            </div>
+                        </div>
+                        
+                        <div class="slide-card fade-in" style="animation-delay: 0.15s;">
+                            <div class="slide-thumbnail">
+                                <div class="slide-elements">
+                                    <div class="element-highlight" style="top: 10%; left: 10%; width: 80%; height: 80%;"></div>
+                                </div>
+                            </div>
+                            <div class="slide-info">
+                                <div class="slide-title">Product Roadmap 2025</div>
+                                <div class="slide-meta">From: Product_Vision.pptx</div>
+                            </div>
+                        </div>
+                        
+                        <div class="slide-card prezi-suggested fade-in" style="animation-delay: 0.2s;">
+                            <div class="slide-thumbnail">
+                                <div class="slide-elements">
+                                    <div class="element-highlight" style="top: 20%; left: 10%; width: 40%; height: 60%;"></div>
+                                    <div class="element-highlight" style="top: 20%; right: 10%; width: 40%; height: 60%;"></div>
+                                </div>
+                            </div>
+                            <div class="slide-info">
+                                <div class="slide-title">Key Metrics Overview</div>
+                                <div class="slide-meta">✨ PrezI recommends</div>
+                            </div>
+                        </div>
+                        
+                        <div class="slide-card fade-in" style="animation-delay: 0.25s;">
+                            <div class="slide-thumbnail">
+                                <div class="slide-elements">
+                                    <div class="element-highlight" style="top: 25%; left: 25%; width: 50%; height: 50%;"></div>
+                                </div>
+                            </div>
+                            <div class="slide-info">
+                                <div class="slide-title">Customer Success Stories</div>
+                                <div class="slide-meta">From: Case_Studies.pptx</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            
+            <!-- Assembly Panel -->
+            <aside class="assembly-panel">
+                <div class="assembly-header">
+                    <h3 class="assembly-title">Assembly</h3>
+                    <div class="assembly-count">3 slides</div>
+                </div>
+                
+                <div class="assembly-dropzone">
+                    <div class="assembly-slides">
+                        <div class="assembly-slide">
+                            <span class="slide-handle">⋮⋮</span>
+                            <span class="slide-number">1</span>
+                            <div class="slide-mini-thumb"></div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 14px; font-weight: 600;">Title Slide</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">Cover</div>
+                            </div>
+                        </div>
+                        
+                        <div class="assembly-slide">
+                            <span class="slide-handle">⋮⋮</span>
+                            <span class="slide-number">2</span>
+                            <div class="slide-mini-thumb"></div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 14px; font-weight: 600;">Q4 Revenue Dashboard</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">Key Results</div>
+                            </div>
+                        </div>
+                        
+                        <div class="assembly-slide">
+                            <span class="slide-handle">⋮⋮</span>
+                            <span class="slide-number">3</span>
+                            <div class="slide-mini-thumb"></div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 14px; font-weight: 600;">Growth Strategy</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">2025 Plan</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="assembly-actions">
+                    <div class="duration-estimate">
+                        <span class="duration-label">Estimated Duration</span>
+                        <span class="duration-value">5 minutes</span>
+                    </div>
+                    <button class="export-btn-large">Export Professional PPTX</button>
+                </div>
+            </aside>
+        </div>
+        
+        <!-- Status Bar -->
+        <footer class="status-bar">
+            <div class="status-item">
+                <div class="status-dot"></div>
+                <span>All systems operational</span>
+            </div>
+            <div class="status-item">
+                <span>847 slides • 42 files • 156 keywords</span>
+            </div>
+            <div class="status-item" style="margin-left: auto;">
+                <span>PrezI: Ready to assist</span>
+            </div>
+        </footer>
+    </div>
+    
+    <!-- PrezI Assistant -->
+    <div class="prezi-assistant" id="preziAssistant">
+        <div class="prezi-header">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="prezi-avatar"></div>
+                <div>
+                    <div style="font-weight: 600;">PrezI Assistant</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">AI-Powered Intelligence</div>
+                </div>
+            </div>
+            <button onclick="togglePrezi()" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 20px;">×</button>
+        </div>
+        
+        <div class="prezi-chat">
+            <div class="prezi-message">
+                <p>👋 Hello! I'm PrezI, your AI presentation assistant.</p>
+                <p style="margin-top: 8px;">I can help you:</p>
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li>Find specific slides instantly</li>
+                    <li>Create professional presentations</li>
+                    <li>Analyze and improve your content</li>
+                    <li>Maintain brand consistency</li>
+                </ul>
+                <p style="margin-top: 8px;">Just type in the command bar or ask me directly!</p>
+            </div>
+        </div>
+        
+        <div class="prezi-input-area">
+            <textarea class="prezi-input" placeholder="Ask PrezI anything..." rows="2"></textarea>
+        </div>
+    </div>
+    
+    <script>
+        // Command bar functionality
+        const commandInput = document.getElementById('commandInput');
+        const searchSuggestions = document.getElementById('searchSuggestions');
+        const preziAssistant = document.getElementById('preziAssistant');
+        
+        // Rotating placeholders
+        const placeholders = [
+            "Search slides, create presentations, or ask PrezI anything...",
+            "Try: 'Find all Q4 revenue charts'",
+            "Try: 'Create investor pitch for BigCorp'",
+            "Try: 'Update all slides with new brand colors'",
+            "Try: 'Which slides need professional formatting?'"
+        ];
+        
+        let placeholderIndex = 0;
+        setInterval(() => {
+            placeholderIndex = (placeholderIndex + 1) % placeholders.length;
+            commandInput.placeholder = placeholders[placeholderIndex];
+        }, 5000);
+        
+        // Search suggestions
+        commandInput.addEventListener('focus', () => {
+            searchSuggestions.classList.add('active');
+        });
+        
+        commandInput.addEventListener('blur', () => {
+            setTimeout(() => {
+                searchSuggestions.classList.remove('active');
+            }, 200);
+        });
+        
+        // PrezI toggle
+        function togglePrezi() {
+            preziAssistant.classList.toggle('active');
+        }
+        
+        // Keyword interactions
+        document.querySelectorAll('.keyword-pill').forEach(pill => {
+            pill.addEventListener('click', function() {
+                this.classList.toggle('active');
+                updateSlideFiltering();
+            });
+        });
+        
+        // Slide card interactions
+        document.querySelectorAll('.slide-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Toggle selection
+                this.classList.toggle('selected');
+            });
+            
+            // Drag to assembly
+            card.draggable = true;
+            card.addEventListener('dragstart', (e) => {
+                e.dataTransfer.effectAllowed = 'copy';
+                card.style.opacity = '0.5';
+            });
+            
+            card.addEventListener('dragend', () => {
+                card.style.opacity = '';
+            });
+        });
+        
+        // Assembly dropzone
+        const dropzone = document.querySelector('.assembly-dropzone');
+        
+        dropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropzone.style.background = 'rgba(102, 126, 234, 0.1)';
+        });
+        
+        dropzone.addEventListener('dragleave', () => {
+            dropzone.style.background = '';
+        });
+        
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.style.background = '';
+            // Add slide to assembly
+            addSlideToAssembly();
+        });
+        
+        // Quick actions
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const action = this.textContent;
+                showStatus(`${action} action initiated...`);
+            });
+        });
+        
+        // Export functionality
+        document.querySelectorAll('.export-button, .export-btn-large').forEach(btn => {
+            btn.addEventListener('click', () => {
+                showStatus('Exporting professional presentation...');
+                setTimeout(() => {
+                    showStatus('✅ Export complete! BigCorp_Pitch_2025.pptx ready');
+                }, 2000);
+            });
+        });
+        
+        // Helper functions
+        function updateSlideFiltering() {
+            const activeKeywords = document.querySelectorAll('.keyword-pill.active');
+            console.log(`Filtering by ${activeKeywords.length} keywords`);
+        }
+        
+        function addSlideToAssembly() {
+            const assemblyCount = document.querySelector('.assembly-count');
+            const currentCount = parseInt(assemblyCount.textContent);
+            assemblyCount.textContent = `${currentCount + 1} slides`;
+            
+            // Update duration
+            const duration = document.querySelector('.duration-value');
+            duration.textContent = `${Math.ceil((currentCount + 1) * 1.5)} minutes`;
+        }
+        
+        function showStatus(message) {
+            const statusBar = document.querySelector('.status-bar');
+            const tempStatus = document.createElement('div');
+            tempStatus.className = 'status-item';
+            tempStatus.style.position = 'absolute';
+            tempStatus.style.left = '50%';
+            tempStatus.style.transform = 'translateX(-50%)';
+            tempStatus.style.background = 'var(--bg-card)';
+            tempStatus.style.padding = '4px 16px';
+            tempStatus.style.borderRadius = '12px';
+            tempStatus.textContent = message;
+            
+            statusBar.appendChild(tempStatus);
+            
+            setTimeout(() => {
+                tempStatus.style.transition = 'opacity 0.5s';
+                tempStatus.style.opacity = '0';
+                setTimeout(() => tempStatus.remove(), 500);
+            }, 3000);
+        }
+        
+        // Animate on load
+        window.addEventListener('load', () => {
+            // Animate slide cards
+            document.querySelectorAll('.slide-card').forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.05}s`;
+                card.classList.add('fade-in');
+            });
+            
+            // Show welcome status
+            showStatus('Welcome to PrezI! Your AI assistant is ready.');
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Cmd/Ctrl + K to focus command bar
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                commandInput.focus();
+            }
+            
+            // Escape to close PrezI
+            if (e.key === 'Escape' && preziAssistant.classList.contains('active')) {
+                togglePrezi();
+            }
+        });
+    </script>
+    
+    <!-- PrezI Navigation Component -->
+    <!-- Add this to any mockup page for easy navigation -->
+    
+    <style>
+        .prezi-nav-menu {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+        }
+        
+        .prezi-nav-toggle {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .prezi-nav-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+        }
+        
+        .prezi-nav-icon {
+            width: 24px;
+            height: 24px;
+            background: white;
+            mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>') center/contain no-repeat;
+        }
+        
+        .prezi-nav-items {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: #1a1a1a;
+            border: 1px solid #3a3a3a;
+            border-radius: 12px;
+            padding: 12px;
+            display: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            min-width: 200px;
+        }
+        
+        .prezi-nav-menu.active .prezi-nav-items {
+            display: block;
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .prezi-nav-item {
+            display: block;
+            padding: 10px 16px;
+            color: #e5e7eb;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .prezi-nav-item:hover {
+            background: #2a2a2a;
+            color: #667eea;
+            transform: translateX(4px);
+        }
+        
+        .prezi-nav-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .prezi-nav-divider {
+            height: 1px;
+            background: #3a3a3a;
+            margin: 8px 0;
+        }
+        
+        .prezi-nav-label {
+            font-size: 11px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 16px;
+            margin-bottom: 4px;
+        }
+    </style>
+    
+    <div class="prezi-nav-menu" id="preziNav">
+        <div class="prezi-nav-items">
+            <div class="prezi-nav-label">Main</div>
+            <a href="index.html" class="prezi-nav-item">🏠 Home</a>
+            <a href="executive_summary.html" class="prezi-nav-item">📊 Executive Summary</a>
+            
+            <div class="prezi-nav-divider"></div>
+            <div class="prezi-nav-label">Demos</div>
+            <a href="01_urgent_pitch_workflow.html" class="prezi-nav-item">⚡ Urgent Pitch</a>
+            <a href="02_prezi_thinking_visualization.html" class="prezi-nav-item">🧠 Thinking Process</a>
+            <a href="03_keyword_prezi_integration.html" class="prezi-nav-item">🏷️ Smart Keywords</a>
+            <a href="04_element_level_intelligence.html" class="prezi-nav-item">🎯 Element Intelligence</a>
+            <a href="05_unified_interface_complete.html" class="prezi-nav-item">💎 Full Interface</a>
+            
+            <div class="prezi-nav-divider"></div>
+            <div class="prezi-nav-label">Docs</div>
+            <a href="PREZI_VISION_DOCUMENT.md" class="prezi-nav-item">📖 Vision Doc</a>
+            <a href="PREZI_KNOWLEDGE_SOURCE_OF_TRUTH.md" class="prezi-nav-item">📚 Source of Truth</a>
+        </div>
+        <div class="prezi-nav-toggle" onclick="togglePreziNav()">
+            <div class="prezi-nav-icon"></div>
+        </div>
+    </div>
+    
+    <script>
+        function togglePreziNav() {
+            const nav = document.getElementById('preziNav');
+            nav.classList.toggle('active');
+        }
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const nav = document.getElementById('preziNav');
+            if (!nav.contains(event.target) && nav.classList.contains('active')) {
+                nav.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

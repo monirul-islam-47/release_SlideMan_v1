@@ -1,0 +1,262 @@
+#!/usr/bin/env python3
+"""
+Create a properly refactored version that works when opened directly.
+Organizes the code but keeps everything embedded for standalone use.
+"""
+
+def create_refactored_html():
+    # Read the original file
+    with open('index.html', 'r', encoding='utf-8') as f:
+        original_html = f.read()
+    
+    # Read the CSS files we extracted
+    with open('css/main.css', 'r', encoding='utf-8') as f:
+        main_css = f.read()
+    
+    with open('css/chat-widget.css', 'r', encoding='utf-8') as f:
+        chat_css = f.read()
+    
+    with open('css/final-styles.css', 'r', encoding='utf-8') as f:
+        final_css = f.read()
+    
+    # Read the JS files
+    with open('js/main.js', 'r', encoding='utf-8') as f:
+        main_js = f.read()
+    
+    with open('js/chat-widget.js', 'r', encoding='utf-8') as f:
+        chat_js = f.read()
+    
+    # Extract body content from original (lines 4581 to 10410)
+    lines = original_html.split('\n')
+    body_start = None
+    body_end = None
+    
+    for i, line in enumerate(lines):
+        if '<body>' in line:
+            body_start = i + 1
+        if '</body>' in line:
+            body_end = i
+            break
+    
+    body_content = '\n'.join(lines[body_start:body_end])
+    
+    # Fix the form action
+    body_content = body_content.replace(
+        '<form class="request-form" id="requestAccessForm">',
+        '<form class="request-form" id="requestAccessForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">'
+    )
+    
+    # Create the refactored HTML with organized sections
+    refactored_html = f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrezI - Transform 5 Hours of Presentation Work into 5 Minutes with AI</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="PrezI is the AI-powered presentation assistant that transforms your PowerPoint chaos into professional presentations in minutes. Save 90% of your time with intelligent slide management, smart keyword tagging, and automated formatting.">
+    <meta name="keywords" content="AI presentation, PowerPoint automation, slide management, presentation AI, PrezI, presentation assistant, business presentations, AI productivity, slide organization">
+    <meta name="author" content="mama marketing GmbH">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    <link rel="canonical" href="https://prezi.ai/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://prezi.ai/">
+    <meta property="og:title" content="PrezI - Transform 5 Hours of Presentation Work into 5 Minutes with AI">
+    <meta property="og:description" content="The AI presentation assistant that saves 90% of your time. From PowerPoint chaos to professional presentations in minutes. Join the early access program now!">
+    <meta property="og:image" content="https://prezi.ai/images/prezi-social-preview.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="PrezI">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://prezi.ai/">
+    <meta property="twitter:title" content="PrezI - Transform 5 Hours of Presentation Work into 5 Minutes with AI">
+    <meta property="twitter:description" content="The AI presentation assistant that saves 90% of your time. From PowerPoint chaos to professional presentations in minutes. Join the early access program now!">
+    <meta property="twitter:image" content="https://prezi.ai/images/prezi-social-preview.png">
+    <meta property="twitter:creator" content="@prezi_ai">
+    <meta property="twitter:site" content="@prezi_ai">
+    
+    <!-- LinkedIn -->
+    <meta property="article:author" content="https://www.linkedin.com/company/prezi-ai">
+    <meta property="article:publisher" content="https://www.linkedin.com/company/prezi-ai">
+    
+    <!-- Additional Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PrezI">
+    <meta name="application-name" content="PrezI">
+    <meta name="msapplication-TileColor" content="#667eea">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    
+    <!-- Performance Optimizations -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <meta name="theme-color" content="#667eea">
+    <meta name="color-scheme" content="dark">
+    
+    <!-- Critical Resource Hints -->
+    <link rel="preload" href="#" as="font" type="font/woff2" crossorigin>
+    <link rel="prefetch" href="executive_summary.html">
+    <link rel="prefetch" href="01_urgent_pitch_workflow.html">
+    
+    <!-- Analytics & Tracking -->
+    <!-- Google Tag Manager -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=YOUR_GA_ID"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){{dataLayer.push(arguments);}}
+      gtag('js', new Date());
+      gtag('config', 'YOUR_GA_ID', {{
+        page_title: 'PrezI Landing Page',
+        page_location: window.location.href,
+        content_group1: 'Marketing',
+        content_group2: 'Landing Page'
+      }});
+      
+      // Enhanced ecommerce tracking for sign-ups
+      function trackSignup(plan) {{
+        gtag('event', 'sign_up', {{
+          method: 'early_access',
+          plan: plan,
+          value: plan === 'starter' ? 29 : plan === 'professional' ? 89 : 0
+        }});
+      }}
+      
+      // Track feature interactions
+      function trackFeatureInteraction(feature) {{
+        gtag('event', 'feature_interaction', {{
+          feature_name: feature,
+          interaction_type: 'click'
+        }});
+      }}
+    </script>
+    
+    <!-- Error Tracking (Sentry placeholder) -->
+    <script>
+      // Initialize error tracking
+      window.addEventListener('error', function(e) {{
+        // Send error to tracking service
+        console.error('Page Error:', {{
+          message: e.message,
+          filename: e.filename,
+          lineno: e.lineno,
+          colno: e.colno,
+          stack: e.error?.stack,
+          userAgent: navigator.userAgent,
+          url: window.location.href,
+          timestamp: new Date().toISOString()
+        }});
+        
+        // In production, replace with actual error tracking service
+        // Sentry.captureException(e.error);
+      }});
+      
+      window.addEventListener('unhandledrejection', function(e) {{
+        console.error('Unhandled Promise Rejection:', e.reason);
+        // Sentry.captureException(e.reason);
+      }});
+    </script>
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {{
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "PrezI",
+      "description": "AI-powered presentation assistant that transforms PowerPoint chaos into professional presentations in minutes",
+      "url": "https://prezi.ai",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {{
+        "@type": "Offer",
+        "price": "29",
+        "priceCurrency": "USD",
+        "priceSpecification": {{
+          "@type": "UnitPriceSpecification",
+          "price": "29",
+          "priceCurrency": "USD",
+          "billingDuration": "P1M"
+        }}
+      }},
+      "creator": {{
+        "@type": "Organization",
+        "name": "mama marketing GmbH",
+        "url": "https://mama-marketing.de"
+      }},
+      "featureList": [
+        "AI-powered slide analysis",
+        "Smart keyword tagging",
+        "Automated presentation assembly",
+        "Professional formatting",
+        "Multi-language support"
+      ]
+    }}
+    </script>
+    
+    <!-- =====================================================
+         MAIN STYLES - ALL ANIMATIONS AND VISUALS PRESERVED
+         ===================================================== -->
+    <style>
+        /* Core styles and animations */
+{main_css}
+    </style>
+    
+    <!-- =====================================================
+         CHAT WIDGET STYLES
+         ===================================================== -->
+    <style>
+        /* Chat widget specific styles */
+{chat_css}
+    </style>
+    
+    <!-- =====================================================
+         ADDITIONAL STYLES
+         ===================================================== -->
+    <style>
+        /* Additional styles */
+{final_css}
+    </style>
+</head>
+<body>
+{body_content}
+
+    <!-- =====================================================
+         MAIN JAVASCRIPT - ALL INTERACTIONS PRESERVED
+         ===================================================== -->
+    <script>
+        /* Main application JavaScript */
+{main_js}
+    </script>
+    
+    <!-- =====================================================
+         CHAT WIDGET JAVASCRIPT
+         ===================================================== -->
+    <script>
+        /* Chat widget functionality */
+{chat_js}
+    </script>
+</body>
+</html>'''
+    
+    # Write the refactored file
+    with open('index_refactored_final.html', 'w', encoding='utf-8') as f:
+        f.write(refactored_html)
+    
+    print("✅ Created index_refactored_final.html")
+    print("This version:")
+    print("- Works when opened directly (no server needed)")
+    print("- Preserves ALL animations and visual effects")
+    print("- Code is organized into logical sections")
+    print("- Form submission is fixed")
+    print("- Analytics ID is ready to replace")
+    print("\nJust replace YOUR_GA_ID and YOUR_FORM_ID and you're ready to launch!")
+
+if __name__ == "__main__":
+    create_refactored_html()

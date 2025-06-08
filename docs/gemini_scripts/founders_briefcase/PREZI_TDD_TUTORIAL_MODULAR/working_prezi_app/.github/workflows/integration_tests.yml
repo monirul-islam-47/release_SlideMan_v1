@@ -1,0 +1,292 @@
+name: Integration Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: [3.9, 3.10, 3.11]
+    
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: prezi_test
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libpq-dev \
+          python3-dev \
+          build-essential \
+          curl
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        pip install -r requirements.txt
+        pip install pytest-cov pytest-asyncio pytest-xdist pytest-mock
+        pip install psycopg2-binary  # For PostgreSQL support
+    
+    - name: Set up test environment
+      run: |
+        cp .env.test .env
+        echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/prezi_test" >> .env
+        echo "ENVIRONMENT=test" >> .env
+        echo "TESTING=true" >> .env
+    
+    - name: Create test database
+      run: |
+        PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE DATABASE IF NOT EXISTS prezi_test;"
+    
+    - name: Run unit tests
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/prezi_test
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        ENVIRONMENT: test
+        TESTING: true
+      run: |
+        python -m pytest tests/unit/ -v \
+          --cov=services \
+          --cov=api \
+          --cov-report=xml \
+          --cov-report=term-missing \
+          --junit-xml=junit-unit.xml \
+          -m "not slow and not requires_openai"
+    
+    - name: Run integration tests (fast)
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/prezi_test
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        ENVIRONMENT: test
+        TESTING: true
+      run: |
+        python -m pytest tests/integration/ -v \
+          --cov=services \
+          --cov=api \
+          --cov-report=xml \
+          --cov-report=term-missing \
+          --junit-xml=junit-integration.xml \
+          -m "integration and not slow and not performance" \
+          --maxfail=5
+    
+    - name: Run performance tests (if main branch)
+      if: github.ref == 'refs/heads/main'
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/prezi_test
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        ENVIRONMENT: test
+        TESTING: true
+      run: |
+        python -m pytest tests/integration/test_performance_load.py -v \
+          --junit-xml=junit-performance.xml \
+          -m "performance" \
+          --tb=short \
+          --maxfail=3
+    
+    - name: Run end-to-end tests (if main branch)
+      if: github.ref == 'refs/heads/main'
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/prezi_test
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        ENVIRONMENT: test
+        TESTING: true
+      run: |
+        python -m pytest tests/integration/test_complete_workflows.py -v \
+          --junit-xml=junit-e2e.xml \
+          -m "e2e" \
+          --tb=short \
+          --maxfail=2
+    
+    - name: Upload coverage to Codecov
+      if: matrix.python-version == '3.10'
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: integration
+        name: integration-tests-${{ matrix.python-version }}
+        fail_ci_if_error: false
+    
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results-${{ matrix.python-version }}
+        path: |
+          junit-*.xml
+          htmlcov/
+          coverage.xml
+    
+    - name: Comment PR with coverage
+      if: github.event_name == 'pull_request' && matrix.python-version == '3.10'
+      uses: py-cov-action/python-coverage-comment-action@v3
+      with:
+        GITHUB_TOKEN: ${{ github.token }}
+        MINIMUM_GREEN: 80
+        MINIMUM_ORANGE: 70
+
+  security-tests:
+    runs-on: ubuntu-latest
+    needs: integration-tests
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.10
+    
+    - name: Install security tools
+      run: |
+        pip install bandit safety
+    
+    - name: Run security linting with Bandit
+      run: |
+        bandit -r services/ api/ -f json -o bandit-report.json || true
+        bandit -r services/ api/ -f txt
+    
+    - name: Check dependencies for security vulnerabilities
+      run: |
+        safety check --json --output safety-report.json || true
+        safety check
+    
+    - name: Upload security reports
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-reports
+        path: |
+          bandit-report.json
+          safety-report.json
+
+  docker-tests:
+    runs-on: ubuntu-latest
+    needs: integration-tests
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    
+    - name: Build Docker image
+      run: |
+        docker build -t prezi-app:test .
+    
+    - name: Run tests in Docker container
+      run: |
+        docker run --rm \
+          -e DATABASE_URL=sqlite:///test.db \
+          -e ENVIRONMENT=test \
+          -e TESTING=true \
+          prezi-app:test \
+          python -m pytest tests/unit/ -v -m "not requires_powerpoint and not requires_openai"
+
+  api-tests:
+    runs-on: ubuntu-latest
+    needs: integration-tests
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.10
+    
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install httpx pytest-asyncio
+    
+    - name: Start API server in background
+      env:
+        DATABASE_URL: sqlite:///test_api.db
+        ENVIRONMENT: test
+        TESTING: true
+      run: |
+        python -m uvicorn main:app --host 0.0.0.0 --port 8000 &
+        echo $! > api_server.pid
+        sleep 10  # Wait for server to start
+    
+    - name: Run API endpoint tests
+      env:
+        API_BASE_URL: http://localhost:8000
+      run: |
+        python -m pytest tests/api/ -v \
+          --junit-xml=junit-api.xml \
+          -m "api" \
+          --tb=short
+    
+    - name: Stop API server
+      if: always()
+      run: |
+        if [ -f api_server.pid ]; then
+          kill $(cat api_server.pid) || true
+          rm api_server.pid
+        fi
+    
+    - name: Upload API test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: api-test-results
+        path: junit-api.xml
+
+  notification:
+    runs-on: ubuntu-latest
+    needs: [integration-tests, security-tests, docker-tests, api-tests]
+    if: always()
+    
+    steps:
+    - name: Notify success
+      if: needs.integration-tests.result == 'success'
+      run: |
+        echo "✅ All integration tests passed successfully!"
+    
+    - name: Notify failure
+      if: needs.integration-tests.result == 'failure'
+      run: |
+        echo "❌ Integration tests failed!"
+        exit 1

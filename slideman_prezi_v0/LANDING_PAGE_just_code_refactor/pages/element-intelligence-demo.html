@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrezI - Element Intelligence Demo</title>
+    
+    <!-- External CSS Files -->
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/windsurf-theme.css">
+</head>
+
+<body style="background: var(--bg-primary); color: var(--text-primary); font-family: system-ui, -apple-system, sans-serif;">
+    
+    <!-- Navigation -->
+    <nav class="nav-modern">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-logo">PrezI</a>
+            <ul class="nav-links">
+                <li><a href="../index.html#features" class="nav-link">Features</a></li>
+                <li><a href="../index.html#demos" class="nav-link">Demos</a></li>
+                <li><a href="../executive-summary.html" class="nav-link">Enterprise</a></li>
+            </ul>
+            <a href="../index.html#cta" class="btn-modern btn-primary">Get Early Access</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-modern" style="min-height: 50vh; padding-top: 120px; padding-bottom: var(--space-xl);">
+        <div class="hero-background"></div>
+        <div class="hero-grid"></div>
+        
+        <div class="container-modern">
+            <div class="hero-content fade-up">
+                <div class="hero-badge">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                        <circle cx="6" cy="6" r="6"/>
+                    </svg>
+                    Computer Vision • 95% Accuracy
+                </div>
+                
+                <h1 class="text-display hero-title">
+                    <span class="text-gradient">Element-Level</span><br>
+                    Intelligence
+                </h1>
+                
+                <p class="text-body-lg hero-subtitle">
+                    PrezI understands every chart, text box, and image in your slides<br>
+                    with pixel-perfect precision and semantic understanding.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Interactive Demo Section -->
+    <section class="section-modern">
+        <div class="container-modern">
+            <div class="text-center" style="margin-bottom: var(--space-3xl);">
+                <h2 class="text-headline" style="margin-bottom: var(--space-lg);">
+                    🎯 Live <span class="text-gradient">Element Recognition</span> Demo
+                </h2>
+                <p class="text-body-lg" style="color: var(--text-secondary);">
+                    Click elements to see PrezI's AI analysis in real-time
+                </p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-2xl); margin-bottom: var(--space-3xl);">
+                <!-- Slide Canvas -->
+                <div class="card-modern" style="padding: var(--space-xl);">
+                    <div style="display: flex; align-items: center; justify-content: between; margin-bottom: var(--space-xl);">
+                        <h3 class="text-title" style="margin: 0;">Q4 Performance Review</h3>
+                        <div style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="font-size: 0.875rem; color: var(--text-secondary);">Show Element Overlays</span>
+                            <div style="position: relative; width: 48px; height: 24px; background: var(--gradient-primary); border-radius: 12px; cursor: pointer; transition: all 0.3s ease;" onclick="toggleOverlays()" id="overlaySwitch">
+                                <div style="position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: all 0.3s ease; box-shadow: var(--shadow-sm);" id="switchHandle"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="aspect-ratio: 16/10; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: var(--radius-lg); padding: var(--space-xl); position: relative; overflow: hidden;">
+                        <div style="position: relative; height: 100%; z-index: 1;">
+                            <!-- Title Element -->
+                            <div style="text-align: center; margin-bottom: var(--space-xl);">
+                                <h1 style="font-size: 2rem; font-weight: 700; color: #1e293b; margin-bottom: var(--space-sm);">Q4 2024 Performance Highlights</h1>
+                                <p style="font-size: 1.125rem; color: #64748b; font-weight: 500;">Record-Breaking Quarter</p>
+                            </div>
+                            
+                            <!-- Body Elements -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); height: calc(100% - 120px);">
+                                <!-- Chart Element -->
+                                <div style="background: white; border-radius: var(--radius-md); padding: var(--space-lg); display: flex; align-items: center; justify-content: center; font-size: 4rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                    📊
+                                </div>
+                                
+                                <!-- Text Elements -->
+                                <div style="display: flex; flex-direction: column; justify-content: center; gap: var(--space-md);">
+                                    <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                        <div style="width: 8px; height: 8px; background: #3b82f6; border-radius: 50%;"></div>
+                                        <span style="color: #1e293b; font-weight: 500;">Revenue increased by 142% YoY</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                        <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></div>
+                                        <span style="color: #1e293b; font-weight: 500;">Customer acquisition up 87%</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                        <div style="width: 8px; height: 8px; background: #f59e0b; border-radius: 50%;"></div>
+                                        <span style="color: #1e293b; font-weight: 500;">Market share expanded to 24%</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                        <div style="width: 8px; height: 8px; background: #8b5cf6; border-radius: 50%;"></div>
+                                        <span style="color: #1e293b; font-weight: 500;">NPS score improved to 72</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Element Overlays -->
+                        <div id="overlaysContainer" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;">
+                            <!-- Title Overlay -->
+                            <div class="element-overlay" style="position: absolute; top: var(--space-xl); left: var(--space-xl); right: var(--space-xl); height: 100px; border: 2px solid var(--primary); border-radius: var(--radius-md); background: rgba(99, 102, 241, 0.1); backdrop-filter: blur(4px); pointer-events: auto; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: var(--space-md);" onclick="selectElement(this, 'title')" onmouseover="this.style.backgroundColor = 'rgba(99, 102, 241, 0.2)'" onmouseout="this.style.backgroundColor = 'rgba(99, 102, 241, 0.1)'">
+                                <div style="font-size: 1.5rem;">📝</div>
+                                <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap;">
+                                    <span style="background: var(--gradient-primary); color: white; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 600;">Title</span>
+                                    <span style="background: var(--bg-surface); color: var(--text-primary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 500;">Q4</span>
+                                    <span style="background: var(--bg-surface); color: var(--text-primary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 500;">Performance</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Chart Overlay -->
+                            <div class="element-overlay" style="position: absolute; bottom: var(--space-xl); left: var(--space-xl); width: calc(50% - var(--space-lg)); height: calc(100% - 150px); border: 2px solid var(--accent-green); border-radius: var(--radius-md); background: rgba(16, 185, 129, 0.1); backdrop-filter: blur(4px); pointer-events: auto; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: var(--space-md);" onclick="selectElement(this, 'chart')" onmouseover="this.style.backgroundColor = 'rgba(16, 185, 129, 0.2)'" onmouseout="this.style.backgroundColor = 'rgba(16, 185, 129, 0.1)'">
+                                <div style="font-size: 1.5rem;">📊</div>
+                                <span style="background: linear-gradient(135deg, #10b981, #06b6d4); color: white; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 600;">Chart</span>
+                            </div>
+                            
+                            <!-- Bullet Points Overlay -->
+                            <div class="element-overlay" style="position: absolute; bottom: var(--space-xl); right: var(--space-xl); width: calc(50% - var(--space-lg)); height: calc(100% - 150px); border: 2px solid #f59e0b; border-radius: var(--radius-md); background: rgba(245, 158, 11, 0.1); backdrop-filter: blur(4px); pointer-events: auto; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: var(--space-md);" onclick="selectElement(this, 'bullets')" onmouseover="this.style.backgroundColor = 'rgba(245, 158, 11, 0.2)'" onmouseout="this.style.backgroundColor = 'rgba(245, 158, 11, 0.1)'">
+                                <div style="font-size: 1.5rem;">📋</div>
+                                <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap;">
+                                    <span style="background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 600;">Key Metrics</span>
+                                    <span style="background: var(--bg-surface); color: var(--text-primary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem; font-weight: 500;">Results</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Element Details Panel -->
+                <div class="card-modern" style="padding: var(--space-xl);">
+                    <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-xl);">
+                        <div style="width: 48px; height: 48px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; animation: breathe 3s ease-in-out infinite;">
+                            🧠
+                        </div>
+                        <h3 class="text-title" style="margin: 0;">Element Intelligence</h3>
+                    </div>
+                    
+                    <div id="elementDetails">
+                        <!-- Default State -->
+                        <div style="text-align: center; padding: var(--space-2xl); background: var(--bg-tertiary); border-radius: var(--radius-lg); border: 1px solid var(--border-primary);">
+                            <div style="font-size: 3rem; margin-bottom: var(--space-lg); opacity: 0.6;">🎯</div>
+                            <p style="color: var(--text-muted); margin: 0;">
+                                Click on any element to see PrezI's analysis
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="text-center" style="margin-bottom: var(--space-3xl);">
+                <h2 class="text-headline" style="margin-bottom: var(--space-lg);">
+                    🚀 Element Intelligence <span class="text-gradient">Workflows</span>
+                </h2>
+                <p class="text-body-lg" style="color: var(--text-secondary);">
+                    Discover how PrezI transforms slide management with AI-powered element understanding
+                </p>
+            </div>
+            
+            <div class="grid-modern grid-2" style="gap: var(--space-xl); margin-bottom: var(--space-3xl);">
+                <!-- Auto-Tagging Workflow -->
+                <div class="card-modern fade-up" style="padding: var(--space-xl);">
+                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #10b981, #06b6d4); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-lg); font-size: 1.5rem;">
+                        🏷️
+                    </div>
+                    <h3 class="text-title" style="margin-bottom: var(--space-md);">Automatic Element Tagging</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: var(--space-lg); line-height: 1.6;">
+                        PrezI analyzes slide content and automatically tags every element with relevant keywords.
+                    </p>
+                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-md);">
+                        <li style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="width: 20px; height: 20px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">Recognizes charts, tables, images, and text</span>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="width: 20px; height: 20px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">Extracts data from charts and graphs</span>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="width: 20px; height: 20px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">Understands context and relationships</span>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="width: 20px; height: 20px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">Tags with 95% accuracy</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Smart Search Workflow -->
+                <div class="card-modern fade-up" style="padding: var(--space-xl); animation-delay: 0.1s;">
+                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-lg); font-size: 1.5rem;">
+                        🔍
+                    </div>
+                    <h3 class="text-title" style="margin-bottom: var(--space-md);">Element-Level Search</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: var(--space-lg); line-height: 1.6;">
+                        Search for specific elements across your entire slide library with natural language.
+                    </p>
+                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-md);">
+                        <li style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="width: 20px; height: 20px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">"Find all revenue charts from Q4"</span>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="width: 20px; height: 20px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">"Show me competitor comparison tables"</span>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="width: 20px; height: 20px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">"Which slides have growth metrics?"</span>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="width: 20px; height: 20px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">Instant results from 1000s of slides</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Content Extraction Workflow -->
+                <div class="card-modern fade-up" style="padding: var(--space-xl); animation-delay: 0.2s;">
+                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #f59e0b, #ef4444); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-lg); font-size: 1.5rem;">
+                        📤
+                    </div>
+                    <h3 class="text-title" style="margin-bottom: var(--space-md);">Smart Content Extraction</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: var(--space-lg); line-height: 1.6;">
+                        Extract and repurpose individual elements to build new presentations instantly.
+                    </p>
+                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-md);">
+                        <li style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="width: 20px; height: 20px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">Pull charts with updated data</span>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="width: 20px; height: 20px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">Extract key bullet points</span>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="width: 20px; height: 20px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">Combine elements from multiple slides</span>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="width: 20px; height: 20px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">Maintain formatting and style</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Style Consistency Workflow -->
+                <div class="card-modern fade-up" style="padding: var(--space-xl); animation-delay: 0.3s;">
+                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #8b5cf6, #ec4899); border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin-bottom: var(--space-lg); font-size: 1.5rem;">
+                        🎨
+                    </div>
+                    <h3 class="text-title" style="margin-bottom: var(--space-md);">Element Style Analysis</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: var(--space-lg); line-height: 1.6;">
+                        PrezI ensures every element follows your brand guidelines and maintains consistency.
+                    </p>
+                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-md);">
+                        <li style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="width: 20px; height: 20px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">Detect non-standard fonts or colors</span>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="width: 20px; height: 20px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">Flag misaligned elements</span>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="width: 20px; height: 20px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">Suggest professional improvements</span>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: var(--space-md);">
+                            <span style="width: 20px; height: 20px; background: var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem; font-weight: bold;">✓</span>
+                            <span style="color: var(--text-secondary); font-size: 0.875rem;">One-click style fixes</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        
+            <div class="card-modern" style="padding: var(--space-2xl); background: var(--bg-secondary); text-align: center;">
+                <h3 class="text-headline" style="margin-bottom: var(--space-lg); color: var(--text-accent);">PrezI Element Intelligence in Action</h3>
+                <p style="color: var(--text-secondary); margin-bottom: var(--space-2xl); font-size: 1.125rem;">
+                    Transforming how you understand and use your slide content
+                </p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-xl);">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; font-weight: 800; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: var(--space-sm);">15,234</div>
+                        <div style="color: var(--text-secondary); font-size: 0.875rem; font-weight: 500;">Elements Analyzed</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; font-weight: 800; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: var(--space-sm);">95%</div>
+                        <div style="color: var(--text-secondary); font-size: 0.875rem; font-weight: 500;">Recognition Accuracy</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; font-weight: 800; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: var(--space-sm);">0.3s</div>
+                        <div style="color: var(--text-secondary); font-size: 0.875rem; font-weight: 500;">Analysis Time</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; font-weight: 800; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: var(--space-sm);">847</div>
+                        <div style="color: var(--text-secondary); font-size: 0.875rem; font-weight: 500;">Auto-Tags Created</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: var(--space-2xl);">
+                    <div style="display: flex; gap: var(--space-lg); justify-content: center; flex-wrap: wrap;">
+                        <a href="../index.html#demos" class="btn-modern btn-secondary">
+                            Try Other Demos
+                        </a>
+                        <a href="../index.html#cta" class="btn-modern btn-primary">
+                            Get Early Access
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- JavaScript -->
+    <script src="../assets/js/common-utilities.js"></script>
+    <!-- Demo-specific JavaScript -->
+    <script>
+        let overlaysVisible = true;
+        
+        function toggleOverlays() {
+            const overlaysContainer = document.getElementById('overlaysContainer');
+            const switchHandle = document.getElementById('switchHandle');
+            
+            overlaysVisible = !overlaysVisible;
+            
+            if (overlaysVisible) {
+                overlaysContainer.style.display = 'block';
+                switchHandle.style.right = '2px';
+                switchHandle.style.left = 'auto';
+            } else {
+                overlaysContainer.style.display = 'none';
+                switchHandle.style.left = '2px';
+                switchHandle.style.right = 'auto';
+            }
+        }
+        
+        function selectElement(overlay, type) {
+            const elementDetails = document.getElementById('elementDetails');
+            
+            // Remove active class from all overlays
+            document.querySelectorAll('.element-overlay').forEach(el => {
+                el.style.transform = 'scale(1)';
+                el.style.zIndex = '1';
+            });
+            
+            // Add active state to selected overlay
+            overlay.style.transform = 'scale(1.02)';
+            overlay.style.zIndex = '10';
+            
+            // Update details panel based on element type
+            let content = '';
+            
+            switch(type) {
+                case 'title':
+                    content = `
+                        <div style="padding: var(--space-lg); background: var(--bg-tertiary); border-radius: var(--radius-lg); border: 1px solid var(--border-accent);">
+                            <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);">
+                                <div style="font-size: 2rem;">📝</div>
+                                <div>
+                                    <h4 style="margin: 0; color: var(--text-accent); font-weight: 600;">Title Element</h4>
+                                    <p style="margin: 0; color: var(--text-muted); font-size: 0.875rem;">Header text analysis</p>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: var(--space-lg);">
+                                <h5 style="color: var(--text-primary); font-size: 0.875rem; margin-bottom: var(--space-sm);">Detected Content:</h5>
+                                <p style="color: var(--text-secondary); font-size: 0.875rem; font-style: italic;">"Q4 2024 Performance Highlights"</p>
+                            </div>
+                            
+                            <div style="margin-bottom: var(--space-lg);">
+                                <h5 style="color: var(--text-primary); font-size: 0.875rem; margin-bottom: var(--space-sm);">Auto-Generated Tags:</h5>
+                                <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap;">
+                                    <span style="background: var(--gradient-primary); color: white; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem;">Q4</span>
+                                    <span style="background: var(--bg-surface); color: var(--text-primary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem;">Performance</span>
+                                    <span style="background: var(--bg-surface); color: var(--text-primary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem;">2024</span>
+                                    <span style="background: var(--bg-surface); color: var(--text-primary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem;">Highlights</span>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h5 style="color: var(--text-primary); font-size: 0.875rem; margin-bottom: var(--space-sm);">Style Analysis:</h5>
+                                <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.875rem; color: var(--text-secondary);">
+                                    <li style="margin-bottom: var(--space-xs);">• Font: Arial Bold, 32px</li>
+                                    <li style="margin-bottom: var(--space-xs);">• Color: #1e293b (Brand Primary)</li>
+                                    <li style="margin-bottom: var(--space-xs);">• Alignment: Center</li>
+                                    <li>• Confidence: 98%</li>
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'chart':
+                    content = `
+                        <div style="padding: var(--space-lg); background: var(--bg-tertiary); border-radius: var(--radius-lg); border: 1px solid var(--border-accent);">
+                            <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);">
+                                <div style="font-size: 2rem;">📊</div>
+                                <div>
+                                    <h4 style="margin: 0; color: var(--text-accent); font-weight: 600;">Chart Element</h4>
+                                    <p style="margin: 0; color: var(--text-muted); font-size: 0.875rem;">Data visualization analysis</p>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: var(--space-lg);">
+                                <h5 style="color: var(--text-primary); font-size: 0.875rem; margin-bottom: var(--space-sm);">Chart Type:</h5>
+                                <p style="color: var(--text-secondary); font-size: 0.875rem;">Bar Chart (Revenue Trends)</p>
+                            </div>
+                            
+                            <div style="margin-bottom: var(--space-lg);">
+                                <h5 style="color: var(--text-primary); font-size: 0.875rem; margin-bottom: var(--space-sm);">Extracted Data:</h5>
+                                <div style="background: var(--bg-surface); padding: var(--space-md); border-radius: var(--radius-md); font-family: monospace; font-size: 0.75rem; color: var(--text-secondary);">
+                                    Q1: $2.1M (+23%)<br>
+                                    Q2: $2.8M (+33%)<br>
+                                    Q3: $3.2M (+14%)<br>
+                                    Q4: $4.1M (+28%)
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h5 style="color: var(--text-primary); font-size: 0.875rem; margin-bottom: var(--space-sm);">Insights:</h5>
+                                <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.875rem; color: var(--text-secondary);">
+                                    <li style="margin-bottom: var(--space-xs);">• Strong upward trend</li>
+                                    <li style="margin-bottom: var(--space-xs);">• 142% YoY growth</li>
+                                    <li>• Confidence: 94%</li>
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'bullets':
+                    content = `
+                        <div style="padding: var(--space-lg); background: var(--bg-tertiary); border-radius: var(--radius-lg); border: 1px solid var(--border-accent);">
+                            <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);">
+                                <div style="font-size: 2rem;">📋</div>
+                                <div>
+                                    <h4 style="margin: 0; color: var(--text-accent); font-weight: 600;">Bullet Points</h4>
+                                    <p style="margin: 0; color: var(--text-muted); font-size: 0.875rem;">Key metrics analysis</p>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: var(--space-lg);">
+                                <h5 style="color: var(--text-primary); font-size: 0.875rem; margin-bottom: var(--space-sm);">Extracted Metrics:</h5>
+                                <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.875rem; color: var(--text-secondary);">
+                                    <li style="margin-bottom: var(--space-sm);">• Revenue: +142% YoY</li>
+                                    <li style="margin-bottom: var(--space-sm);">• Customer acquisition: +87%</li>
+                                    <li style="margin-bottom: var(--space-sm);">• Market share: 24%</li>
+                                    <li>• NPS score: 72</li>
+                                </ul>
+                            </div>
+                            
+                            <div style="margin-bottom: var(--space-lg);">
+                                <h5 style="color: var(--text-primary); font-size: 0.875rem; margin-bottom: var(--space-sm);">Auto-Generated Tags:</h5>
+                                <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap;">
+                                    <span style="background: linear-gradient(135deg, #f59e0b, #ef4444); color: white; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem;">Key Metrics</span>
+                                    <span style="background: var(--bg-surface); color: var(--text-primary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem;">Growth</span>
+                                    <span style="background: var(--bg-surface); color: var(--text-primary); padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-md); font-size: 0.75rem;">Performance</span>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h5 style="color: var(--text-primary); font-size: 0.875rem; margin-bottom: var(--space-sm);">Analysis:</h5>
+                                <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.875rem; color: var(--text-secondary);">
+                                    <li style="margin-bottom: var(--space-xs);">• 4 key performance indicators</li>
+                                    <li style="margin-bottom: var(--space-xs);">• All metrics show positive growth</li>
+                                    <li>• Confidence: 96%</li>
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            elementDetails.innerHTML = content;
+        }
+        
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-up');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-up').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+
+    <style>
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            div[style*="grid-template-columns: 2fr 1fr"] {
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+</body>
+</html>

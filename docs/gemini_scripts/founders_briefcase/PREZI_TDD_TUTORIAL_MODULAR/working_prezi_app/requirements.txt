@@ -1,0 +1,39 @@
+# Core backend dependencies for PrezI
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+sqlalchemy==2.0.23
+alembic==1.13.0
+
+# PowerPoint integration (Windows only)
+pywin32==306; platform_system=="Windows"
+
+# Advanced OpenAI integration for AI features
+openai==1.3.0
+python-dotenv==1.0.0
+tiktoken==0.5.1  # For token counting and optimization
+
+# Natural language processing enhancements
+spacy==3.7.0  # For advanced NLP tasks
+textblob==0.17.1  # For sentiment analysis
+
+# Testing framework
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+httpx==0.25.2  # For testing HTTP requests
+
+# Development and code quality
+black==23.11.0
+flake8==6.1.0
+mypy==1.7.1
+isort==5.12.0
+
+# CI/CD and security
+pytest-html==4.1.1  # For HTML test reports
+bandit==1.7.5        # Security linting
+safety==2.3.4        # Dependency security checks
+
+# Performance monitoring
+memory-profiler==0.61.0  # For memory usage tracking
+psutil==5.9.6            # For system resource monitoring

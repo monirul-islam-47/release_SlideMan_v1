@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrezI - Transform 5 Hours of Presentation Work into 5 Minutes with AI</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="PrezI is the AI-powered presentation assistant that transforms your PowerPoint chaos into professional presentations in minutes. Save 90% of your time with intelligent slide management, smart keyword tagging, and automated formatting.">
+    <meta name="keywords" content="AI presentation, PowerPoint automation, slide management, presentation AI, PrezI, presentation assistant, business presentations, AI productivity, slide organization">
+    <meta name="author" content="mama marketing GmbH">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    <link rel="canonical" href="https://prezi.ai/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://prezi.ai/">
+    <meta property="og:title" content="PrezI - Transform 5 Hours of Presentation Work into 5 Minutes with AI">
+    <meta property="og:description" content="The AI presentation assistant that saves 90% of your time. From PowerPoint chaos to professional presentations in minutes. Join the early access program now!">
+    <meta property="og:image" content="https://prezi.ai/images/prezi-social-preview.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="PrezI">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://prezi.ai/">
+    <meta property="twitter:title" content="PrezI - Transform 5 Hours of Presentation Work into 5 Minutes with AI">
+    <meta property="twitter:description" content="The AI presentation assistant that saves 90% of your time. From PowerPoint chaos to professional presentations in minutes. Join the early access program now!">
+    <meta property="twitter:image" content="https://prezi.ai/images/prezi-social-preview.png">
+    <meta property="twitter:creator" content="@prezi_ai">
+    <meta property="twitter:site" content="@prezi_ai">
+    
+    <!-- LinkedIn -->
+    <meta property="article:author" content="https://www.linkedin.com/company/prezi-ai">
+    <meta property="article:publisher" content="https://www.linkedin.com/company/prezi-ai">
+    
+    <!-- Additional Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PrezI">
+    <meta name="application-name" content="PrezI">
+    <meta name="msapplication-TileColor" content="#667eea">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    
+    <!-- Performance Optimizations -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <meta name="theme-color" content="#667eea">
+    <meta name="color-scheme" content="dark">
+    
+    <!-- Critical CSS (inline for performance) -->
+    <style>
+        /* Critical above-the-fold styles */
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --bg-dark: #0a0a0a;
+            --text-primary: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Loading skeleton for better perceived performance */
+        .loading-skeleton {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-dark);
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .skeleton-loader {
+            width: 80px;
+            height: 80px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    
+    <!-- Async load stylesheets -->
+    <link rel="preload" href="css/main.css" as="style">
+    <link rel="preload" href="css/components.css" as="style">
+    <link rel="preload" href="css/enhancements.css" as="style">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/enhancements.css">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="js/main.js" as="script">
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "PrezI",
+      "description": "AI-powered presentation assistant that transforms PowerPoint chaos into professional presentations in minutes",
+      "url": "https://prezi.ai",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "29",
+        "priceCurrency": "USD",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "price": "29",
+          "priceCurrency": "USD",
+          "billingDuration": "P1M"
+        }
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "mama marketing GmbH",
+        "url": "https://mama-marketing.de"
+      },
+      "featureList": [
+        "AI-powered slide analysis",
+        "Smart keyword tagging",
+        "Automated presentation assembly",
+        "Professional formatting",
+        "Multi-language support"
+      ]
+    }
+    </script>
+</head>
+<body>
+    <!-- Loading Skeleton -->
+    <div class="loading-skeleton" id="loadingSkeleton">
+        <div class="skeleton-loader"></div>
+    </div>
+    
+    <!-- Skip to Content (Accessibility) -->
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+    
+    <!-- Urgency Banner -->
+    <div class="urgency-banner">
+        <div class="urgency-content">
+            <span class="urgency-icon">🔥</span>
+            <span class="urgency-text">Limited Early Access: Only <span id="spotsCount" class="spots-count">37</span> spots remaining at 50% off!</span>
+            <a href="#pricing" class="urgency-cta">Claim Your Spot →</a>
+        </div>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <div class="nav-logo">PrezI</div>
+            <ul class="nav-links">
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#demo" class="nav-link">Demo</a></li>
+                <li><a href="#testimonials" class="nav-link">Testimonials</a></li>
+                <li><a href="#pricing" class="nav-link">Pricing</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+                <button id="soundToggle" class="sound-toggle" aria-label="Toggle sound">🔊</button>
+                <button id="languageToggle" class="language-toggle" aria-label="Switch language">
+                    <span id="languageFlag">🇩🇪</span>
+                </button>
+                <a href="#cta" class="nav-cta">Get Early Access</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="hero" id="hero">
+            <!-- Background animations -->
+            <div class="hero-bg"></div>
+            <div class="parallax-bg"></div>
+            <div class="parallax-mid"></div>
+            <div class="parallax-front"></div>
+            <div class="gradient-mesh">
+                <div class="mesh-gradient"></div>
+                <div class="mesh-gradient"></div>
+                <div class="mesh-gradient"></div>
+            </div>
+            <div class="noise-overlay"></div>
+            <div class="gradient-orb gradient-orb-1"></div>
+            <div class="gradient-orb gradient-orb-2"></div>
+            <div class="gradient-orb gradient-orb-3"></div>
+            <div class="hero-particles"></div>
+            
+            <!-- Hero Content -->
+            <div class="hero-content">
+                <!-- PrezI Avatar -->
+                <div class="prezi-hero-avatar">
+                    <div class="prezi-avatar-main">
+                        <div class="prezi-avatar-core"></div>
+                        <div class="prezi-particles"></div>
+                    </div>
+                </div>
+                
+                <p class="hero-tagline" data-i18n="hero.tagline">AI-Powered Presentation Assistant</p>
+                <h1 class="hero-title" data-i18n="hero.title">
+                    Transform <span>5 Hours</span> of Presentation Work<br>
+                    Into <span>5 Minutes</span> with AI
+                </h1>
+                <p class="hero-subtitle" data-i18n="hero.subtitle">
+                    Stop wasting time searching through PowerPoint chaos. PrezI instantly finds, 
+                    organizes, and assembles the perfect slides for your next presentation.
+                </p>
+                
+                <div class="hero-cta">
+                    <a href="#demo" class="btn btn-primary" data-i18n="hero.cta.primary">
+                        <span>Watch 2-Min Demo</span>
+                        <span class="btn-arrow">→</span>
+                    </a>
+                    <a href="#features" class="btn btn-secondary" data-i18n="hero.cta.secondary">
+                        See How It Works
+                    </a>
+                </div>
+                
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">84%</div>
+                        <div class="stat-label" data-i18n="hero.stats.timeSaved">Time Saved</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">0.3s</div>
+                        <div class="stat-label" data-i18n="hero.stats.responseTime">Response Time</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label" data-i18n="hero.stats.betaUsers">Beta Users</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Problem Section -->
+        <section class="section problem-section" id="problem">
+            <div class="ambient-dots">
+                <div class="floating-dot" style="left: 10%; animation-delay: 0s;"></div>
+                <div class="floating-dot" style="left: 30%; animation-delay: 5s;"></div>
+                <div class="floating-dot" style="left: 50%; animation-delay: 10s;"></div>
+                <div class="floating-dot" style="left: 70%; animation-delay: 15s;"></div>
+                <div class="floating-dot" style="left: 90%; animation-delay: 20s;"></div>
+            </div>
+            
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title" data-i18n="problem.title">The Hidden Cost of Presentation Chaos</h2>
+                    <p class="section-subtitle" data-i18n="problem.subtitle">
+                        Every day, professionals waste hours searching through scattered PowerPoint files,
+                        recreating slides that already exist somewhere in their organization.
+                    </p>
+                </div>
+                
+                <div class="problem-grid">
+                    <div class="problem-card">
+                        <div class="problem-icon">😫</div>
+                        <h3 class="problem-title" data-i18n="problem.card1.title">5+ Hours Per Presentation</h3>
+                        <p class="problem-description" data-i18n="problem.card1.description">
+                            The average professional spends 5-8 hours creating a single presentation,
+                            with 70% of that time wasted searching for existing content.
+                        </p>
+                    </div>
+                    
+                    <div class="problem-card">
+                        <div class="problem-icon">🔍</div>
+                        <h3 class="problem-title" data-i18n="problem.card2.title">Lost in the Slide Maze</h3>
+                        <p class="problem-description" data-i18n="problem.card2.description">
+                            "I know we have that slide somewhere..." Sound familiar? Teams recreate
+                            the same content repeatedly because finding it is impossible.
+                        </p>
+                    </div>
+                    
+                    <div class="problem-card">
+                        <div class="problem-icon">🎯</div>
+                        <h3 class="problem-title" data-i18n="problem.card3.title">Inconsistent Quality</h3>
+                        <p class="problem-description" data-i18n="problem.card3.description">
+                            Without a centralized system, every presentation looks different.
+                            Brand guidelines? Forgotten. Best practices? Lost in translation.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Visual Section Divider -->
+        <div class="section-divider"></div>
+        
+        <!-- Solution Section -->
+        <section class="section solution-section" id="solution">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title" data-i18n="solution.title">Meet PrezI: Your AI Presentation Partner</h2>
+                    <p class="section-subtitle" data-i18n="solution.subtitle">
+                        PrezI transforms your PowerPoint chaos into an intelligent, searchable library
+                        that assembles perfect presentations in minutes, not hours.
+                    </p>
+                </div>
+                
+                <div class="solution-grid">
+                    <div class="solution-content">
+                        <h3 data-i18n="solution.heading">From Chaos to Clarity in 3 Steps</h3>
+                        
+                        <!-- Visual Process Flow -->
+                        <div class="process-flow">
+                            <div class="process-step">
+                                <div class="process-icon">📤</div>
+                                <h4 class="process-title">Upload</h4>
+                                <p class="process-desc">Drop your PowerPoint files</p>
+                            </div>
+                            <div class="process-step">
+                                <div class="process-icon">🤖</div>
+                                <h4 class="process-title">Analyze</h4>
+                                <p class="process-desc">AI indexes every slide</p>
+                            </div>
+                            <div class="process-step">
+                                <div class="process-icon">💬</div>
+                                <h4 class="process-title">Ask</h4>
+                                <p class="process-desc">Natural language search</p>
+                            </div>
+                            <div class="process-step">
+                                <div class="process-icon">✨</div>
+                                <h4 class="process-title">Create</h4>
+                                <p class="process-desc">Perfect presentation ready</p>
+                            </div>
+                        </div>
+                        
+                        <a href="#demo" class="btn btn-primary" data-i18n="solution.cta">See It In Action</a>
+                    </div>
+                    
+                    <div class="solution-visual">
+                        <div class="visual-card">
+                            <div class="visual-header">
+                                <div class="prezi-avatar-small">
+                                    <div class="avatar-core"></div>
+                                </div>
+                                <span class="visual-title">PrezI Assistant</span>
+                            </div>
+                            <div class="command-demo">
+                                Find slides about "digital transformation roadmap"
+                            </div>
+                            <div class="result-preview">
+                                <div class="mini-slide highlighted"></div>
+                                <div class="mini-slide highlighted"></div>
+                                <div class="mini-slide highlighted"></div>
+                                <div class="mini-slide"></div>
+                                <div class="mini-slide"></div>
+                                <div class="mini-slide"></div>
+                            </div>
+                            <div class="result-stats">
+                                <span class="stat-badge">✓ 6 slides found</span>
+                                <span class="stat-badge">⚡ 0.3s</span>
+                                <span class="stat-badge">🎯 98% match</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Features Section -->
+        <section class="section features-section" id="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title" data-i18n="features.title">Intelligent Features That Save Time</h2>
+                    <p class="section-subtitle" data-i18n="features.subtitle">
+                        Every feature is designed to eliminate the friction between your ideas
+                        and a finished presentation.
+                    </p>
+                </div>
+                
+                <div class="feature-showcase">
+                    <!-- Feature 1: Smart Search -->
+                    <div class="feature-row">
+                        <div class="feature-content">
+                            <h3 data-i18n="features.smartSearch.title">Natural Language Search</h3>
+                            <p data-i18n="features.smartSearch.description">
+                                Stop thinking in keywords. Just describe what you need: 
+                                "Slides showing our competitive advantages in the European market" 
+                                and PrezI finds exactly what you're looking for.
+                            </p>
+                            <!-- Visual Feature Cards -->
+                            <div class="visual-features">
+                                <div class="visual-feature-card">
+                                    <div class="visual-feature-icon">🧠</div>
+                                    <h5 class="visual-feature-title">Context Aware</h5>
+                                    <p class="visual-feature-desc">Understands intent</p>
+                                </div>
+                                <div class="visual-feature-card">
+                                    <div class="visual-feature-icon">🔍</div>
+                                    <h5 class="visual-feature-title">Deep Search</h5>
+                                    <p class="visual-feature-desc">Text, images & notes</p>
+                                </div>
+                                <div class="visual-feature-card">
+                                    <div class="visual-feature-icon">🌐</div>
+                                    <h5 class="visual-feature-title">Multi-Language</h5>
+                                    <p class="visual-feature-desc">Global support</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="feature-visual lazy-section">
+                            <!-- Animated search visualization -->
+                            <div class="search-demo">
+                                <div class="search-input">
+                                    <span class="search-text"></span>
+                                    <span class="cursor">|</span>
+                                </div>
+                                <div class="search-results">
+                                    <div class="result-item"></div>
+                                    <div class="result-item"></div>
+                                    <div class="result-item"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Feature 2: Auto Assembly -->
+                    <div class="feature-row">
+                        <div class="feature-content">
+                            <h3 data-i18n="features.autoAssembly.title">Intelligent Auto-Assembly</h3>
+                            <p data-i18n="features.autoAssembly.description">
+                                PrezI doesn't just find slides - it intelligently assembles them
+                                into a cohesive narrative. It understands flow, removes duplicates,
+                                and ensures consistent formatting.
+                            </p>
+                            <ul class="feature-highlights">
+                                <li>Smart slide ordering</li>
+                                <li>Automatic formatting consistency</li>
+                                <li>Duplicate detection</li>
+                            </ul>
+                        </div>
+                        <div class="feature-visual lazy-section">
+                            <!-- Assembly animation -->
+                            <div class="assembly-demo">
+                                <div class="slide-stack">
+                                    <div class="slide-item"></div>
+                                    <div class="slide-item"></div>
+                                    <div class="slide-item"></div>
+                                </div>
+                                <div class="assembly-arrow">→</div>
+                                <div class="final-presentation"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Feature 3: Learning AI -->
+                    <div class="feature-row">
+                        <div class="feature-content">
+                            <h3 data-i18n="features.learningAI.title">AI That Learns Your Style</h3>
+                            <p data-i18n="features.learningAI.description">
+                                Every time you use PrezI, it learns your preferences. Which slides
+                                you choose, how you order them, what you modify - PrezI remembers
+                                and improves its suggestions.
+                            </p>
+                            <ul class="feature-highlights">
+                                <li>Personalized recommendations</li>
+                                <li>Team knowledge sharing</li>
+                                <li>Continuous improvement</li>
+                            </ul>
+                        </div>
+                        <div class="feature-visual lazy-section">
+                            <!-- AI learning visualization -->
+                            <div class="ai-brain">
+                                <div class="neural-network">
+                                    <div class="node"></div>
+                                    <div class="node"></div>
+                                    <div class="node"></div>
+                                    <div class="connection"></div>
+                                    <div class="connection"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Demo Gallery -->
+        <section class="section gallery-section" id="demo">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title" data-i18n="demo.title">See PrezI in Action</h2>
+                    <p class="section-subtitle" data-i18n="demo.subtitle">
+                        Interactive demos showing real workflows and time savings
+                    </p>
+                </div>
+                
+                <div class="demo-grid">
+                    <a href="demos/01_urgent_pitch_workflow.html" class="demo-card">
+                        <div class="demo-thumbnail">
+                            <div class="demo-badge">2 min</div>
+                            <div class="demo-preview">
+                                <div class="preview-screen">
+                                    <div class="preview-content">
+                                        <div class="preview-slide"></div>
+                                        <div class="preview-slide"></div>
+                                        <div class="preview-slide"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="demo-content">
+                            <h3 class="demo-title" data-i18n="demo.card1.title">Urgent Pitch Workflow</h3>
+                            <p class="demo-description" data-i18n="demo.card1.description">
+                                Watch how PrezI helps create a client pitch in under 5 minutes
+                                using existing slide assets.
+                            </p>
+                        </div>
+                    </a>
+                    
+                    <a href="demos/02_prezi_thinking_visualization.html" class="demo-card">
+                        <div class="demo-thumbnail">
+                            <div class="demo-badge">1 min</div>
+                            <div class="demo-preview">
+                                <div class="preview-screen">
+                                    <div class="preview-content">
+                                        <div class="preview-slide"></div>
+                                        <div class="preview-slide"></div>
+                                        <div class="preview-slide"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="demo-content">
+                            <h3 class="demo-title" data-i18n="demo.card2.title">AI Thinking Process</h3>
+                            <p class="demo-description" data-i18n="demo.card2.description">
+                                See how PrezI's AI understands context and finds the perfect
+                                slides for your needs.
+                            </p>
+                        </div>
+                    </a>
+                    
+                    <a href="demos/03_keyword_prezi_integration.html" class="demo-card">
+                        <div class="demo-thumbnail">
+                            <div class="demo-badge">3 min</div>
+                            <div class="demo-preview">
+                                <div class="preview-screen">
+                                    <div class="preview-content">
+                                        <div class="preview-slide"></div>
+                                        <div class="preview-slide"></div>
+                                        <div class="preview-slide"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="demo-content">
+                            <h3 class="demo-title" data-i18n="demo.card3.title">Smart Tagging System</h3>
+                            <p class="demo-description" data-i18n="demo.card3.description">
+                                Learn how PrezI automatically tags and organizes your slides
+                                for instant retrieval.
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Security & Trust Section (Consolidated) -->
+        <section class="security-trust-section" id="security">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title" data-i18n="security.title">Enterprise-Grade Security & Trust</h2>
+                    <p class="section-subtitle" data-i18n="security.subtitle">
+                        Your data security and compliance requirements are our top priority
+                    </p>
+                </div>
+                
+                <div class="security-grid">
+                    <div class="security-card">
+                        <div class="security-icon">🔒</div>
+                        <h3 class="security-title" data-i18n="security.gdpr.title">GDPR Compliant</h3>
+                        <p class="security-description" data-i18n="security.gdpr.description">
+                            Full data protection compliance with European privacy regulations
+                        </p>
+                    </div>
+                    
+                    <div class="security-card">
+                        <div class="security-icon">🛡️</div>
+                        <h3 class="security-title" data-i18n="security.soc2.title">SOC 2 Type II</h3>
+                        <p class="security-description" data-i18n="security.soc2.description">
+                            Audited security controls and data handling practices
+                        </p>
+                    </div>
+                    
+                    <div class="security-card">
+                        <div class="security-icon">🔐</div>
+                        <h3 class="security-title" data-i18n="security.sso.title">Enterprise SSO</h3>
+                        <p class="security-description" data-i18n="security.sso.description">
+                            Seamless integration with your existing authentication systems
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="compliance-badges">
+                    <div class="badge-item">
+                        <div class="badge-logo">🇪🇺</div>
+                        <span>GDPR</span>
+                    </div>
+                    <div class="badge-item">
+                        <div class="badge-logo">🛡️</div>
+                        <span>SOC 2</span>
+                    </div>
+                    <div class="badge-item">
+                        <div class="badge-logo">🔒</div>
+                        <span>ISO 27001</span>
+                    </div>
+                    <div class="badge-item">
+                        <div class="badge-logo">✅</div>
+                        <span>CCPA</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Testimonials -->
+        <section class="testimonials-section" id="testimonials">
+            <div class="container">
+                <div class="testimonials-header">
+                    <h2 class="testimonials-title" data-i18n="testimonials.title">
+                        Trusted by Presentation Professionals
+                    </h2>
+                    <p class="testimonials-subtitle" data-i18n="testimonials.subtitle">
+                        See what early beta users are saying about PrezI
+                    </p>
+                </div>
+                
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-quote" data-i18n="testimonials.quote1">
+                            "PrezI transformed our pitch process completely. What used to take our team 4-5 hours now takes 15 minutes. The quality is actually better because PrezI finds slides we forgot we had."
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">SL</div>
+                            <div class="author-info">
+                                <div class="author-name">Sarah Liu</div>
+                                <div class="author-title">VP Sales, TechCorp</div>
+                            </div>
+                        </div>
+                        <div class="testimonial-metric">
+                            <span class="metric-value">80%</span>
+                            <span class="metric-label" data-i18n="testimonials.metric.timeSaved">Time Saved</span>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial-card">
+                        <div class="testimonial-quote" data-i18n="testimonials.quote2">
+                            "The AI understands context in a way I never expected. When I ask for 'growth strategy slides,' it doesn't just match keywords - it understands what makes a compelling narrative."
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">MC</div>
+                            <div class="author-info">
+                                <div class="author-name">Michael Chen</div>
+                                <div class="author-title">Strategy Consultant, BCG</div>
+                            </div>
+                        </div>
+                        <div class="testimonial-metric">
+                            <span class="metric-value">95%</span>
+                            <span class="metric-label" data-i18n="testimonials.metric.accuracy">Accuracy Rate</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Visual Icon Statistics -->
+                <div class="icon-stats">
+                    <div class="icon-stat">
+                        <div class="icon-stat-visual">
+                            <div class="icon-stat-circle" style="--percentage: 100">
+                                <span class="icon-stat-value">500+</span>
+                            </div>
+                        </div>
+                        <div class="icon-stat-label" data-i18n="testimonials.stats.users">Beta Users</div>
+                    </div>
+                    <div class="icon-stat">
+                        <div class="icon-stat-visual">
+                            <div class="icon-stat-circle" style="--percentage: 100">
+                                <span class="icon-stat-value">15K+</span>
+                            </div>
+                        </div>
+                        <div class="icon-stat-label" data-i18n="testimonials.stats.presentations">Presentations</div>
+                    </div>
+                    <div class="icon-stat">
+                        <div class="icon-stat-visual">
+                            <div class="icon-stat-circle" style="--percentage: 84">
+                                <span class="icon-stat-value">84%</span>
+                            </div>
+                        </div>
+                        <div class="icon-stat-label" data-i18n="testimonials.stats.timeSavings">Time Saved</div>
+                    </div>
+                    <div class="icon-stat">
+                        <div class="icon-stat-visual">
+                            <div class="icon-stat-circle" style="--percentage: 98">
+                                <span class="icon-stat-value">4.9</span>
+                            </div>
+                        </div>
+                        <div class="icon-stat-label" data-i18n="testimonials.stats.rating">User Rating</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Pricing -->
+        <section class="pricing-section" id="pricing">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title" data-i18n="pricing.title">Choose Your PrezI Plan</h2>
+                    <p class="section-subtitle" data-i18n="pricing.subtitle">
+                        Flexible pricing designed to grow with your team and presentation needs
+                    </p>
+                    
+                    <!-- Early Bird Flash -->
+                    <div class="early-bird-flash">
+                        <div class="early-bird-title" data-i18n="pricing.earlyBird.title">🚀 Early Access Special</div>
+                        <div class="early-bird-savings" data-i18n="pricing.earlyBird.savings">Save 50% for Life</div>
+                        <div class="early-bird-subtitle" data-i18n="pricing.earlyBird.subtitle">
+                            Be among the first 100 users and lock in this pricing forever
+                        </div>
+                    </div>
+                    
+                    <!-- Countdown Timer -->
+                    <div class="countdown-timer">
+                        <div class="countdown-title" data-i18n="pricing.countdown.title">⏰ Early Access Closes Soon</div>
+                        <div class="countdown-display">
+                            <div class="countdown-unit">
+                                <div class="countdown-number" id="countdownDays">5</div>
+                                <div class="countdown-label" data-i18n="pricing.countdown.days">Days</div>
+                            </div>
+                            <div class="countdown-unit">
+                                <div class="countdown-number" id="countdownHours">14</div>
+                                <div class="countdown-label" data-i18n="pricing.countdown.hours">Hours</div>
+                            </div>
+                            <div class="countdown-unit">
+                                <div class="countdown-number" id="countdownMinutes">32</div>
+                                <div class="countdown-label" data-i18n="pricing.countdown.minutes">Minutes</div>
+                            </div>
+                            <div class="countdown-unit">
+                                <div class="countdown-number" id="countdownSeconds">18</div>
+                                <div class="countdown-label" data-i18n="pricing.countdown.seconds">Seconds</div>
+                            </div>
+                        </div>
+                        <div style="font-size: 14px; color: var(--text-muted);" data-i18n="pricing.countdown.cta">
+                            Join now and secure your early adopter pricing
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pricing-grid">
+                    <!-- Starter Plan -->
+                    <div class="pricing-card starter">
+                        <div class="pricing-header">
+                            <h3 class="pricing-title" data-i18n="pricing.starter.title">Starter</h3>
+                            <div class="pricing-subtitle" data-i18n="pricing.starter.subtitle">Perfect for individuals</div>
+                            <div class="pricing-price">
+                                <span class="price-amount">$29</span>
+                                <span class="price-period" data-i18n="pricing.period">/month</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pricing-features">
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.starter.feature1">Up to 5 projects</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.starter.feature2">1,000 slides storage</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.starter.feature3">Basic AI assistance</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.starter.feature4">100 AI generations/month</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.starter.feature5">Standard support</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pricing-cta">
+                            <button class="pricing-btn" data-i18n="pricing.cta.trial">Start Free Trial</button>
+                            <div class="pricing-note" data-i18n="pricing.note.trial">14-day free trial</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pro Plan -->
+                    <div class="pricing-card pro popular">
+                        <div class="popular-badge" data-i18n="pricing.badge.popular">Most Popular</div>
+                        <div class="pricing-header">
+                            <h3 class="pricing-title" data-i18n="pricing.professional.title">Professional</h3>
+                            <div class="pricing-subtitle" data-i18n="pricing.professional.subtitle">For growing teams</div>
+                            <div class="pricing-price">
+                                <span class="price-amount">$89</span>
+                                <span class="price-period" data-i18n="pricing.period">/month</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pricing-features">
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.professional.feature1">Unlimited projects</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.professional.feature2">10,000 slides storage</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.professional.feature3">Advanced AI with context understanding</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.professional.feature4">1,000 AI generations/month</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.professional.feature5">Element-level intelligence</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.professional.feature6">Team collaboration</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.professional.feature7">Priority support</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pricing-cta">
+                            <button class="pricing-btn primary" data-i18n="pricing.cta.trial">Start Free Trial</button>
+                            <div class="pricing-note" data-i18n="pricing.note.trial">14-day free trial</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Enterprise Plan -->
+                    <div class="pricing-card enterprise">
+                        <div class="pricing-header">
+                            <h3 class="pricing-title" data-i18n="pricing.enterprise.title">Enterprise</h3>
+                            <div class="pricing-subtitle" data-i18n="pricing.enterprise.subtitle">For large organizations</div>
+                            <div class="pricing-price">
+                                <span class="price-amount" data-i18n="pricing.enterprise.price">Custom</span>
+                                <span class="price-period" data-i18n="pricing.enterprise.pricing">pricing</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pricing-features">
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.enterprise.feature1">Unlimited everything</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.enterprise.feature2">Unlimited AI generations</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.enterprise.feature3">Advanced security & SSO</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.enterprise.feature4">Custom AI training</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.enterprise.feature5">On-premise deployment</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.enterprise.feature6">Dedicated account manager</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.enterprise.feature7">24/7 premium support</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <span data-i18n="pricing.enterprise.feature8">Custom integrations</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pricing-cta">
+                            <button class="pricing-btn" data-i18n="pricing.cta.contact">Contact Sales</button>
+                            <div class="pricing-note" data-i18n="pricing.note.custom">Custom quote</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pricing-footer">
+                    <div class="pricing-faq">
+                        <h4 data-i18n="pricing.footer.title">💡 All plans include:</h4>
+                        <div class="faq-items">
+                            <span data-i18n="pricing.footer.item1">• McKinsey-level presentation quality</span>
+                            <span data-i18n="pricing.footer.item2">• 0.3s average response time</span>
+                            <span data-i18n="pricing.footer.item3">• 99.9% uptime SLA</span>
+                            <span data-i18n="pricing.footer.item4">• GDPR & SOC 2 compliance</span>
+                            <span data-i18n="pricing.footer.item5">• Cancel anytime</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- CTA Section with Form -->
+        <section class="cta-section" id="cta">
+            <div class="cta-bg"></div>
+            <div class="container">
+                <div class="cta-content">
+                    <h2 class="cta-title" data-i18n="cta.title">Ready to Transform Your Presentations?</h2>
+                    <p class="cta-subtitle" data-i18n="cta.subtitle">
+                        Join 500+ professionals who are already saving 80% of their presentation time
+                    </p>
+                    
+                    <!-- Quick Signup Form with Progress Animations -->
+                    <form class="cta-form" id="earlyAccessForm">
+                        <div class="form-row">
+                            <div class="form-field">
+                                <input type="email" class="form-input" id="emailInput" placeholder=" " required>
+                                <label for="emailInput" class="form-label">Work Email</label>
+                                <div class="form-progress"></div>
+                                <div class="form-success">✓</div>
+                            </div>
+                            <div class="form-field">
+                                <input type="text" class="form-input" id="companyInput" placeholder=" ">
+                                <label for="companyInput" class="form-label">Company (Optional)</label>
+                                <div class="form-progress"></div>
+                                <div class="form-success">✓</div>
+                            </div>
+                            <button type="submit" class="btn btn-white">Get Early Access</button>
+                        </div>
+                    </form>
+                    
+                    <div class="cta-buttons">
+                        <a href="#demo" class="btn btn-outline-white" data-i18n="cta.secondary">Watch Demo First</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">PrezI</div>
+                    <p class="footer-tagline" data-i18n="footer.tagline">AI-Powered Presentation Excellence</p>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4 data-i18n="footer.product">Product</h4>
+                        <ul>
+                            <li><a href="#features" data-i18n="footer.features">Features</a></li>
+                            <li><a href="#pricing" data-i18n="footer.pricing">Pricing</a></li>
+                            <li><a href="#demo" data-i18n="footer.demo">Demo</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4 data-i18n="footer.company">Company</h4>
+                        <ul>
+                            <li><a href="/about" data-i18n="footer.about">About</a></li>
+                            <li><a href="/blog" data-i18n="footer.blog">Blog</a></li>
+                            <li><a href="/careers" data-i18n="footer.careers">Careers</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4 data-i18n="footer.support">Support</h4>
+                        <ul>
+                            <li><a href="/help" data-i18n="footer.help">Help Center</a></li>
+                            <li><a href="/contact" data-i18n="footer.contact">Contact</a></li>
+                            <li><a href="/status" data-i18n="footer.status">Status</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4 data-i18n="footer.legal">Legal</h4>
+                        <ul>
+                            <li><a href="/privacy" data-i18n="footer.privacy">Privacy</a></li>
+                            <li><a href="/terms" data-i18n="footer.terms">Terms</a></li>
+                            <li><a href="/security" data-i18n="footer.security">Security</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="copyright" data-i18n="footer.copyright">© 2025 mama marketing GmbH. All rights reserved.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Twitter">🐦</a>
+                    <a href="#" aria-label="LinkedIn">💼</a>
+                    <a href="#" aria-label="GitHub">🐙</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Scripts -->
+    <script src="js/main.js" defer></script>
+    
+    <!-- Analytics (load after main content) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=YOUR_GA_ID"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'YOUR_GA_ID');
+    </script>
+</body>
+</html>

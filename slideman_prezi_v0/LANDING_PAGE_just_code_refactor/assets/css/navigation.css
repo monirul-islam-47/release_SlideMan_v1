@@ -1,0 +1,97 @@
+/* PrezI Navigation Component Styles */
+.prezi-nav-menu {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+}
+
+.prezi-nav-toggle {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
+}
+
+.prezi-nav-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+}
+
+.prezi-nav-icon {
+    width: 24px;
+    height: 24px;
+    background: white;
+    mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>') center/contain no-repeat;
+}
+
+.prezi-nav-items {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    background: #1a1a1a;
+    border: 1px solid #3a3a3a;
+    border-radius: 12px;
+    padding: 12px;
+    display: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    min-width: 200px;
+}
+
+.prezi-nav-menu.active .prezi-nav-items {
+    display: block;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.prezi-nav-item {
+    display: block;
+    padding: 10px 16px;
+    color: #e5e7eb;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.prezi-nav-item:hover {
+    background: #2a2a2a;
+    color: #667eea;
+    transform: translateX(4px);
+}
+
+.prezi-nav-item:last-child {
+    margin-bottom: 0;
+}
+
+.prezi-nav-divider {
+    height: 1px;
+    background: #3a3a3a;
+    margin: 8px 0;
+}
+
+.prezi-nav-label {
+    font-size: 11px;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 16px;
+    margin-bottom: 4px;
+}
